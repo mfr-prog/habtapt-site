@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabaseServer";
 
+export const runtime = 'edge';
+
 type NewsletterBody = {
 	email?: string;
 	name?: string;
