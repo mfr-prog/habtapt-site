@@ -63,7 +63,7 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
     try {
       const response = await supabaseFetch('testimonials', {
         method: 'GET',
-      });
+      }, 1, true); // isAdmin = true
 
       if (response.ok) {
         const data = await response.json();
@@ -133,7 +133,7 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
         const response = await supabaseFetch(`testimonials/${editingTestimonial.id}`, {
           method: 'PUT',
           body: JSON.stringify(formData),
-        });
+        }, 1, true); // isAdmin = true
 
         if (response.ok) {
           toast.success('Depoimento atualizado com sucesso!');
@@ -148,14 +148,17 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
         const response = await supabaseFetch('testimonials', {
           method: 'POST',
           body: JSON.stringify(formData),
-        });
+        }, 1, true); // isAdmin = true
 
         if (response.ok) {
+          const result = await response.json();
+          console.log('[TestimonialsManager] ✅ Depoimento criado:', result);
           toast.success('Depoimento criado com sucesso!');
           await fetchTestimonials();
           handleCloseModal();
         } else {
           const error = await response.json();
+          console.error('[TestimonialsManager] ❌ Erro ao criar:', error);
           toast.error(error.error || 'Erro ao criar depoimento');
         }
       }
@@ -175,7 +178,7 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
     try {
       const response = await supabaseFetch(`testimonials/${id}`, {
         method: 'DELETE',
-      });
+      }, 1, true); // isAdmin = true
 
       if (response.ok) {
         toast.success('Depoimento excluído com sucesso!');

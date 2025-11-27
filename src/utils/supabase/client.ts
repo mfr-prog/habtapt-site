@@ -55,11 +55,18 @@ export const getServerUrl = (functionName: string): string => {
 /**
  * Retorna os headers padrão para requisições autenticadas
  */
-export const getAuthHeaders = (accessToken?: string): HeadersInit => {
-  return {
+export const getAuthHeaders = (accessToken?: string, isAdmin: boolean = false): HeadersInit => {
+  const headers: HeadersInit = {
     'Authorization': `Bearer ${accessToken || publicAnonKey}`,
     'Content-Type': 'application/json',
   };
+  
+  // Adicionar header de admin se necessário
+  if (isAdmin) {
+    headers['x-admin-request'] = 'true';
+  }
+  
+  return headers;
 };
 
 /**
@@ -69,7 +76,8 @@ export const getAuthHeaders = (accessToken?: string): HeadersInit => {
 export const supabaseFetch = async (
   endpoint: string,
   options: RequestInit = {},
-  retries: number = 1
+  retries: number = 1,
+  isAdmin: boolean = false
 ): Promise<Response> => {
   // Validar que a configuração ainda está OK
   if (!projectId || !publicAnonKey) {
@@ -80,13 +88,14 @@ export const supabaseFetch = async (
 
   const url = `${getSupabaseUrl()}/functions/v1/${endpoint}`;
   const headers = {
-    ...getAuthHeaders(),
+    ...getAuthHeaders(undefined, isAdmin),
     ...options.headers,
   };
 
   const method = options.method || 'GET';
   console.log(`[Supabase Fetch] ${method} ${url}`);
   console.log(`[Supabase Fetch] Headers:`, Object.keys(headers));
+  console.log(`[Supabase Fetch] Is Admin:`, isAdmin);
 
   let lastError: Error | null = null;
 
