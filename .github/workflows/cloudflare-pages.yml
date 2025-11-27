@@ -1,0 +1,54 @@
+name: Deploy to Cloudflare Pages (manual fallback)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (Next.js → next-on-pages)
+        run: npm run cf:build
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
+        run: |
+          npx --yes wrangler@3 pages deploy ".vercel/output/static" \
+            --project-name "$CF_PAGES_PROJECT" \
+            --branch "${GITHUB_REF_NAME}" \
+            --commit-hash "${GITHUB_SHA}" \
+            --commit-message "GitHub Actions deploy" \
+            --functions ".vercel/output/functions"
+
+      - name: Optionally set Pages secrets (first-time only)
+        if: ${{ false }} # set to true to initialize secrets on first run
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          printf "%s" "$SUPABASE_URL" | npx --yes wrangler@3 pages project secret put SUPABASE_URL --project-name "$CF_PAGES_PROJECT" --quiet
+          printf "%s" "$SUPABASE_ANON_KEY" | npx --yes wrangler@3 pages project secret put SUPABASE_ANON_KEY --project-name "$CF_PAGES_PROJECT" --quiet
+          printf "%s" "$SUPABASE_SERVICE_ROLE_KEY" | npx --yes wrangler@3 pages project secret put SUPABASE_SERVICE_ROLE_KEY --project-name "$CF_PAGES_PROJECT" --quiet
+
+
