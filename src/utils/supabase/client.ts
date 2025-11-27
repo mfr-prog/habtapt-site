@@ -48,9 +48,8 @@ export const getSupabaseUrl = (): string => {
 /**
  * Retorna a URL da API do servidor
  */
-export const getServerUrl = (path: string = ''): string => {
-  const baseUrl = `${getSupabaseUrl()}/functions/v1/make-server-4b2936bc`;
-  return path ? `${baseUrl}/${path}` : baseUrl;
+export const getServerUrl = (functionName: string): string => {
+  return `${getSupabaseUrl()}/functions/v1/${functionName}`;
 };
 
 /**
@@ -79,7 +78,7 @@ export const supabaseFetch = async (
     throw new Error(error);
   }
 
-  const url = getServerUrl(endpoint);
+  const url = `${getSupabaseUrl()}/functions/v1/${endpoint}`;
   const headers = {
     ...getAuthHeaders(),
     ...options.headers,
