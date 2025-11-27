@@ -55,41 +55,48 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
     };
     reader.readAsDataURL(file);
 
-    // Upload para o servidor
+    // Upload para o Supabase Storage
     setIsUploading(true);
     console.log('[ImageUpload] Starting upload to bucket:', bucket);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
       const { projectId, publicAnonKey } = await import('../../utils/supabase/info');
       
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-4b2936bc/upload/${bucket}`,
-        {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Bearer ${publicAnonKey}`,
-          },
-        }
-      );
+      // Gerar nome único para o arquivo
+      const timestamp = Date.now();
+      const randomStr = Math.random().toString(36).substring(7);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${timestamp}-${randomStr}.${fileExt}`;
+      const filePath = `${fileName}`;
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Erro no upload');
-      }
+      console.log('[ImageUpload] Uploading to path:', filePath);
 
-      const data = await response.json();
-      console.log('[ImageUpload] Upload response:', data);
+      // Upload direto para o Storage usando a API REST
+      const uploadUrl = `https://${projectId}.supabase.co/storage/v1/object/${bucket}/${filePath}`;
       
-      if (data.url) {
-        console.log('[ImageUpload] Calling onChange with URL:', data.url);
-        onChange(data.url);
-        toast.success('Imagem enviada com sucesso!');
-      } else {
-        throw new Error('URL não retornada');
+      const uploadResponse = await fetch(uploadUrl, {
+        method: 'POST',
+        body: file,
+        headers: {
+          'Authorization': `Bearer ${publicAnonKey}`,
+          'Content-Type': file.type,
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json().catch(() => ({}));
+        console.error('[ImageUpload] Upload error:', errorData);
+        throw new Error(errorData.message || errorData.error || 'Erro no upload');
       }
+
+      const uploadData = await uploadResponse.json();
+      console.log('[ImageUpload] Upload response:', uploadData);
+      
+      // Construir URL pública da imagem
+      const publicUrl = `https://${projectId}.supabase.co/storage/v1/object/public/${bucket}/${filePath}`;
+      
+      console.log('[ImageUpload] Public URL:', publicUrl);
+      onChange(publicUrl);
+      toast.success('Imagem enviada com sucesso!');
     } catch (error) {
       console.error('[ImageUpload] Erro:', error);
       toast.error(error instanceof Error ? error.message : 'Erro ao fazer upload da imagem');
