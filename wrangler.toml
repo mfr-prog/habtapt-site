@@ -1,0 +1,12 @@
+# Cloudflare Pages configuration
+name = "habtapt-site"
+compatibility_date = "2025-11-27"
+
+[build]
+command = "npm run build"
+cwd = "."
+
+[build.upload]
+format = "service-worker"
+dir = ".vercel/output/static"
+
