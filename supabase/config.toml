@@ -1,0 +1,25 @@
+project_id = "qasiruoxclggeromagiw"
+
+[functions.newsletter]
+verify_jwt = false
+
+[functions.insights]
+verify_jwt = false
+
+[functions.projects]
+verify_jwt = false
+
+[functions.testimonials]
+verify_jwt = false
+
+[functions.subscribers]
+verify_jwt = false
+
+[functions.contacts]
+verify_jwt = false
+
+[functions.contact]
+verify_jwt = false
+
+[functions.leads]
+verify_jwt = false

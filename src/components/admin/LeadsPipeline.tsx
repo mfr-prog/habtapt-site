@@ -23,6 +23,7 @@ interface Contact {
   maxBudget?: string;
   typology?: string;
   notes?: string;
+  classifications?: string[]; // Comprador, Vendedor, Inquilino, Arrendatário
 }
 
 type PipelineStageId =
@@ -61,11 +62,13 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
     maxBudget: string;
     typology: string;
     notes: string;
+    classifications: string[];
   }>({
     desiredLocations: '',
     maxBudget: '',
     typology: '',
     notes: '',
+    classifications: [],
   });
   const [localPrefs, setLocalPrefs] = useState<Record<string, Partial<Contact>>>(() => {
     try {
@@ -232,6 +235,7 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                   maxBudget: c.maxBudget || '',
                   typology: c.typology || '',
                   notes: c.notes || '',
+                  classifications: c.classifications || [],
                 });
                 setIsEditing(true);
               }}
@@ -561,6 +565,90 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                   />
                 </div>
               </div>
+              
+              {/* Mensagem original do lead */}
+              {editingContact.message && (
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.medium,
+                      color: colors.gray[700],
+                      marginBottom: spacing[1],
+                    }}
+                  >
+                    Mensagem original
+                  </label>
+                  <div
+                    style={{
+                      width: '100%',
+                      padding: spacing[3],
+                      border: `1px solid ${colors.gray[200]}`,
+                      borderRadius: radius.md,
+                      fontSize: typography.fontSize.sm,
+                      color: colors.gray[600],
+                      background: colors.gray[50],
+                      maxHeight: '120px',
+                      overflowY: 'auto',
+                      lineHeight: typography.lineHeight.relaxed,
+                    }}
+                  >
+                    {editingContact.message}
+                  </div>
+                </div>
+              )}
+              
+              {/* Classificações do lead */}
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: typography.fontSize.sm,
+                    fontWeight: typography.fontWeight.medium,
+                    color: colors.gray[700],
+                    marginBottom: spacing[2],
+                  }}
+                >
+                  Classificação do Lead
+                </label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: spacing[2] }}>
+                  {['Comprador', 'Vendedor', 'Inquilino', 'Arrendatário'].map((classification) => (
+                    <label
+                      key={classification}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: spacing[2],
+                        padding: `${spacing[2]} ${spacing[3]}`,
+                        border: `2px solid ${form.classifications.includes(classification) ? colors.primary : colors.gray[300]}`,
+                        borderRadius: radius.md,
+                        cursor: 'pointer',
+                        background: form.classifications.includes(classification) ? designSystem.helpers.hexToRgba(colors.primary, 0.05) : colors.white,
+                        transition: 'all 0.2s',
+                        fontSize: typography.fontSize.sm,
+                        fontWeight: typography.fontWeight.medium,
+                        color: form.classifications.includes(classification) ? colors.primary : colors.gray[700],
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={form.classifications.includes(classification)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setForm({ ...form, classifications: [...form.classifications, classification] });
+                          } else {
+                            setForm({ ...form, classifications: form.classifications.filter(c => c !== classification) });
+                          }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      {classification}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              
               <div>
                 <label
                   style={{
@@ -620,6 +708,7 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                         maxBudget: form.maxBudget.trim(),
                         typology: form.typology.trim(),
                         notes: form.notes.trim(),
+                        classifications: form.classifications,
                       };
                       const response = await supabaseFetch(`contacts/${encodeURIComponent(normalizeContactId(editingContact.id))}`, {
                         method: 'PUT',
@@ -652,6 +741,7 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                           maxBudget: form.maxBudget.trim(),
                           typology: form.typology.trim(),
                           notes: form.notes.trim(),
+                          classifications: form.classifications,
                         };
                         const next = { ...localPrefs, [editingContact!.id]: payloadLocal };
                         setLocalPrefs(next);
