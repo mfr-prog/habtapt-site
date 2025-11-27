@@ -81,6 +81,9 @@ function AppContent() {
           {!isAdminRoute && <BackToTop />}
           <Toaster 
           position="top-right"
+          duration={4000}
+          closeButton
+          richColors
           toastOptions={{
             style: {
               background: 'white',
