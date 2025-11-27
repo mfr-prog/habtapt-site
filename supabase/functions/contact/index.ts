@@ -19,6 +19,8 @@ Deno.serve(async (req) => {
         phone: body.phone,
         interest: body.interest || 'Contato geral',
         message: body.message,
+        source: 'contact_form',
+        source_url: body.sourceUrl || null,
       });
 
       if (error) {

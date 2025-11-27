@@ -23,6 +23,10 @@ Deno.serve(async (req) => {
         desired_locations: body.desiredLocations ? [body.desiredLocations] : null,
         max_budget: body.maxBudget,
         typology: body.typology,
+        source: body.source || 'project', // project, insight, etc
+        source_id: body.sourceId || null,
+        source_title: body.sourceTitle || body.projectTitle || null,
+        source_url: body.sourceUrl || null,
       });
 
       if (error) {

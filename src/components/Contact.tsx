@@ -86,10 +86,13 @@ export function Contact() {
     setIsSubmitting(true);
 
     try {
-      // Send to Supabase backend
+      // Send to Supabase backend with tracking
       const response = await supabaseFetch('contact', {
         method: 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          sourceUrl: window.location.href,
+        }),
       });
 
       const data = await response.json();

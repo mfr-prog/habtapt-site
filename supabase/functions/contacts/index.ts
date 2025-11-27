@@ -86,6 +86,10 @@ Deno.serve(async (req) => {
       if (body.interest) updateData.interest = body.interest;
       if (body.message) updateData.message = body.message;
       if (body.classifications) updateData.classifications = body.classifications;
+      if (body.source) updateData.source = body.source;
+      if (body.source_id) updateData.source_id = body.source_id;
+      if (body.source_title) updateData.source_title = body.source_title;
+      if (body.source_url) updateData.source_url = body.source_url;
       
       const { error } = await supabase
         .from('contacts')
@@ -135,6 +139,10 @@ Deno.serve(async (req) => {
       typology: contact.typology,
       notes: contact.notes,
       classifications: contact.classifications || [],
+      source: contact.source,
+      sourceId: contact.source_id,
+      sourceTitle: contact.source_title,
+      sourceUrl: contact.source_url,
     }));
 
     return new Response(
