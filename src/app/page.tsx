@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Home() {
 	const [email, setEmail] = useState("");
@@ -12,23 +13,20 @@ export default function Home() {
 		setStatus(null);
 		setMessage("");
 		try {
-			const res = await fetch("/api/newsletter", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email }),
+			const { data, error } = await supabase.functions.invoke('newsletter', {
+				body: { email }
 			});
-			// Avoid JSON parse on non-OK responses to prevent SyntaxError
-			const isJson = res.headers.get("content-type")?.includes("application/json");
-			const payload = isJson ? await res.json() : null;
-			if (!res.ok) {
+			
+			if (error) {
 				setStatus("error");
-				setMessage(payload?.error ?? "Falha ao assinar.");
+				setMessage(error.message ?? "Falha ao assinar.");
 				return;
 			}
+			
 			setStatus("ok");
 			setMessage("Inscrição realizada!");
 			setEmail("");
-		} catch {
+		} catch (err) {
 			setStatus("error");
 			setMessage("Erro de rede.");
 		}
