@@ -1,6 +1,9 @@
-name: Deploy to Cloudflare Pages (manual fallback)
+name: Deploy to Cloudflare Pages
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -21,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (Next.js → next-on-pages)
-        run: npm run cf:build
+      - name: Build (Vite)
+        run: npm run build
 
       - name: Deploy to Cloudflare Pages
         env:
@@ -30,12 +33,11 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
         run: |
-          npx --yes wrangler@3 pages deploy ".vercel/output/static" \
+          npx --yes wrangler@3 pages deploy "dist" \
             --project-name "$CF_PAGES_PROJECT" \
             --branch "${GITHUB_REF_NAME}" \
             --commit-hash "${GITHUB_SHA}" \
-            --commit-message "GitHub Actions deploy" \
-            --functions ".vercel/output/functions"
+            --commit-message "GitHub Actions deploy"
 
       - name: Optionally set Pages secrets (first-time only)
         if: ${{ false }} # set to true to initialize secrets on first run
