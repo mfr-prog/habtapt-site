@@ -181,15 +181,33 @@ export function Footer() {
             }}
           >
             <div className="flex flex-col md:flex-row justify-between items-center" style={{ gap: designSystem.spacing[4], width: '100%' }}>
-              <p 
-                className="text-center md:text-left"
-                style={{
-                  color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.7),
-                  fontSize: designSystem.typography.fontSize.sm
-                }}
-              >
-                HABTA © {currentYear} — Reabilitação Inteligente e Investimento Sustentável.
-              </p>
+              <div className="text-center md:text-left">
+                <p 
+                  style={{
+                    color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.7),
+                    fontSize: designSystem.typography.fontSize.sm,
+                    marginBottom: designSystem.spacing[2]
+                  }}
+                >
+                  HABTA © {currentYear} — Reabilitação Inteligente e Investimento Sustentável.
+                </p>
+                <p 
+                  style={{
+                    color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.6),
+                    fontSize: designSystem.typography.fontSize.xs
+                  }}
+                >
+                  © {currentYear} Jornada Prometida LDA. NIF: 518493644
+                </p>
+                <p 
+                  style={{
+                    color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.6),
+                    fontSize: designSystem.typography.fontSize.xs
+                  }}
+                >
+                  Sede Rua Fernão Lopes, nº 23, Cascais 2765 088, Portugal
+                </p>
+              </div>
               <motion.button
                 onClick={scrollToTop}
                 whileHover={{ scale: 1.1, y: -3 }}
