@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container } from '../components/Container';
 import { Section } from '../components/Section';
 import { motion } from 'motion/react';
@@ -8,9 +8,8 @@ import { useInView } from '../components/useInView';
 import { designSystem } from '../components/design-system';
 import {
   MapPin, Phone, Mail, MessageCircle, Download, ArrowRight,
-  CheckCircle, Home, Building, Maximize, Square, ChevronRight,
-  ExternalLink, Bath, BedDouble, Ruler, Calendar, Shield, Star,
-  HelpCircle, ChevronDown, Send, Eye,
+  CheckCircle, Home, Building, Ruler, Calendar, Star,
+  ChevronDown, Send, Eye, ExternalLink,
 } from '../components/icons';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 import {
@@ -20,32 +19,11 @@ import {
   AccordionContent,
 } from '../components/ui/accordion';
 
-// ─── Animation helpers ───────────────────────────────────────────────────────
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
-
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: (i: number = 0) => ({
-    opacity: 1,
-    transition: { duration: 0.5, delay: i * 0.1 },
-  }),
-};
-
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: (i: number = 0) => ({
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
+// ─── Shorthand refs ──────────────────────────────────────────────────────────
+const ds = designSystem;
+const c = ds.colors;
+const t = ds.typography;
+const sp = ds.spacing;
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 const counters = [
@@ -68,26 +46,11 @@ const benefits = [
 ];
 
 const interiorFeatures = [
-  {
-    title: 'Cozinha',
-    desc: 'Linguagem contemporânea, bancada escura e integração com a sala',
-  },
-  {
-    title: 'Sala',
-    desc: 'Possibilidade de separação visual com elementos envidraçados (conceito)',
-  },
-  {
-    title: 'Quartos',
-    desc: 'Ambientes simples com boa arrumação',
-  },
-  {
-    title: 'Casas de banho',
-    desc: 'Revestimentos claros tipo pedra e móveis suspensos (conceito)',
-  },
-  {
-    title: 'Duplex',
-    desc: 'Escada com integração estética e área extra no piso superior (conceito)',
-  },
+  { title: 'Cozinha', desc: 'Linguagem contemporânea, bancada escura e integração com a sala' },
+  { title: 'Sala', desc: 'Possibilidade de separação visual com elementos envidraçados (conceito)' },
+  { title: 'Quartos', desc: 'Ambientes simples com boa arrumação' },
+  { title: 'Casas de banho', desc: 'Revestimentos claros tipo pedra e móveis suspensos (conceito)' },
+  { title: 'Duplex', desc: 'Escada com integração estética e área extra no piso superior (conceito)' },
 ];
 
 const units = [
@@ -110,7 +73,7 @@ const units = [
       'A garagem privativa é um diferencial raro na zona — e resolve o "assunto" do estacionamento logo à partida.',
     ],
     cta: 'Quero visitar este T1',
-    color: designSystem.colors.brand.primary,
+    color: c.brand.primary,
   },
   {
     id: 'p1',
@@ -132,7 +95,7 @@ const units = [
       'O anexo é a carta na manga: pode servir como arrumo, lavandaria organizada ou um pequeno escritório — aquilo que normalmente falta num T2.',
     ],
     cta: 'Quero visitar este T2',
-    color: designSystem.colors.brand.secondary,
+    color: c.brand.secondary,
   },
   {
     id: 'p2',
@@ -168,31 +131,11 @@ const galleryItems = [
 ];
 
 const locationCards = [
-  {
-    num: '01',
-    title: 'Transportes',
-    desc: 'Paragens de autocarro como S. Crispim e Monte Aventino a cerca de 5 minutos a pé e estação de metro Combatentes a ~15 minutos a pé.',
-  },
-  {
-    num: '02',
-    title: 'Zona das Antas',
-    desc: 'Uma envolvente residencial consolidada, com vida de bairro e acessos rápidos ao resto do Porto.',
-  },
-  {
-    num: '03',
-    title: 'Parque de S. Roque',
-    desc: 'Perto do portão principal do Parque de S. Roque — opção verde para caminhar e desligar do ritmo da cidade.',
-  },
-  {
-    num: '04',
-    title: 'Serviços do dia a dia',
-    desc: 'Supermercados, escolas, farmácias, ginásios e restauração a curta distância — conveniência sem depender do carro.',
-  },
-  {
-    num: '05',
-    title: 'Mobilidade e acessos',
-    desc: 'Localização prática para circular entre centro, zona oriental e principais vias.',
-  },
+  { num: '01', title: 'Transportes', desc: 'Paragens de autocarro como S. Crispim e Monte Aventino a cerca de 5 minutos a pé e estação de metro Combatentes a ~15 minutos a pé.' },
+  { num: '02', title: 'Zona das Antas', desc: 'Uma envolvente residencial consolidada, com vida de bairro e acessos rápidos ao resto do Porto.' },
+  { num: '03', title: 'Parque de S. Roque', desc: 'Perto do portão principal do Parque de S. Roque — opção verde para caminhar e desligar do ritmo da cidade.' },
+  { num: '04', title: 'Serviços do dia a dia', desc: 'Supermercados, escolas, farmácias, ginásios e restauração a curta distância — conveniência sem depender do carro.' },
+  { num: '05', title: 'Mobilidade e acessos', desc: 'Localização prática para circular entre centro, zona oriental e principais vias.' },
 ];
 
 const pricingRows = [
@@ -202,40 +145,99 @@ const pricingRows = [
 ];
 
 const faqItems = [
-  {
-    q: 'As áreas exteriores são privativas?',
-    a: 'Confirme na documentação da propriedade horizontal. Na brochura indicamos o detalhe por unidade.',
-  },
-  {
-    q: 'O que inclui a "área bruta" de cada unidade?',
-    a: 'Cada unidade integra componentes diferentes (ex.: garagem, anexo, sótão). Por isso mostramos a decomposição completa na brochura.',
-  },
-  {
-    q: 'O sótão do duplex conta como área habitacional?',
-    a: 'Depende do licenciamento e do pé-direito/condições. Esclarecemos isso no processo (e deve estar refletido no CPCV).',
-  },
-  {
-    q: 'Há garagem?',
-    a: 'A unidade do R/C inclui garagem privativa.',
-  },
-  {
-    q: 'Como posso agendar visita?',
-    a: 'Clique em "Agendar visita" e indique o melhor dia/horário. Respondemos no próprio dia útil.',
-  },
+  { q: 'As áreas exteriores são privativas?', a: 'Confirme na documentação da propriedade horizontal. Na brochura indicamos o detalhe por unidade.' },
+  { q: 'O que inclui a "área bruta" de cada unidade?', a: 'Cada unidade integra componentes diferentes (ex.: garagem, anexo, sótão). Por isso mostramos a decomposição completa na brochura.' },
+  { q: 'O sótão do duplex conta como área habitacional?', a: 'Depende do licenciamento e do pé-direito/condições. Esclarecemos isso no processo (e deve estar refletido no CPCV).' },
+  { q: 'Há garagem?', a: 'A unidade do R/C inclui garagem privativa.' },
+  { q: 'Como posso agendar visita?', a: 'Clique em "Agendar visita" e indique o melhor dia/horário. Respondemos no próprio dia útil.' },
 ];
+
+// ─── Styles (inline, matching HABTA identity) ────────────────────────────────
+const sectionBadge = (gold = false) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: sp[2],
+  padding: `${sp[3]} ${sp[5]}`,
+  borderRadius: ds.borderRadius.full,
+  background: gold ? 'rgba(184,149,106,0.08)' : 'rgba(26,62,92,0.08)',
+  border: `1px solid ${gold ? 'rgba(184,149,106,0.15)' : 'rgba(26,62,92,0.15)'}`,
+  fontSize: t.fontSize.sm,
+  fontWeight: t.fontWeight.semibold,
+  color: gold ? c.brand.secondary : c.brand.primary,
+  textTransform: 'uppercase' as const,
+  letterSpacing: t.letterSpacing.wider,
+  marginBottom: sp[6],
+});
+
+const sectionTitle: React.CSSProperties = {
+  fontSize: t.fontSize['4xl'],
+  fontWeight: t.fontWeight.black,
+  color: c.brand.primary,
+  letterSpacing: t.letterSpacing.tight,
+  lineHeight: t.lineHeight.tight,
+  marginBottom: sp[4],
+};
+
+const bodyText: React.CSSProperties = {
+  fontSize: t.fontSize.lg,
+  fontWeight: t.fontWeight.normal,
+  color: c.neutral[600],
+  lineHeight: t.lineHeight.relaxed,
+};
+
+const cardBase: React.CSSProperties = {
+  background: c.neutral.white,
+  borderRadius: ds.borderRadius['3xl'],
+  border: `1px solid rgba(26,62,92,0.12)`,
+  boxShadow: ds.shadows.md,
+  transition: ds.animations.transition.base,
+};
+
+const ctaButtonPrimary: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: sp[2],
+  padding: `${sp[5]} ${sp[10]}`,
+  borderRadius: ds.borderRadius.full,
+  background: c.gradients.secondary,
+  color: c.neutral.white,
+  fontWeight: t.fontWeight.semibold,
+  fontSize: t.fontSize.base,
+  boxShadow: '0 10px 40px rgba(184,149,106,0.3)',
+  cursor: 'pointer',
+  border: 'none',
+};
+
+const ctaButtonOutline: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: sp[2],
+  padding: `${sp[5]} ${sp[10]}`,
+  borderRadius: ds.borderRadius.full,
+  background: 'rgba(255,255,255,0.1)',
+  color: c.neutral.white,
+  fontWeight: t.fontWeight.semibold,
+  fontSize: t.fontSize.base,
+  border: '2px solid rgba(255,255,255,0.3)',
+  backdropFilter: 'blur(12px)',
+  cursor: 'pointer',
+};
 
 // ─── Component ───────────────────────────────────────────────────────────────
 export function VelaskPage() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    typology: '',
-    message: '',
-    consentContact: false,
-    consentPrivacy: false,
+    name: '', email: '', phone: '', typology: '', message: '',
+    consentContact: false, consentPrivacy: false,
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < parseInt(ds.breakpoints.lg));
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const heroInView = useInView({ threshold: 0.1 });
   const empInView = useInView({ threshold: 0.1 });
@@ -253,311 +255,156 @@ export function VelaskPage() {
   };
 
   const handleWhatsApp = () => {
-    window.open(
-      'https://wa.me/351000000000?text=Olá! Gostaria de saber mais sobre o VELASK Residence.',
-      '_blank'
-    );
+    window.open('https://wa.me/351000000000?text=Olá! Gostaria de saber mais sobre o VELASK Residence.', '_blank');
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: integrate with Supabase / n8n
     setFormSubmitted(true);
+  };
+
+  const anim = (i: number) => ({
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] },
+  });
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: `${sp[3]} ${sp[4]}`,
+    borderRadius: ds.borderRadius.xl,
+    background: 'rgba(255,255,255,0.08)',
+    border: '1px solid rgba(255,255,255,0.15)',
+    color: '#fff',
+    fontSize: t.fontSize.base,
+    outline: 'none',
   };
 
   return (
     <>
-      {/* ═══════════════════════════════════════════════════════════════════════
-          HERO
-      ═══════════════════════════════════════════════════════════════════════ */}
+      {/* ═══ HERO ═══ */}
       <section
         ref={heroInView.ref}
         className="relative overflow-hidden"
         style={{
-          background: designSystem.colors.gradients.hero,
+          background: c.gradients.hero,
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
         }}
       >
-        {/* Decorative elements */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(ellipse 80% 60% at 70% 40%, rgba(184,149,106,0.12) 0%, transparent 70%)',
-          }}
-        />
-        <div
-          className="absolute top-0 right-0 w-1/2 h-full pointer-events-none opacity-[0.04]"
-          style={{
-            backgroundImage: `repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 1px, transparent 40px)`,
-          }}
-        />
+        {/* Decorative */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 70% 40%, rgba(184,149,106,0.12) 0%, transparent 70%)' }} />
 
-        <Container className="relative z-10 py-32 lg:py-40">
-          <div className="max-w-3xl">
-            {/* Badge */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={heroInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-            >
-              <span
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold tracking-wider uppercase mb-8"
-                style={{
-                  background: 'rgba(184,149,106,0.15)',
-                  color: designSystem.colors.brand.secondaryLight,
-                  border: '1px solid rgba(184,149,106,0.25)',
-                }}
-              >
-                <Star className="w-4 h-4" />
-                Novo Empreendimento
-              </span>
+        <Container>
+          <div style={{ position: 'relative', zIndex: 10, paddingTop: sp[32], paddingBottom: sp[32] }}>
+            <div style={{ maxWidth: '48rem' }}>
+              {/* Badge */}
+              <motion.div {...anim(0)}>
+                <span style={{ ...sectionBadge(true), color: c.brand.secondaryLight, background: 'rgba(184,149,106,0.15)', border: '1px solid rgba(184,149,106,0.25)' }}>
+                  <Star style={{ width: 16, height: 16 }} />
+                  Novo Empreendimento
+                </span>
+              </motion.div>
+
+              {/* H1 */}
+              <motion.h1 {...anim(1)} style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight, lineHeight: t.lineHeight.tight, color: '#fff', marginBottom: sp[6] }}>
+                T1, T2 e T3 Duplex<br />
+                <span style={{ color: c.brand.secondaryLight }}>nas Antas (Campanhã), Porto</span>
+              </motion.h1>
+
+              {/* Subheadline */}
+              <motion.p {...anim(2)} style={{ fontSize: t.fontSize.xl, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.8)', marginBottom: sp[6] }}>
+                Três apartamentos a estrear, com jardins privados e um duplex com sótão — numa rua residencial com acessos e transportes por perto.
+              </motion.p>
+
+              {/* Location */}
+              <motion.div {...anim(3)} className="flex items-center gap-2" style={{ color: 'rgba(255,255,255,0.6)', marginBottom: sp[8] }}>
+                <MapPin style={{ width: 16, height: 16, flexShrink: 0 }} />
+                <span style={{ fontSize: t.fontSize.sm }}>Rua Manuel Carqueja, 259 — Porto (Campanhã)</span>
+              </motion.div>
+
+              {/* Price */}
+              <motion.div {...anim(4)} style={{ marginBottom: sp[10] }}>
+                <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, letterSpacing: t.letterSpacing.widest, textTransform: 'uppercase', color: c.brand.secondaryLight, marginBottom: sp[1] }}>
+                  Tabela de Preços Sob Consulta
+                </p>
+                <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.5)' }}>
+                  Receba a brochura com plantas, áreas e valores.
+                </p>
+              </motion.div>
+
+              {/* CTAs */}
+              <motion.div {...anim(5)} className="flex flex-wrap gap-4 items-center">
+                <motion.button onClick={scrollToForm} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                  <Calendar style={{ width: 20, height: 20 }} /> AGENDAR VISITA
+                </motion.button>
+                <motion.button onClick={scrollToForm} style={ctaButtonOutline} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                  <Download style={{ width: 20, height: 20 }} /> DOWNLOAD PLANTAS (PDF)
+                </motion.button>
+                <motion.button onClick={handleWhatsApp} style={{ display: 'inline-flex', alignItems: 'center', gap: sp[2], padding: sp[3], fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer' }} whileHover={{ color: '#fff' }}>
+                  <MessageCircle style={{ width: 16, height: 16 }} /> Falar por WhatsApp
+                </motion.button>
+              </motion.div>
+            </div>
+
+            {/* Counters */}
+            <motion.div {...anim(6)} className="grid grid-cols-3 gap-6" style={{ marginTop: sp[20], maxWidth: '40rem' }}>
+              {counters.map((ct, i) => (
+                <div key={i}>
+                  <p style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: t.fontWeight.black, color: '#fff', lineHeight: 1 }}>
+                    {ct.value}
+                    <span style={{ fontSize: t.fontSize['2xl'], color: c.brand.secondaryLight, marginLeft: sp[1] }}>{ct.suffix}</span>
+                  </p>
+                  <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.5)', marginTop: sp[2], lineHeight: t.lineHeight.snug }}>{ct.label}</p>
+                </div>
+              ))}
             </motion.div>
 
-            {/* H1 */}
-            <motion.h1
-              variants={fadeUp}
-              initial="hidden"
-              animate={heroInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight text-white mb-6"
-              style={{ letterSpacing: designSystem.typography.letterSpacing.tight }}
-            >
-              T1, T2 e T3 Duplex
-              <br />
-              <span style={{ color: designSystem.colors.brand.secondaryLight }}>
-                nas Antas (Campanhã), Porto
-              </span>
-            </motion.h1>
-
-            {/* Subheadline */}
-            <motion.p
-              variants={fadeUp}
-              initial="hidden"
-              animate={heroInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="text-lg sm:text-xl leading-relaxed mb-6"
-              style={{ color: 'rgba(255,255,255,0.8)' }}
-            >
-              Três apartamentos a estrear, com jardins privados e um duplex com sótão
-              — numa rua residencial com acessos e transportes por perto.
-            </motion.p>
-
-            {/* Location line */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={heroInView.isInView ? 'visible' : 'hidden'}
-              custom={3}
-              className="flex items-center gap-2 mb-8"
-              style={{ color: 'rgba(255,255,255,0.6)' }}
-            >
-              <MapPin className="w-4 h-4 flex-shrink-0" />
-              <span className="text-sm">Rua Manuel Carqueja, 259 — Porto (Campanhã)</span>
-            </motion.div>
-
-            {/* Price */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={heroInView.isInView ? 'visible' : 'hidden'}
-              custom={4}
-              className="mb-10"
-            >
-              <p
-                className="text-sm font-semibold tracking-widest uppercase mb-1"
-                style={{ color: designSystem.colors.brand.secondaryLight }}
-              >
-                Tabela de Preços Sob Consulta
-              </p>
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                Receba a brochura com plantas, áreas e valores.
-              </p>
-            </motion.div>
-
-            {/* CTA Buttons */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={heroInView.isInView ? 'visible' : 'hidden'}
-              custom={5}
-              className="flex flex-wrap gap-4 items-center"
-            >
-              <button
-                onClick={scrollToForm}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                style={{
-                  background: designSystem.colors.gradients.secondary,
-                  color: '#fff',
-                  boxShadow: designSystem.shadows.secondaryHover,
-                }}
-              >
-                <Calendar className="w-5 h-5" />
-                AGENDAR VISITA
-              </button>
-
-              <button
-                onClick={scrollToForm}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold transition-all duration-300 hover:scale-105"
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  color: '#fff',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  backdropFilter: 'blur(8px)',
-                }}
-              >
-                <Download className="w-5 h-5" />
-                DOWNLOAD PLANTAS (PDF)
-              </button>
-
-              <button
-                onClick={handleWhatsApp}
-                className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-300 hover:underline"
-                style={{ color: 'rgba(255,255,255,0.7)' }}
-              >
-                <MessageCircle className="w-4 h-4" />
-                Falar por WhatsApp
-              </button>
+            {/* Highlights */}
+            <motion.div {...anim(7)} className="grid grid-cols-2 gap-4" style={{ marginTop: sp[12] }}>
+              {highlights.map((h, i) => (
+                <motion.div key={i} className="flex items-start gap-3 p-4 rounded-3xl" style={{ background: 'linear-gradient(135deg, rgba(26,62,92,0.35), rgba(15,39,56,0.45))', border: '2px solid rgba(255,255,255,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }} whileHover={isMobile ? {} : { y: -4, scale: 1.01 }}>
+                  <span style={{ fontSize: t.fontSize.xl, flexShrink: 0, marginTop: 2 }}>{h.icon}</span>
+                  <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.85)', lineHeight: t.lineHeight.snug }}>{h.text}</p>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
-
-          {/* Counters */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate={heroInView.isInView ? 'visible' : 'hidden'}
-            custom={6}
-            className="grid grid-cols-3 gap-6 mt-16 lg:mt-20 max-w-2xl"
-          >
-            {counters.map((c, i) => (
-              <div key={i} className="text-center sm:text-left">
-                <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-none">
-                  {c.value}
-                  <span
-                    className="text-xl sm:text-2xl ml-1"
-                    style={{ color: designSystem.colors.brand.secondaryLight }}
-                  >
-                    {c.suffix}
-                  </span>
-                </p>
-                <p
-                  className="text-xs sm:text-sm mt-2 leading-snug"
-                  style={{ color: 'rgba(255,255,255,0.5)' }}
-                >
-                  {c.label}
-                </p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Highlights */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate={heroInView.isInView ? 'visible' : 'hidden'}
-            custom={7}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-12"
-          >
-            {highlights.map((h, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 p-4 rounded-xl"
-                style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                }}
-              >
-                <span className="text-xl flex-shrink-0 mt-0.5">{h.icon}</span>
-                <p className="text-sm text-white/80 leading-snug">{h.text}</p>
-              </div>
-            ))}
-          </motion.div>
         </Container>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <ChevronDown className="w-6 h-6 text-white/40" />
-        </div>
+        <motion.div className="absolute" style={{ bottom: sp[8], left: '50%', transform: 'translateX(-50%)' }} animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}>
+          <ChevronDown style={{ width: 24, height: 24, color: 'rgba(255,255,255,0.4)' }} />
+        </motion.div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          O EMPREENDIMENTO
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="white" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ O EMPREENDIMENTO ═══ */}
+      <Section background="white">
         <Container>
-          <div ref={empInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={empInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="text-center mb-4"
-            >
-              <span
-                className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                style={{
-                  background: `rgba(26,62,92,0.06)`,
-                  color: designSystem.colors.brand.primary,
-                }}
-              >
-                O Empreendimento
-              </span>
+          <div ref={empInView.ref} className="text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge()}>O Empreendimento</span>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              animate={empInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-8"
-              style={{
-                color: designSystem.colors.brand.primary,
-                letterSpacing: designSystem.typography.letterSpacing.tight,
-              }}
-            >
+            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
               VELASK Residence
             </motion.h2>
 
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={empInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="max-w-3xl mx-auto space-y-5 mb-12"
-            >
-              <p className="text-base sm:text-lg leading-relaxed" style={{ color: designSystem.colors.neutral[700] }}>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', marginBottom: sp[12] }}>
+              <p style={{ ...bodyText, marginBottom: sp[5] }}>
                 O VELASK Residence foi pensado para quem quer viver o Porto com mais espaço exterior — sem abdicar de um interior contemporâneo e funcional. São apenas três apartamentos, cada um com um diferencial claro: jardim + garagem, jardim + anexo, ou duplex com sótão.
               </p>
-              <p className="text-base sm:text-lg leading-relaxed" style={{ color: designSystem.colors.neutral[700] }}>
-                As plantas privilegiam zonas sociais integradas e arrumação, com áreas exteriores desenhadas para refeições ao ar livre e momentos de descanso. <em className="text-sm" style={{ color: designSystem.colors.neutral[500] }}>(Imagens 3D ilustrativas.)</em>
+              <p style={bodyText}>
+                As plantas privilegiam zonas sociais integradas e arrumação, com áreas exteriores desenhadas para refeições ao ar livre e momentos de descanso. <em style={{ fontSize: t.fontSize.sm, color: c.neutral[500] }}>(Imagens 3D ilustrativas.)</em>
               </p>
             </motion.div>
 
-            {/* Benefits */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
               {benefits.map((b, i) => (
-                <motion.div
-                  key={i}
-                  variants={scaleIn}
-                  initial="hidden"
-                  animate={empInView.isInView ? 'visible' : 'hidden'}
-                  custom={i + 3}
-                  className="flex items-start gap-3 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg"
-                  style={{
-                    background: designSystem.colors.neutral[50],
-                    border: `1px solid ${designSystem.colors.neutral[200]}`,
-                  }}
-                >
-                  <CheckCircle
-                    className="w-5 h-5 flex-shrink-0 mt-0.5"
-                    style={{ color: designSystem.colors.brand.secondary }}
-                  />
-                  <p className="text-sm sm:text-base leading-relaxed" style={{ color: designSystem.colors.neutral[700] }}>
-                    {b}
-                  </p>
+                <motion.div key={i} className="flex items-start gap-3" style={{ ...cardBase, padding: sp[8], textAlign: 'left' }} initial={{ opacity: 0, y: 20 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                  <CheckCircle style={{ width: 20, height: 20, flexShrink: 0, marginTop: 2, color: c.brand.secondary }} />
+                  <p style={{ fontSize: t.fontSize.base, lineHeight: t.lineHeight.relaxed, color: c.neutral[700] }}>{b}</p>
                 </motion.div>
               ))}
             </div>
@@ -565,411 +412,154 @@ export function VelaskPage() {
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          INTERIORES
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="muted" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ INTERIORES ═══ */}
+      <Section background="muted">
         <Container>
-          <div ref={intInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={intInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="text-center mb-4"
-            >
-              <span
-                className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                style={{
-                  background: 'rgba(184,149,106,0.1)',
-                  color: designSystem.colors.brand.secondary,
-                }}
-              >
-                Conceito de Interiores
-              </span>
+          <div ref={intInView.ref} className="text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge(true)}>Conceito de Interiores</span>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              animate={intInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-6"
-              style={{
-                color: designSystem.colors.brand.primary,
-                letterSpacing: designSystem.typography.letterSpacing.tight,
-              }}
-            >
+            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
               Interiores contemporâneos, luz e funcionalidade
             </motion.h2>
 
-            <motion.p
-              variants={fadeUp}
-              initial="hidden"
-              animate={intInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="text-base sm:text-lg leading-relaxed text-center max-w-3xl mx-auto mb-14"
-              style={{ color: designSystem.colors.neutral[700] }}
-            >
+            <motion.p initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '48rem', margin: `0 auto ${sp[12]}` }}>
               Um conceito de interiores minimalista e quente, com tons claros, detalhes em madeira e linhas limpas. Cozinha integrada com bancada escura e zonas pensadas para viver e receber.
             </motion.p>
 
-            {/* Features grid */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
               {interiorFeatures.map((f, i) => (
-                <motion.div
-                  key={i}
-                  variants={scaleIn}
-                  initial="hidden"
-                  animate={intInView.isInView ? 'visible' : 'hidden'}
-                  custom={i + 3}
-                  className="p-6 rounded-2xl bg-white transition-all duration-300 hover:shadow-lg"
-                  style={{
-                    border: `1px solid ${designSystem.colors.neutral[200]}`,
-                  }}
-                >
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-                    style={{
-                      background: `rgba(26,62,92,0.06)`,
-                    }}
-                  >
-                    <Home className="w-5 h-5" style={{ color: designSystem.colors.brand.primary }} />
+                <motion.div key={i} style={{ ...cardBase, padding: sp[8], textAlign: 'left' }} initial={{ opacity: 0, y: 20 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: ds.borderRadius.lg, background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: sp[4] }}>
+                    <Home style={{ width: 20, height: 20, color: c.brand.primary }} />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: designSystem.colors.neutral[900] }}>
-                    {f.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: designSystem.colors.neutral[600] }}>
-                    {f.desc}
-                  </p>
+                  <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], marginBottom: sp[2], lineHeight: t.lineHeight.snug }}>{f.title}</h3>
+                  <p style={{ fontSize: t.fontSize.sm, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{f.desc}</p>
                 </motion.div>
               ))}
             </div>
 
-            {/* Disclaimer */}
-            <motion.p
-              variants={fadeIn}
-              initial="hidden"
-              animate={intInView.isInView ? 'visible' : 'hidden'}
-              custom={8}
-              className="text-center text-xs italic mt-10"
-              style={{ color: designSystem.colors.neutral[500] }}
-            >
+            <motion.p initial={{ opacity: 0 }} animate={intInView.isInView ? { opacity: 1 } : {}} transition={{ duration: 0.5, delay: 0.8 }} style={{ fontSize: t.fontSize.xs, fontStyle: 'italic', color: c.neutral[500], marginTop: sp[10] }}>
               As imagens e renders são meramente ilustrativos. Mobiliário e decoração não incluídos. Soluções finais dependem de projeto de acabamentos.
             </motion.p>
           </div>
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          PLANTAS E TIPOLOGIAS
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="white" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ PLANTAS E TIPOLOGIAS ═══ */}
+      <Section background="white">
         <Container>
-          <div ref={planInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={planInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="text-center mb-4"
-            >
-              <span
-                className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                style={{
-                  background: `rgba(26,62,92,0.06)`,
-                  color: designSystem.colors.brand.primary,
-                }}
-              >
-                Plantas e Tipologias
-              </span>
+          <div ref={planInView.ref} className="text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge()}>Plantas e Tipologias</span>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              animate={planInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-4"
-              style={{
-                color: designSystem.colors.brand.primary,
-                letterSpacing: designSystem.typography.letterSpacing.tight,
-              }}
-            >
+            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
               Compare as 3 unidades
             </motion.h2>
 
-            <motion.p
-              variants={fadeUp}
-              initial="hidden"
-              animate={planInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="text-base sm:text-lg text-center max-w-2xl mx-auto mb-6"
-              style={{ color: designSystem.colors.neutral[600] }}
-            >
+            <motion.p initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[6]}` }}>
               Compare as três unidades lado a lado. Aqui as áreas estão detalhadas (interior + exterior + extras) para evitar confusão com "área bruta".
             </motion.p>
 
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={planInView.isInView ? 'visible' : 'hidden'}
-              custom={3}
-              className="text-center mb-12"
-            >
-              <button
-                onClick={scrollToForm}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                style={{
-                  background: designSystem.colors.gradients.primary,
-                  color: '#fff',
-                  boxShadow: designSystem.shadows.md,
-                }}
-              >
-                <Download className="w-4 h-4" />
-                DOWNLOAD PLANTAS (PDF)
-              </button>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.3 }} style={{ marginBottom: sp[12] }}>
+              <motion.button onClick={scrollToForm} style={{ ...ctaButtonPrimary, background: c.gradients.primary, boxShadow: ds.shadows.primaryHover }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Download style={{ width: 18, height: 18 }} /> DOWNLOAD PLANTAS (PDF)
+              </motion.button>
             </motion.div>
 
-            {/* Tabs */}
-            <motion.div
-              variants={fadeIn}
-              initial="hidden"
-              animate={planInView.isInView ? 'visible' : 'hidden'}
-              custom={4}
-            >
-              <Tabs defaultValue="rc" className="w-full">
-                <TabsList className="w-full justify-center mb-8 bg-transparent gap-2 flex-wrap h-auto p-0">
-                  {units.map((u) => (
-                    <TabsTrigger
-                      key={u.id}
-                      value={u.id}
-                      className="px-6 py-3 rounded-xl text-sm sm:text-base font-semibold transition-all duration-300 data-[state=active]:shadow-lg"
-                      style={{
-                        '--active-bg': u.color,
-                      } as React.CSSProperties}
-                    >
-                      {u.tab}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+            <Tabs defaultValue="rc" className="flex flex-col gap-2">
+              <TabsList className="inline-flex items-center justify-center rounded-xl p-0 gap-2 flex-wrap" style={{ background: 'transparent', height: 'auto', marginBottom: sp[8] }}>
+                {units.map((u) => (
+                  <TabsTrigger key={u.id} value={u.id} style={{ padding: `${sp[3]} ${sp[6]}`, borderRadius: ds.borderRadius.full, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold }}>
+                    {u.tab}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-                {units.map((unit) => (
-                  <TabsContent key={unit.id} value={unit.id}>
-                    <div
-                      className="rounded-3xl overflow-hidden"
-                      style={{
-                        background: designSystem.colors.neutral[50],
-                        border: `1px solid ${designSystem.colors.neutral[200]}`,
-                      }}
-                    >
-                      <div className="grid lg:grid-cols-2">
-                        {/* Plan placeholder */}
-                        <div
-                          className="flex items-center justify-center p-12 min-h-[300px] lg:min-h-[500px]"
-                          style={{
-                            background: `linear-gradient(135deg, ${designSystem.colors.neutral[100]} 0%, ${designSystem.colors.neutral[200]} 100%)`,
-                          }}
-                        >
-                          <div className="text-center">
-                            <Building
-                              className="w-16 h-16 mx-auto mb-4"
-                              style={{ color: designSystem.colors.neutral[400] }}
-                            />
-                            <p
-                              className="text-sm font-medium"
-                              style={{ color: designSystem.colors.neutral[500] }}
-                            >
-                              Planta do {unit.title}
-                            </p>
-                            <p
-                              className="text-xs mt-1"
-                              style={{ color: designSystem.colors.neutral[400] }}
-                            >
-                              Imagem ilustrativa
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Info */}
-                        <div className="p-8 lg:p-12 flex flex-col justify-center">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3
-                              className="text-2xl sm:text-3xl font-bold"
-                              style={{ color: designSystem.colors.neutral[900] }}
-                            >
-                              {unit.title}
-                            </h3>
-                            <span
-                              className="text-sm font-semibold px-3 py-1 rounded-full"
-                              style={{
-                                background: `${unit.color}15`,
-                                color: unit.color,
-                              }}
-                            >
-                              {unit.area}
-                            </span>
-                          </div>
-
-                          <p
-                            className="text-base mb-6 leading-relaxed"
-                            style={{ color: designSystem.colors.neutral[600] }}
-                          >
-                            {unit.summary}
-                          </p>
-
-                          {/* Specs grid */}
-                          <div className="grid grid-cols-2 gap-3 mb-8">
-                            {unit.specs.map((s, i) => (
-                              <div
-                                key={i}
-                                className="flex items-center gap-2 p-3 rounded-lg"
-                                style={{
-                                  background: 'white',
-                                  border: `1px solid ${designSystem.colors.neutral[200]}`,
-                                }}
-                              >
-                                <Ruler
-                                  className="w-4 h-4 flex-shrink-0"
-                                  style={{ color: unit.color }}
-                                />
-                                <div>
-                                  <p className="text-xs" style={{ color: designSystem.colors.neutral[500] }}>
-                                    {s.label}
-                                  </p>
-                                  <p className="text-sm font-semibold" style={{ color: designSystem.colors.neutral[800] }}>
-                                    {s.value}
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Copy */}
-                          <div className="space-y-4 mb-8">
-                            {unit.copy.map((p, i) => (
-                              <p
-                                key={i}
-                                className="text-sm leading-relaxed"
-                                style={{ color: designSystem.colors.neutral[600] }}
-                              >
-                                {p}
-                              </p>
-                            ))}
-                          </div>
-
-                          {/* CTA */}
-                          <button
-                            onClick={scrollToForm}
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 w-fit"
-                            style={{
-                              background: unit.color,
-                              color: '#fff',
-                              boxShadow: `0 4px 14px ${unit.color}40`,
-                            }}
-                          >
-                            {unit.cta}
-                            <ArrowRight className="w-4 h-4" />
-                          </button>
+              {units.map((unit) => (
+                <TabsContent key={unit.id} value={unit.id}>
+                  <div className="rounded-3xl overflow-hidden" style={{ background: c.neutral[50], border: `1px solid ${c.neutral[200]}` }}>
+                    <div className="grid" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
+                      {/* Plan placeholder */}
+                      <div className="flex items-center justify-center" style={{ padding: sp[12], minHeight: isMobile ? 200 : 400, background: `linear-gradient(135deg, ${c.neutral[100]} 0%, ${c.neutral[200]} 100%)` }}>
+                        <div className="text-center">
+                          <Building style={{ width: 48, height: 48, margin: '0 auto', marginBottom: sp[4], color: c.neutral[400] }} />
+                          <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.neutral[500] }}>Planta do {unit.title}</p>
+                          <p style={{ fontSize: t.fontSize.xs, color: c.neutral[400], marginTop: sp[1] }}>Imagem ilustrativa</p>
                         </div>
                       </div>
+
+                      {/* Info */}
+                      <div className="flex flex-col justify-center" style={{ padding: isMobile ? sp[8] : sp[12] }}>
+                        <div className="flex items-center gap-3" style={{ marginBottom: sp[2] }}>
+                          <h3 style={{ fontSize: t.fontSize['2xl'], fontWeight: t.fontWeight.bold, color: c.neutral[900] }}>{unit.title}</h3>
+                          <span style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: `${unit.color}15`, color: unit.color }}>{unit.area}</span>
+                        </div>
+
+                        <p style={{ ...bodyText, fontSize: t.fontSize.base, marginBottom: sp[6] }}>{unit.summary}</p>
+
+                        <div className="grid grid-cols-2 gap-3" style={{ marginBottom: sp[8] }}>
+                          {unit.specs.map((s, i) => (
+                            <div key={i} className="flex items-center gap-2 p-3 rounded-xl" style={{ background: '#fff', border: `1px solid ${c.neutral[200]}` }}>
+                              <Ruler style={{ width: 16, height: 16, flexShrink: 0, color: unit.color }} />
+                              <div>
+                                <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500] }}>{s.label}</p>
+                                <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[800] }}>{s.value}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div style={{ marginBottom: sp[8] }}>
+                          {unit.copy.map((p, i) => (
+                            <p key={i} style={{ fontSize: t.fontSize.sm, lineHeight: t.lineHeight.relaxed, color: c.neutral[600], marginBottom: i === 0 ? sp[4] : 0 }}>{p}</p>
+                          ))}
+                        </div>
+
+                        <motion.button onClick={scrollToForm} style={{ display: 'inline-flex', alignItems: 'center', gap: sp[2], padding: `${sp[3]} ${sp[6]}`, borderRadius: ds.borderRadius.full, background: unit.color, color: '#fff', fontWeight: t.fontWeight.semibold, fontSize: t.fontSize.sm, border: 'none', cursor: 'pointer', boxShadow: `0 4px 14px ${unit.color}40`, width: 'fit-content' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                          {unit.cta} <ArrowRight style={{ width: 16, height: 16 }} />
+                        </motion.button>
+                      </div>
                     </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
-            </motion.div>
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
           </div>
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          GALERIA / MOODBOARD
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="muted" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ GALERIA ═══ */}
+      <Section background="muted">
         <Container>
-          <div ref={galInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={galInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="text-center mb-4"
-            >
-              <span
-                className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                style={{
-                  background: 'rgba(184,149,106,0.1)',
-                  color: designSystem.colors.brand.secondary,
-                }}
-              >
-                Galeria
-              </span>
+          <div ref={galInView.ref} className="text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={galInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge(true)}>Galeria</span>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              animate={galInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-4"
-              style={{
-                color: designSystem.colors.brand.primary,
-                letterSpacing: designSystem.typography.letterSpacing.tight,
-              }}
-            >
+            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={galInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={{ ...sectionTitle, marginBottom: sp[4] }}>
               Ambientes e inspiração
             </motion.h2>
 
-            <motion.p
-              variants={fadeUp}
-              initial="hidden"
-              animate={galInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="text-base sm:text-lg text-center max-w-2xl mx-auto mb-14"
-              style={{ color: designSystem.colors.neutral[600] }}
-            >
+            <motion.p initial={{ opacity: 0, y: 30 }} animate={galInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[12]}` }}>
               Explore o conceito de interiores e exteriores. <em>(Imagens 3D ilustrativas.)</em>
             </motion.p>
 
-            {/* Gallery grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4" style={{ gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)' }}>
               {galleryItems.map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={scaleIn}
-                  initial="hidden"
-                  animate={galInView.isInView ? 'visible' : 'hidden'}
-                  custom={i + 3}
-                  className={`rounded-2xl overflow-hidden group cursor-pointer relative ${
-                    i === 0 ? 'col-span-2 row-span-2' : ''
-                  }`}
-                  style={{
-                    background: `linear-gradient(135deg, ${designSystem.colors.neutral[200]} 0%, ${designSystem.colors.neutral[300]} 100%)`,
-                    minHeight: i === 0 ? '400px' : '200px',
-                  }}
-                >
+                <motion.div key={i} className="group relative overflow-hidden cursor-pointer rounded-3xl" initial={{ opacity: 0, scale: 0.9 }} animate={galInView.isInView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.08 }} style={{
+                  background: `linear-gradient(135deg, ${c.neutral[200]} 0%, ${c.neutral[300]} 100%)`,
+                  minHeight: i === 0 && !isMobile ? 320 : 180,
+                  gridColumn: i === 0 && !isMobile ? 'span 2' : undefined,
+                  gridRow: i === 0 && !isMobile ? 'span 2' : undefined,
+                }} whileHover={isMobile ? {} : { scale: 1.02 }}>
                   <div className="absolute inset-0 flex items-center justify-center p-4">
-                    <Eye
-                      className="w-10 h-10"
-                      style={{ color: designSystem.colors.neutral[400] }}
-                    />
+                    <Eye style={{ width: 32, height: 32, color: c.neutral[400] }} />
                   </div>
-                  <div
-                    className="absolute inset-x-0 bottom-0 p-4 transition-all duration-300 opacity-0 group-hover:opacity-100"
-                    style={{
-                      background: 'linear-gradient(to top, rgba(26,62,92,0.85), transparent)',
-                    }}
-                  >
-                    <p className="text-white text-sm font-medium leading-snug">{item}</p>
-                  </div>
-                  {/* Always-visible label on mobile */}
-                  <div
-                    className="absolute inset-x-0 bottom-0 p-3 lg:hidden"
-                    style={{
-                      background: 'linear-gradient(to top, rgba(26,62,92,0.7), transparent)',
-                    }}
-                  >
-                    <p className="text-white text-xs font-medium leading-snug">{item}</p>
+                  <div className="absolute" style={{ inset: '0', top: 'auto', padding: sp[4], background: 'linear-gradient(to top, rgba(26,62,92,0.75), transparent)' }}>
+                    <p style={{ color: '#fff', fontSize: t.fontSize.xs, fontWeight: t.fontWeight.medium, lineHeight: t.lineHeight.snug }}>{item}</p>
                   </div>
                 </motion.div>
               ))}
@@ -978,112 +568,36 @@ export function VelaskPage() {
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          LOCALIZAÇÃO
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="white" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ LOCALIZAÇÃO ═══ */}
+      <Section background="white">
         <Container>
-          <div ref={locInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={locInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="text-center mb-4"
-            >
-              <span
-                className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                style={{
-                  background: `rgba(26,62,92,0.06)`,
-                  color: designSystem.colors.brand.primary,
-                }}
-              >
-                Localização
-              </span>
+          <div ref={locInView.ref} className="text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge()}>Localização</span>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              animate={locInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-4"
-              style={{
-                color: designSystem.colors.brand.primary,
-                letterSpacing: designSystem.typography.letterSpacing.tight,
-              }}
-            >
+            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
               Tudo ao seu alcance
             </motion.h2>
 
-            <motion.p
-              variants={fadeUp}
-              initial="hidden"
-              animate={locInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="text-base text-center mb-4"
-              style={{ color: designSystem.colors.neutral[600] }}
-            >
+            <motion.p initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.15 }} style={{ fontSize: t.fontSize.base, color: c.neutral[600], marginBottom: sp[4] }}>
               Rua Manuel Carqueja, 259 — Porto (Campanhã)
             </motion.p>
 
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={locInView.isInView ? 'visible' : 'hidden'}
-              custom={3}
-              className="text-center mb-14"
-            >
-              <a
-                href="https://www.google.com/maps/search/Rua+Manuel+Carqueja+259+Porto"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                style={{
-                  background: designSystem.colors.gradients.primary,
-                  color: '#fff',
-                  boxShadow: designSystem.shadows.md,
-                }}
-              >
-                <MapPin className="w-4 h-4" />
-                VER NO MAPA
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ marginBottom: sp[12] }}>
+              <motion.a href="https://www.google.com/maps/search/Rua+Manuel+Carqueja+259+Porto" target="_blank" rel="noopener noreferrer" style={{ ...ctaButtonPrimary, background: c.gradients.primary, boxShadow: ds.shadows.primaryHover, textDecoration: 'none' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}>
+                <MapPin style={{ width: 18, height: 18 }} /> VER NO MAPA <ExternalLink style={{ width: 14, height: 14 }} />
+              </motion.a>
             </motion.div>
 
-            {/* Location cards */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)' }}>
               {locationCards.map((card, i) => (
-                <motion.div
-                  key={i}
-                  variants={scaleIn}
-                  initial="hidden"
-                  animate={locInView.isInView ? 'visible' : 'hidden'}
-                  custom={i + 4}
-                  className="p-6 rounded-2xl transition-all duration-300 hover:shadow-lg"
-                  style={{
-                    background: designSystem.colors.neutral[50],
-                    border: `1px solid ${designSystem.colors.neutral[200]}`,
-                  }}
-                >
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center mb-4 text-sm font-bold"
-                    style={{
-                      background: designSystem.colors.gradients.primary,
-                      color: '#fff',
-                    }}
-                  >
+                <motion.div key={i} style={{ ...cardBase, padding: sp[8], textAlign: 'left' }} initial={{ opacity: 0, y: 20 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: ds.borderRadius.full, background: c.gradients.primary, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.bold, marginBottom: sp[4] }}>
                     {card.num}
                   </div>
-                  <h3
-                    className="text-lg font-semibold mb-2"
-                    style={{ color: designSystem.colors.neutral[900] }}
-                  >
-                    {card.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: designSystem.colors.neutral[600] }}>
-                    {card.desc}
-                  </p>
+                  <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], marginBottom: sp[2], lineHeight: t.lineHeight.snug }}>{card.title}</h3>
+                  <p style={{ fontSize: t.fontSize.sm, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{card.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -1091,458 +605,167 @@ export function VelaskPage() {
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          PREÇOS E DISPONIBILIDADE
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="muted" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ PREÇOS ═══ */}
+      <Section background="muted">
         <Container>
-          <div ref={priceInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={priceInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="text-center mb-4"
-            >
-              <span
-                className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                style={{
-                  background: 'rgba(184,149,106,0.1)',
-                  color: designSystem.colors.brand.secondary,
-                }}
-              >
-                Investimento
-              </span>
+          <div ref={priceInView.ref} className="text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={priceInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge(true)}>Investimento</span>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              animate={priceInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-14"
-              style={{
-                color: designSystem.colors.brand.primary,
-                letterSpacing: designSystem.typography.letterSpacing.tight,
-              }}
-            >
+            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={priceInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={{ ...sectionTitle, marginBottom: sp[12] }}>
               Preços e Disponibilidade
             </motion.h2>
 
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={priceInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="max-w-4xl mx-auto"
-            >
-              {/* Table - Desktop */}
-              <div className="hidden md:block rounded-2xl overflow-hidden bg-white" style={{ border: `1px solid ${designSystem.colors.neutral[200]}` }}>
-                <table className="w-full">
-                  <thead>
-                    <tr style={{ background: designSystem.colors.brand.primary }}>
-                      <th className="text-left text-sm font-semibold text-white px-6 py-4">Unidade</th>
-                      <th className="text-left text-sm font-semibold text-white px-6 py-4">Piso</th>
-                      <th className="text-left text-sm font-semibold text-white px-6 py-4">Tipologia</th>
-                      <th className="text-left text-sm font-semibold text-white px-6 py-4">Área bruta (m²)</th>
-                      <th className="text-left text-sm font-semibold text-white px-6 py-4">Preço</th>
-                      <th className="text-left text-sm font-semibold text-white px-6 py-4">Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pricingRows.map((row, i) => (
-                      <tr
-                        key={i}
-                        className="transition-colors duration-200"
-                        style={{
-                          borderBottom: i < pricingRows.length - 1 ? `1px solid ${designSystem.colors.neutral[200]}` : 'none',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = designSystem.colors.neutral[50])}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <td className="px-6 py-5 text-sm font-semibold" style={{ color: designSystem.colors.neutral[900] }}>{row.unit}</td>
-                        <td className="px-6 py-5 text-sm" style={{ color: designSystem.colors.neutral[700] }}>{row.floor}</td>
-                        <td className="px-6 py-5 text-sm font-medium" style={{ color: designSystem.colors.brand.primary }}>{row.type}</td>
-                        <td className="px-6 py-5 text-sm" style={{ color: designSystem.colors.neutral[700] }}>{row.area}</td>
-                        <td className="px-6 py-5 text-sm font-semibold" style={{ color: designSystem.colors.brand.secondary }}>{row.price}</td>
-                        <td className="px-6 py-5">
-                          <span
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
-                            style={{
-                              background: 'rgba(16,185,129,0.1)',
-                              color: designSystem.colors.semantic.success,
-                            }}
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: designSystem.colors.semantic.success }} />
-                            {row.status}
-                          </span>
-                        </td>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={priceInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '56rem', margin: '0 auto' }}>
+              {/* Desktop table */}
+              {!isMobile && (
+                <div className="rounded-3xl overflow-hidden" style={{ background: '#fff', border: `1px solid ${c.neutral[200]}` }}>
+                  <table style={{ width: '100%' }}>
+                    <thead>
+                      <tr style={{ background: c.brand.primary }}>
+                        {['Unidade', 'Piso', 'Tipologia', 'Área bruta (m²)', 'Preço', 'Estado'].map(h => (
+                          <th key={h} style={{ textAlign: 'left', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: '#fff', padding: `${sp[4]} ${sp[6]}` }}>{h}</th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {pricingRows.map((row, i) => (
+                        <tr key={i} style={{ borderBottom: i < pricingRows.length - 1 ? `1px solid ${c.neutral[200]}` : 'none' }}>
+                          <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{row.unit}</td>
+                          <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.floor}</td>
+                          <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.brand.primary }}>{row.type}</td>
+                          <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.area}</td>
+                          <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.brand.secondary }}>{row.price}</td>
+                          <td style={{ padding: `${sp[5]} ${sp[6]}` }}>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: sp[1], fontSize: t.fontSize.xs, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: 'rgba(16,185,129,0.1)', color: c.semantic.success }}>
+                              <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.semantic.success }} />{row.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
-              {/* Table - Mobile cards */}
-              <div className="md:hidden space-y-4">
-                {pricingRows.map((row, i) => (
-                  <div
-                    key={i}
-                    className="p-5 rounded-2xl bg-white"
-                    style={{ border: `1px solid ${designSystem.colors.neutral[200]}` }}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold" style={{ color: designSystem.colors.brand.primary }}>
-                          Unidade {row.unit}
-                        </span>
-                        <span className="text-sm font-medium" style={{ color: designSystem.colors.neutral[600] }}>
-                          {row.type}
-                        </span>
+              {/* Mobile cards */}
+              {isMobile && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: sp[4] }}>
+                  {pricingRows.map((row, i) => (
+                    <div key={i} className="rounded-3xl" style={{ ...cardBase, padding: sp[6] }}>
+                      <div className="flex items-center justify-between" style={{ marginBottom: sp[3] }}>
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.primary }}>Unidade {row.unit}</span>
+                          <span style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.neutral[600] }}>{row.type}</span>
+                        </div>
+                        <span style={{ fontSize: t.fontSize.xs, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: 'rgba(16,185,129,0.1)', color: c.semantic.success }}>{row.status}</span>
                       </div>
-                      <span
-                        className="text-xs font-semibold px-3 py-1 rounded-full"
-                        style={{
-                          background: 'rgba(16,185,129,0.1)',
-                          color: designSystem.colors.semantic.success,
-                        }}
-                      >
-                        {row.status}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span style={{ color: designSystem.colors.neutral[500] }}>Piso: </span>
-                        <span className="font-medium" style={{ color: designSystem.colors.neutral[800] }}>{row.floor}</span>
+                      <div className="grid grid-cols-2 gap-2" style={{ fontSize: t.fontSize.sm }}>
+                        <div><span style={{ color: c.neutral[500] }}>Piso: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.floor}</span></div>
+                        <div><span style={{ color: c.neutral[500] }}>Área: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m²</span></div>
                       </div>
-                      <div>
-                        <span style={{ color: designSystem.colors.neutral[500] }}>Área: </span>
-                        <span className="font-medium" style={{ color: designSystem.colors.neutral[800] }}>{row.area} m²</span>
+                      <div style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
+                        <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.brand.secondary }}>{row.price}</p>
                       </div>
                     </div>
-                    <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${designSystem.colors.neutral[200]}` }}>
-                      <p className="text-sm font-semibold" style={{ color: designSystem.colors.brand.secondary }}>
-                        {row.price}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
-              {/* Footnote */}
-              <p
-                className="text-xs text-center mt-6 leading-relaxed"
-                style={{ color: designSystem.colors.neutral[500] }}
-              >
+              <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], marginTop: sp[6], lineHeight: t.lineHeight.relaxed }}>
                 Áreas brutas incluem componentes como jardim/pátio/varanda/garagem/anexo/sótão conforme unidade. Solicite a brochura para detalhe completo.
               </p>
 
-              {/* CTA */}
-              <div className="text-center mt-8">
-                <button
-                  onClick={scrollToForm}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: designSystem.colors.gradients.secondary,
-                    color: '#fff',
-                    boxShadow: designSystem.shadows.secondaryHover,
-                  }}
-                >
-                  PEDIR TABELA DE PREÇOS
-                  <ArrowRight className="w-5 h-5" />
-                </button>
+              <div style={{ marginTop: sp[8] }}>
+                <motion.button onClick={scrollToForm} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                  PEDIR TABELA DE PREÇOS <ArrowRight style={{ width: 20, height: 20 }} />
+                </motion.button>
               </div>
             </motion.div>
           </div>
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          GESTOR DE VENDAS
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="white" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ GESTOR DE VENDAS ═══ */}
+      <Section background="white">
         <Container>
-          <div ref={contactInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={contactInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="max-w-3xl mx-auto"
-            >
-              <div className="text-center mb-4">
-                <span
-                  className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                  style={{
-                    background: `rgba(26,62,92,0.06)`,
-                    color: designSystem.colors.brand.primary,
-                  }}
-                >
-                  Contactos
-                </span>
-              </div>
-
-              <h2
-                className="text-3xl sm:text-4xl font-bold text-center mb-6"
-                style={{
-                  color: designSystem.colors.brand.primary,
-                  letterSpacing: designSystem.typography.letterSpacing.tight,
-                }}
-              >
-                Gestor de Vendas
-              </h2>
-
-              <p
-                className="text-base sm:text-lg leading-relaxed text-center mb-10"
-                style={{ color: designSystem.colors.neutral[600] }}
-              >
+          <div ref={contactInView.ref} style={{ maxWidth: '48rem', margin: '0 auto' }}>
+            <motion.div className="text-center" initial={{ opacity: 0, y: 30 }} animate={contactInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge()}>Contactos</span>
+              <h2 style={{ ...sectionTitle, marginBottom: sp[6] }}>Gestor de Vendas</h2>
+              <p style={{ ...bodyText, marginBottom: sp[10] }}>
                 Acompanhamo-lo(a) em todo o processo: esclarecimento de áreas, mapa de acabamentos, simulações de financiamento e agendamento de visita.
               </p>
 
-              {/* Contact cards */}
-              <div className="grid sm:grid-cols-3 gap-4 mb-8">
-                <a
-                  href="tel:+351000000000"
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg group"
-                  style={{
-                    background: designSystem.colors.neutral[50],
-                    border: `1px solid ${designSystem.colors.neutral[200]}`,
-                  }}
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                    style={{ background: `rgba(26,62,92,0.08)` }}
-                  >
-                    <Phone className="w-5 h-5" style={{ color: designSystem.colors.brand.primary }} />
-                  </div>
-                  <p className="text-sm font-semibold" style={{ color: designSystem.colors.neutral[800] }}>
-                    +351 000 000 000
-                  </p>
-                  <p className="text-xs" style={{ color: designSystem.colors.neutral[500] }}>Telefone</p>
-                </a>
-
-                <a
-                  href="mailto:info@velaskresidence.pt"
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg group"
-                  style={{
-                    background: designSystem.colors.neutral[50],
-                    border: `1px solid ${designSystem.colors.neutral[200]}`,
-                  }}
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                    style={{ background: `rgba(184,149,106,0.1)` }}
-                  >
-                    <Mail className="w-5 h-5" style={{ color: designSystem.colors.brand.secondary }} />
-                  </div>
-                  <p className="text-sm font-semibold" style={{ color: designSystem.colors.neutral[800] }}>
-                    info@velaskresidence.pt
-                  </p>
-                  <p className="text-xs" style={{ color: designSystem.colors.neutral[500] }}>Email</p>
-                </a>
-
-                <button
-                  onClick={handleWhatsApp}
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg group"
-                  style={{
-                    background: designSystem.colors.neutral[50],
-                    border: `1px solid ${designSystem.colors.neutral[200]}`,
-                  }}
-                >
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-                    style={{ background: 'rgba(37,211,102,0.08)' }}
-                  >
-                    <MessageCircle className="w-5 h-5" style={{ color: designSystem.colors.external.whatsappPrimary }} />
-                  </div>
-                  <p className="text-sm font-semibold" style={{ color: designSystem.colors.neutral[800] }}>
-                    WhatsApp
-                  </p>
-                  <p className="text-xs" style={{ color: designSystem.colors.neutral[500] }}>Mensagem</p>
-                </button>
+              <div className="grid gap-4" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', marginBottom: sp[8] }}>
+                {[
+                  { icon: Phone, label: '+351 000 000 000', sub: 'Telefone', href: 'tel:+351000000000', iconColor: c.brand.primary, bgColor: 'rgba(26,62,92,0.08)' },
+                  { icon: Mail, label: 'info@velaskresidence.pt', sub: 'Email', href: 'mailto:info@velaskresidence.pt', iconColor: c.brand.secondary, bgColor: 'rgba(184,149,106,0.1)' },
+                  { icon: MessageCircle, label: 'WhatsApp', sub: 'Mensagem', onClick: handleWhatsApp, iconColor: c.external.whatsappPrimary, bgColor: 'rgba(37,211,102,0.08)' },
+                ].map((item, i) => (
+                  <motion.a key={i} href={item.href} onClick={item.onClick} className="flex flex-col items-center gap-3 p-6 rounded-3xl" style={{ ...cardBase, textDecoration: 'none', cursor: 'pointer' }} whileHover={isMobile ? {} : { scale: 1.02, x: 4 }}>
+                    <div className="flex items-center justify-center rounded-full" style={{ width: 48, height: 48, background: item.bgColor }}>
+                      <item.icon style={{ width: 20, height: 20, color: item.iconColor }} />
+                    </div>
+                    <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[800] }}>{item.label}</p>
+                    <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500] }}>{item.sub}</p>
+                  </motion.a>
+                ))}
               </div>
 
-              {/* CTA buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="tel:+351000000000"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: designSystem.colors.gradients.primary,
-                    color: '#fff',
-                    boxShadow: designSystem.shadows.md,
-                  }}
-                >
-                  <Phone className="w-5 h-5" />
-                  LIGAR AGORA
-                </a>
-                <button
-                  onClick={handleWhatsApp}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: designSystem.colors.external.whatsappPrimary,
-                    color: '#fff',
-                    boxShadow: '0 4px 14px rgba(37,211,102,0.3)',
-                  }}
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  ENVIAR WHATSAPP
-                </button>
+              <div className="flex gap-4 justify-center" style={{ flexDirection: isMobile ? 'column' : 'row' }}>
+                <motion.a href="tel:+351000000000" style={{ ...ctaButtonPrimary, background: c.gradients.primary, boxShadow: ds.shadows.primaryHover, textDecoration: 'none', justifyContent: 'center' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                  <Phone style={{ width: 20, height: 20 }} /> LIGAR AGORA
+                </motion.a>
+                <motion.button onClick={handleWhatsApp} style={{ ...ctaButtonPrimary, background: c.external.whatsappPrimary, boxShadow: '0 4px 14px rgba(37,211,102,0.3)', justifyContent: 'center' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                  <MessageCircle style={{ width: 20, height: 20 }} /> ENVIAR WHATSAPP
+                </motion.button>
               </div>
             </motion.div>
           </div>
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          FORMULÁRIO
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section
-        id="velask-form"
-        background="default"
-        style={{
-          paddingTop: '6rem',
-          paddingBottom: '6rem',
-          background: designSystem.colors.gradients.hero,
-        }}
-      >
+      {/* ═══ FORMULÁRIO ═══ */}
+      <section id="velask-form" style={{ background: c.gradients.heroLuxury, padding: `${sp[24]} 0` }}>
         <Container>
-          <div ref={formInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={formInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="max-w-2xl mx-auto"
-            >
-              <div className="text-center mb-4">
-                <span
-                  className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                  style={{
-                    background: 'rgba(184,149,106,0.15)',
-                    color: designSystem.colors.brand.secondaryLight,
-                    border: '1px solid rgba(184,149,106,0.25)',
-                  }}
-                >
-                  Contacte-nos
-                </span>
-              </div>
-
-              <h2
-                className="text-3xl sm:text-4xl font-bold text-center mb-4 text-white"
-                style={{ letterSpacing: designSystem.typography.letterSpacing.tight }}
-              >
-                Receba a brochura completa
-              </h2>
-
-              <p className="text-base text-center mb-10" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          <div ref={formInView.ref} style={{ maxWidth: '42rem', margin: '0 auto' }}>
+            <motion.div className="text-center" initial={{ opacity: 0, y: 30 }} animate={formInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={{ ...sectionBadge(true), color: c.brand.secondaryLight, background: 'rgba(184,149,106,0.15)', border: '1px solid rgba(184,149,106,0.25)' }}>Contacte-nos</span>
+              <h2 style={{ ...sectionTitle, color: '#fff', marginBottom: sp[4] }}>Receba a brochura completa</h2>
+              <p style={{ fontSize: t.fontSize.base, color: 'rgba(255,255,255,0.7)', marginBottom: sp[10] }}>
                 Plantas, áreas detalhadas e disponibilidade. Envio por email.
               </p>
 
               {formSubmitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center p-12 rounded-3xl"
-                  style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    backdropFilter: 'blur(12px)',
-                  }}
-                >
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
-                    style={{ background: 'rgba(16,185,129,0.2)' }}
-                  >
-                    <CheckCircle className="w-8 h-8" style={{ color: designSystem.colors.semantic.success }} />
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center rounded-3xl" style={{ padding: sp[12], background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)' }}>
+                  <div className="flex items-center justify-center rounded-full" style={{ width: 64, height: 64, background: 'rgba(16,185,129,0.2)', margin: `0 auto ${sp[6]}` }}>
+                    <CheckCircle style={{ width: 32, height: 32, color: c.semantic.success }} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">Obrigado!</h3>
-                  <p className="text-base" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                    Vamos enviar a brochura e entrar em contacto para agendar visita.
-                  </p>
+                  <h3 style={{ fontSize: t.fontSize['2xl'], fontWeight: t.fontWeight.bold, color: '#fff', marginBottom: sp[3] }}>Obrigado!</h3>
+                  <p style={{ fontSize: t.fontSize.base, color: 'rgba(255,255,255,0.7)' }}>Vamos enviar a brochura e entrar em contacto para agendar visita.</p>
                 </motion.div>
               ) : (
-                <form
-                  onSubmit={handleFormSubmit}
-                  className="p-8 sm:p-10 rounded-3xl space-y-6"
-                  style={{
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    backdropFilter: 'blur(12px)',
-                  }}
-                >
-                  <div className="grid sm:grid-cols-2 gap-5">
+                <form onSubmit={handleFormSubmit} className="rounded-3xl" style={{ padding: isMobile ? sp[8] : sp[10], background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(12px)', textAlign: 'left' }}>
+                  <div className="grid gap-5" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', marginBottom: sp[5] }}>
                     <div>
-                      <label className="block text-sm font-medium text-white/80 mb-2">
-                        Nome <span style={{ color: designSystem.colors.brand.secondaryLight }}>*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 focus:ring-2"
-                        style={{
-                          background: 'rgba(255,255,255,0.08)',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          color: '#fff',
-                        }}
-                        placeholder="O seu nome"
-                      />
+                      <label style={{ display: 'block', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: 'rgba(255,255,255,0.8)', marginBottom: sp[2] }}>Nome <span style={{ color: c.brand.secondaryLight }}>*</span></label>
+                      <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} style={inputStyle} placeholder="O seu nome" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-white/80 mb-2">
-                        Email <span style={{ color: designSystem.colors.brand.secondaryLight }}>*</span>
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 focus:ring-2"
-                        style={{
-                          background: 'rgba(255,255,255,0.08)',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          color: '#fff',
-                        }}
-                        placeholder="email@exemplo.com"
-                      />
+                      <label style={{ display: 'block', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: 'rgba(255,255,255,0.8)', marginBottom: sp[2] }}>Email <span style={{ color: c.brand.secondaryLight }}>*</span></label>
+                      <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} style={inputStyle} placeholder="email@exemplo.com" />
                     </div>
                   </div>
-
-                  <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="grid gap-5" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', marginBottom: sp[5] }}>
                     <div>
-                      <label className="block text-sm font-medium text-white/80 mb-2">
-                        Telefone <span style={{ color: designSystem.colors.brand.secondaryLight }}>*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 focus:ring-2"
-                        style={{
-                          background: 'rgba(255,255,255,0.08)',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          color: '#fff',
-                        }}
-                        placeholder="+351 000 000 000"
-                      />
+                      <label style={{ display: 'block', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: 'rgba(255,255,255,0.8)', marginBottom: sp[2] }}>Telefone <span style={{ color: c.brand.secondaryLight }}>*</span></label>
+                      <input type="tel" required value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} style={inputStyle} placeholder="+351 000 000 000" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-white/80 mb-2">
-                        Tipologia de interesse
-                      </label>
-                      <select
-                        value={formData.typology}
-                        onChange={(e) => setFormData({ ...formData, typology: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 focus:ring-2"
-                        style={{
-                          background: 'rgba(255,255,255,0.08)',
-                          border: '1px solid rgba(255,255,255,0.15)',
-                          color: '#fff',
-                        }}
-                      >
+                      <label style={{ display: 'block', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: 'rgba(255,255,255,0.8)', marginBottom: sp[2] }}>Tipologia de interesse</label>
+                      <select value={formData.typology} onChange={(e) => setFormData({ ...formData, typology: e.target.value })} style={inputStyle}>
                         <option value="" style={{ color: '#333' }}>Selecione...</option>
                         <option value="t1" style={{ color: '#333' }}>T1 com Jardim + Garagem</option>
                         <option value="t2" style={{ color: '#333' }}>T2 com Jardim + Anexo</option>
@@ -1551,138 +774,56 @@ export function VelaskPage() {
                       </select>
                     </div>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white/80 mb-2">
-                      Mensagem <span className="text-xs font-normal text-white/50">(opcional)</span>
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 focus:ring-2 resize-none"
-                      style={{
-                        background: 'rgba(255,255,255,0.08)',
-                        border: '1px solid rgba(255,255,255,0.15)',
-                        color: '#fff',
-                      }}
-                      placeholder="Alguma questão ou pedido?"
-                    />
+                  <div style={{ marginBottom: sp[5] }}>
+                    <label style={{ display: 'block', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: 'rgba(255,255,255,0.8)', marginBottom: sp[2] }}>Mensagem <span style={{ fontSize: t.fontSize.xs, fontWeight: t.fontWeight.normal, color: 'rgba(255,255,255,0.5)' }}>(opcional)</span></label>
+                    <textarea rows={4} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} style={{ ...inputStyle, resize: 'none' }} placeholder="Alguma questão ou pedido?" />
                   </div>
 
-                  {/* RGPD checkboxes */}
-                  <div className="space-y-3">
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        required
-                        checked={formData.consentContact}
-                        onChange={(e) => setFormData({ ...formData, consentContact: e.target.checked })}
-                        className="mt-1 w-4 h-4 rounded accent-amber-600"
-                      />
-                      <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                        Autorizo o contacto para efeitos de informação comercial sobre este imóvel. <span style={{ color: designSystem.colors.brand.secondaryLight }}>*</span>
-                      </span>
-                    </label>
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        required
-                        checked={formData.consentPrivacy}
-                        onChange={(e) => setFormData({ ...formData, consentPrivacy: e.target.checked })}
-                        className="mt-1 w-4 h-4 rounded accent-amber-600"
-                      />
-                      <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                        Li e aceito a Política de Privacidade. <span style={{ color: designSystem.colors.brand.secondaryLight }}>*</span>
-                      </span>
-                    </label>
+                  <div style={{ marginBottom: sp[6] }}>
+                    {[
+                      { key: 'consentContact', text: 'Autorizo o contacto para efeitos de informação comercial sobre este imóvel.' },
+                      { key: 'consentPrivacy', text: 'Li e aceito a Política de Privacidade.' },
+                    ].map((cb) => (
+                      <label key={cb.key} className="flex items-start gap-3 cursor-pointer" style={{ marginBottom: sp[3] }}>
+                        <input type="checkbox" required checked={(formData as Record<string, unknown>)[cb.key] as boolean} onChange={(e) => setFormData({ ...formData, [cb.key]: e.target.checked })} style={{ marginTop: 4, width: 16, height: 16 }} />
+                        <span style={{ fontSize: t.fontSize.xs, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.6)' }}>
+                          {cb.text} <span style={{ color: c.brand.secondaryLight }}>*</span>
+                        </span>
+                      </label>
+                    ))}
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
-                    style={{
-                      background: designSystem.colors.gradients.secondary,
-                      color: '#fff',
-                      boxShadow: designSystem.shadows.secondaryHover,
-                    }}
-                  >
-                    <Send className="w-5 h-5" />
-                    QUERO RECEBER A BROCHURA
-                  </button>
+                  <motion.button type="submit" className="flex items-center justify-center gap-2" style={{ ...ctaButtonPrimary, width: '100%', justifyContent: 'center' }} whileHover={isMobile ? {} : { scale: 1.02 }} whileTap={{ scale: 0.95 }}>
+                    <Send style={{ width: 20, height: 20 }} /> QUERO RECEBER A BROCHURA
+                  </motion.button>
                 </form>
               )}
             </motion.div>
           </div>
         </Container>
-      </Section>
+      </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          FAQ
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <Section background="white" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
+      {/* ═══ FAQ ═══ */}
+      <Section background="white">
         <Container>
-          <div ref={faqInView.ref}>
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={faqInView.isInView ? 'visible' : 'hidden'}
-              custom={0}
-              className="text-center mb-4"
-            >
-              <span
-                className="inline-block text-sm font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6"
-                style={{
-                  background: `rgba(26,62,92,0.06)`,
-                  color: designSystem.colors.brand.primary,
-                }}
-              >
-                FAQ
-              </span>
+          <div ref={faqInView.ref} className="text-center">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={faqInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+              <span style={sectionBadge()}>FAQ</span>
             </motion.div>
 
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              animate={faqInView.isInView ? 'visible' : 'hidden'}
-              custom={1}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-14"
-              style={{
-                color: designSystem.colors.brand.primary,
-                letterSpacing: designSystem.typography.letterSpacing.tight,
-              }}
-            >
+            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={faqInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={{ ...sectionTitle, marginBottom: sp[12] }}>
               Perguntas frequentes
             </motion.h2>
 
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate={faqInView.isInView ? 'visible' : 'hidden'}
-              custom={2}
-              className="max-w-3xl mx-auto"
-            >
-              <Accordion type="single" collapsible className="w-full">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={faqInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', textAlign: 'left' }}>
+              <Accordion type="single" collapsible>
                 {faqItems.map((item, i) => (
-                  <AccordionItem
-                    key={i}
-                    value={`faq-${i}`}
-                    className="border-b"
-                    style={{ borderColor: designSystem.colors.neutral[200] }}
-                  >
-                    <AccordionTrigger
-                      className="py-5 text-left text-base font-semibold hover:no-underline"
-                      style={{ color: designSystem.colors.neutral[800] }}
-                    >
+                  <AccordionItem key={i} value={`faq-${i}`} style={{ borderColor: c.neutral[200] }}>
+                    <AccordionTrigger style={{ padding: `${sp[5]} 0`, fontSize: t.fontSize.base, fontWeight: t.fontWeight.semibold, color: c.neutral[800] }}>
                       {item.q}
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p
-                        className="text-sm leading-relaxed pb-2"
-                        style={{ color: designSystem.colors.neutral[600] }}
-                      >
-                        {item.a}
-                      </p>
+                      <p style={{ fontSize: t.fontSize.sm, lineHeight: t.lineHeight.relaxed, color: c.neutral[600], paddingBottom: sp[2] }}>{item.a}</p>
                     </AccordionContent>
                   </AccordionItem>
                 ))}
@@ -1692,22 +833,14 @@ export function VelaskPage() {
         </Container>
       </Section>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          LEGAL FOOTER
-      ═══════════════════════════════════════════════════════════════════════ */}
-      <section
-        className="py-8"
-        style={{
-          background: designSystem.colors.neutral[950],
-          borderTop: `1px solid ${designSystem.colors.neutral[800]}`,
-        }}
-      >
+      {/* ═══ LEGAL FOOTER ═══ */}
+      <section style={{ background: c.neutral[950], borderTop: `1px solid ${c.neutral[800]}`, padding: `${sp[8]} 0` }}>
         <Container>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs leading-relaxed text-center sm:text-left" style={{ color: designSystem.colors.neutral[500] }}>
+          <div className="flex items-center justify-between gap-4" style={{ flexDirection: isMobile ? 'column' : 'row' }}>
+            <p style={{ fontSize: t.fontSize.xs, lineHeight: t.lineHeight.relaxed, color: c.neutral[500], textAlign: isMobile ? 'center' : 'left' }}>
               As imagens e renders 3D são ilustrativos e não vinculativos. As áreas são aproximadas e devem ser confirmadas com documentação oficial. Esta informação não constitui proposta contratual e pode ser alterada sem aviso.
             </p>
-            <p className="text-xs whitespace-nowrap" style={{ color: designSystem.colors.neutral[600] }}>
+            <p style={{ fontSize: t.fontSize.xs, color: c.neutral[600], whiteSpace: 'nowrap' }}>
               VELASK Residence &copy; {new Date().getFullYear()}
             </p>
           </div>
