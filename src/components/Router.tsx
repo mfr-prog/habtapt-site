@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-export type Route = 'home' | 'services' | 'process' | 'portfolio' | 'testimonials' | 'insights' | 'contact' | 'portfolio-detail' | 'insight-detail' | 'admin' | 'login';
+export type Route = 'home' | 'services' | 'process' | 'portfolio' | 'testimonials' | 'insights' | 'contact' | 'portfolio-detail' | 'insight-detail' | 'admin' | 'login' | 'velask';
 
 interface RouterContextType {
   currentRoute: Route;
@@ -32,7 +32,7 @@ export function Router({ children }: { children: React.ReactNode }) {
     
     // Parse route
     let route: Route = 'home';
-    const validRoutes: Route[] = ['home', 'services', 'process', 'portfolio', 'testimonials', 'insights', 'contact', 'admin', 'login'];
+    const validRoutes: Route[] = ['home', 'services', 'process', 'portfolio', 'testimonials', 'insights', 'contact', 'admin', 'login', 'velask'];
     
     if (validRoutes.includes(routePart as Route)) {
       route = routePart as Route;

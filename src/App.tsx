@@ -22,6 +22,7 @@ import { TestimonialsPage } from './pages/TestimonialsPage';
 import { InsightsPage } from './pages/InsightsPage';
 import { InsightDetailPage } from './pages/InsightDetailPage';
 import { ContactPage } from './pages/ContactPage';
+import { VelaskPage } from './pages/VelaskPage';
 import { AdminPanel } from './components/AdminPanelNew';
 import { Login } from './components/Login';
 
@@ -55,6 +56,8 @@ function AppContent() {
         return <InsightDetailPage />;
       case 'contact':
         return <ContactPage />;
+      case 'velask':
+        return <VelaskPage />;
       case 'admin':
         return <AdminPanel />;
       case 'login':
@@ -64,21 +67,23 @@ function AppContent() {
     }
   };
 
-  // Admin e Login não precisam de header/footer públicos
+  // Admin, Login e landing pages standalone não precisam de header/footer públicos
   const isAdminRoute = currentRoute === 'admin' || currentRoute === 'login';
+  const isStandalonePage = currentRoute === 'velask';
+  const hideChrome = isAdminRoute || isStandalonePage;
 
   return (
     <ErrorBoundary>
       <PageTransition>
         <div className="min-h-screen">
-          {!isAdminRoute && <ScrollProgress />}
-          {!isAdminRoute && <Header />}
+          {!hideChrome && <ScrollProgress />}
+          {!hideChrome && <Header />}
           <main>
             {renderPage()}
           </main>
-          {!isAdminRoute && <Footer />}
-          {!isAdminRoute && <WhatsAppButton />}
-          {!isAdminRoute && <BackToTop />}
+          {!hideChrome && <Footer />}
+          {!hideChrome && <WhatsAppButton />}
+          {!hideChrome && <BackToTop />}
           <Toaster 
           position="top-right"
           duration={4000}
