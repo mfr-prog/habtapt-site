@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Edit, Trash2, Save, X, Star, User } from '../icons';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { colors, spacing, radius, shadows, typography } from '../../utils/styles';
 import { AnimatedButton } from '../primitives/AnimatedButton';
 import { ImageWithFallback } from '../figma/ImageWithFallback';

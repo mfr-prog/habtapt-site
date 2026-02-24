@@ -27,3 +27,4 @@ CREATE POLICY "Public can subscribe" ON public.newsletter_subscribers
 -- Add comment
 COMMENT ON TABLE public.newsletter_subscribers IS 'Stores newsletter subscription emails with timestamps';
 
+

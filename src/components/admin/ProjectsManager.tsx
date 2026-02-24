@@ -19,7 +19,7 @@ import {
   AlertCircle,
   RefreshCw,
 } from '../icons';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { colors, spacing, radius, shadows, typography } from '../../utils/styles';
 import { designSystem } from '../design-system';
 import { AnimatedButton } from '../primitives/AnimatedButton';

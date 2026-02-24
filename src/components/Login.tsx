@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { Shield, Lock, User, LogIn } from './icons';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { useRouter } from './Router';
 import { Logo } from './Logo';
 import { AuthCard } from './primitives/AuthCard';

@@ -1,0 +1,166 @@
+{
+  "name": "HABTA - Calendar Available Slots",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "calendar-slots",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "habta-calendar-slots"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "startDate",
+              "value": "={{ $json.query.startDate || new Date().toISOString().split('T')[0] }}"
+            },
+            {
+              "name": "endDate",
+              "value": "={{ $json.query.endDate || new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0] }}"
+            },
+            {
+              "name": "timezone",
+              "value": "Europe/Lisbon"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-params",
+      "name": "Set Parameters",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "event",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list",
+          "cachedResultName": "primary"
+        },
+        "returnAll": true,
+        "options": {
+          "timeMin": "={{ $json.startDate }}T00:00:00",
+          "timeMax": "={{ $json.endDate }}T23:59:59",
+          "timeZone": "={{ $json.timezone }}"
+        }
+      },
+      "id": "google-calendar-events",
+      "name": "Google Calendar - Get Busy Times",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_GOOGLE_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Configuração de horários de trabalho\nconst workHours = { start: 9, end: 18 }; // 9h às 18h\nconst slotDuration = 60; // 60 minutos\nconst workDays = [1, 2, 3, 4, 5]; // Seg-Sex\nconst breakTime = { start: 13, end: 14 }; // Almoço 13h-14h\n\nconst params = $input.first().json;\nconst startDate = new Date(params.startDate);\nconst endDate = new Date(params.endDate);\nconst busyEvents = $input.all()[1]?.json || [];\n\nconst availableSlots = [];\n\n// Iterar pelos dias\nfor (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {\n  const dayOfWeek = d.getDay();\n  \n  // Pular fins de semana\n  if (!workDays.includes(dayOfWeek)) continue;\n  \n  // Gerar slots do dia\n  for (let hour = workHours.start; hour < workHours.end; hour++) {\n    // Pular horário de almoço\n    if (hour >= breakTime.start && hour < breakTime.end) continue;\n    \n    const slotStart = new Date(d);\n    slotStart.setHours(hour, 0, 0, 0);\n    \n    const slotEnd = new Date(slotStart);\n    slotEnd.setMinutes(slotDuration);\n    \n    // Verificar se slot está livre\n    const isBusy = busyEvents.some(event => {\n      if (!event.start || !event.end) return false;\n      const eventStart = new Date(event.start.dateTime || event.start.date);\n      const eventEnd = new Date(event.end.dateTime || event.end.date);\n      return slotStart < eventEnd && slotEnd > eventStart;\n    });\n    \n    // Apenas slots futuros\n    if (!isBusy && slotStart > new Date()) {\n      availableSlots.push({\n        start: slotStart.toISOString(),\n        end: slotEnd.toISOString(),\n        date: slotStart.toISOString().split('T')[0],\n        time: slotStart.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }),\n        label: slotStart.toLocaleDateString('pt-PT', { \n          weekday: 'short', \n          day: '2-digit', \n          month: 'short' \n        }) + ' às ' + slotStart.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })\n      });\n    }\n  }\n}\n\nreturn [{ json: { slots: availableSlots, count: availableSlots.length } }];"
+      },
+      "id": "code-generate-slots",
+      "name": "Generate Available Slots",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Parameters": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar - Get Busy Times",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar - Get Busy Times": {
+      "main": [
+        [
+          {
+            "node": "Generate Available Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Available Slots": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-27T19:00:00.000Z",
+  "versionId": "1"
+}
+
+

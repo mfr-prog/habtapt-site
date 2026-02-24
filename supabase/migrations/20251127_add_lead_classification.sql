@@ -8,3 +8,4 @@ ON public.contacts USING GIN(classifications);
 
 COMMENT ON COLUMN public.contacts.classifications IS 'Classificações do lead: Comprador, Vendedor, Inquilino, Arrendatário';
 
+

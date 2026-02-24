@@ -11,7 +11,7 @@ import { colors, spacing, radius, shadows, typography } from '../../utils/styles
 import { AnimatedButton } from '../primitives/AnimatedButton';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { supabaseFetch } from '../../utils/supabase/client';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 interface ImageUploadProps {
   value?: string;

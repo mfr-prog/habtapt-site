@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Mail, Send, CheckCircle } from './icons';
 import { designSystem } from './design-system';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { supabaseFetch } from '../utils/supabase/client';
 
 interface NewsletterProps {

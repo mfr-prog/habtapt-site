@@ -1,0 +1,111 @@
+{
+  "name": "HABTA - Schedule Meeting",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "schedule-meeting",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "habta-schedule-meeting"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list",
+          "cachedResultName": "primary"
+        },
+        "start": "={{ $json.body.startTime }}",
+        "end": "={{ $json.body.endTime }}",
+        "summary": "Reunião HABTA - {{ $json.body.name }}",
+        "description": "=**Cliente:** {{ $json.body.name }}\\n**Email:** {{ $json.body.email }}\\n**Telefone:** {{ $json.body.phone }}\\n**Interesse:** {{ $json.body.interest }}\\n\\n**Origem:** {{ $json.body.sourceTitle || 'Site HABTA' }}\\n\\n**Mensagem:**\\n{{ $json.body.message }}",
+        "options": {
+          "sendUpdates": "all",
+          "attendees": "={{ $json.body.email }}",
+          "conferenceData": "hangoutsMeet"
+        }
+      },
+      "id": "google-calendar-create",
+      "name": "Google Calendar - Create Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_GOOGLE_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true, \"eventId\": $json.id, \"eventLink\": $json.htmlLink, \"meetLink\": $json.hangoutLink, \"message\": \"Reunião agendada com sucesso! Você receberá um email de confirmação.\" } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar - Create Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar - Create Event": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-27T19:00:00.000Z",
+  "versionId": "1"
+}
+
+

@@ -27,7 +27,7 @@ import {
   UserPlus,
   TrendingDown,
 } from './icons';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { supabaseFetch } from '../utils/supabase/client';
 import { useRouter } from './Router';
 import { AdminLayout } from './admin/AdminLayout';

@@ -14,3 +14,4 @@ COMMENT ON COLUMN public.contacts.source_id IS 'ID do projeto/insight de origem'
 COMMENT ON COLUMN public.contacts.source_title IS 'Título do projeto/insight de origem';
 COMMENT ON COLUMN public.contacts.source_url IS 'URL de origem do lead';
 
+

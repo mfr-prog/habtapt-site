@@ -27,7 +27,7 @@ import {
   Type,
   List,
 } from '../icons';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { colors as utilColors, spacing, radius, shadows, typography } from '../../utils/styles';
 import { projectId, publicAnonKey } from '../../utils/supabase/info';
 

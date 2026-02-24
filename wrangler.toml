@@ -1,0 +1,11 @@
+# Cloudflare Pages configuration
+name = "habtapt-site"
+compatibility_date = "2025-11-27"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Non-secret env vars can go here
+
+[build]
+command = "npx @cloudflare/next-on-pages"
+cwd = "."

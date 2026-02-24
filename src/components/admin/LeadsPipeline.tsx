@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Mail, Phone, Calendar, MessageSquare, Edit, Save, X } from '../icons';
 import { colors, spacing, radius, typography, shadows } from '../../utils/styles';
 import { designSystem } from '../design-system';

@@ -4,7 +4,7 @@ import { Section } from './Section';
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare, ChevronDown, HelpCircle } from './icons';
 import { motion } from 'motion/react';
 import { useInView } from './useInView';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { designSystem } from './design-system';
 import { supabaseFetch } from '../utils/supabase/client';
 

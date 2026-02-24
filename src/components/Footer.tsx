@@ -1,56 +1,63 @@
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
 import { Container } from './Container';
 import { Instagram, Linkedin, ArrowUp } from './icons';
 import { Logo } from './Logo';
 import { motion } from 'motion/react';
 import { designSystem } from './design-system';
 import { LogoPattern } from './LogoPatterns';
-import { useRouter, Route } from './Router';
+
+const links = {
+  menu: [
+    { label: 'Home', href: '/' },
+    { label: 'Servicos', href: '/servicos' },
+    { label: 'Processo', href: '/processo' },
+    { label: 'Projetos', href: '/portfolio' },
+    { label: 'Contato', href: '/contacto' },
+  ],
+  recursos: [
+    { label: 'Insights', href: '/blog' },
+    { label: 'Depoimentos', href: '/#depoimentos' },
+    { label: 'Painel Admin', href: '/login' },
+  ],
+  legal: [
+    { label: 'Politica de Privacidade', href: '/privacidade' },
+  ],
+};
+
+const socialLinks = [
+  { icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:bg-blue-700' },
+  { icon: Instagram, href: '#', label: 'Instagram', color: 'hover:bg-pink-600' },
+];
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const { navigate } = useRouter();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const links = {
-    menu: [
-      { label: 'Home', route: 'home' as Route },
-      { label: 'Serviços', route: 'services' as Route },
-      { label: 'Processo', route: 'process' as Route },
-      { label: 'Projetos', route: 'portfolio' as Route },
-      { label: 'Contato', route: 'contact' as Route },
-    ],
-    recursos: [
-      { label: 'Insights', route: 'insights' as Route },
-      { label: 'Depoimentos', route: 'testimonials' as Route },
-      { label: 'Painel Admin', route: 'login' as Route },
-    ],
-    legal: [
-      { label: 'Política de Privacidade', route: null },
-    ],
-  };
-
-  const socialLinks = [
-    { icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:bg-blue-700' },
-    { icon: Instagram, href: '#', label: 'Instagram', color: 'hover:bg-pink-600' },
+  const allSections = [
+    { title: 'Menu', links: links.menu },
+    { title: 'Recursos', links: links.recursos },
+    { title: 'Legal', links: links.legal },
   ];
 
   return (
-    <footer 
+    <footer
       className="relative text-white overflow-hidden"
       role="contentinfo"
-      aria-label="Rodapé do site"
+      aria-label="Rodape do site"
       style={{
         background: designSystem.colors.gradients.heroLuxury,
       }}
     >
-      {/* Background Pattern - Padrão com Logo HABTA */}
-      <LogoPattern 
-        pattern="arrows-tiny" 
-        opacity={0.09} 
+      {/* Background Pattern */}
+      <LogoPattern
+        pattern="arrows-tiny"
+        opacity={0.09}
         color={designSystem.colors.neutral.white}
       />
 
@@ -71,9 +78,9 @@ export function Footer() {
                 className="mb-6 flex items-center gap-3"
               >
                 <Logo variant="white" size={48} />
-                <span 
-                  style={{ 
-                    fontWeight: designSystem.typography.fontWeight.black, 
+                <span
+                  style={{
+                    fontWeight: designSystem.typography.fontWeight.black,
                     letterSpacing: designSystem.typography.letterSpacing.tight,
                     fontSize: designSystem.typography.fontSize['3xl'],
                     color: designSystem.colors.neutral.white,
@@ -82,7 +89,7 @@ export function Footer() {
                   HABTA
                 </span>
               </motion.div>
-              <p 
+              <p
                 style={{
                   color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.8),
                   lineHeight: designSystem.typography.lineHeight.relaxed,
@@ -90,9 +97,9 @@ export function Footer() {
                   maxWidth: '24rem'
                 }}
               >
-                Reabilitação Inteligente e Investimento Sustentável.
+                Reabilitacao Inteligente e Investimento Sustentavel.
               </p>
-              <div 
+              <div
                 className="flex"
                 style={{ gap: designSystem.spacing[3] }}
               >
@@ -116,11 +123,7 @@ export function Footer() {
             </motion.div>
 
             {/* Links Columns */}
-            {[
-              { title: 'Menu', links: links.menu },
-              { title: 'Recursos', links: links.recursos },
-              { title: 'Legal', links: links.legal },
-            ].map((section, sectionIndex) => (
+            {allSections.map((section, sectionIndex) => (
               <motion.div
                 key={section.title}
                 initial={{ opacity: 0, y: 20 }}
@@ -138,26 +141,14 @@ export function Footer() {
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: 0.2 + sectionIndex * 0.1 + index * 0.05 }}
                     >
-                      {link.route ? (
-                        <motion.button
-                          onClick={() => navigate(link.route!)}
-                          whileHover={{ x: 5 }}
-                          transition={{ duration: 0.2 }}
-                          className="text-white/70 hover:text-white transition-colors duration-200 inline-block bg-transparent border-none cursor-pointer p-0"
-                          style={{ font: 'inherit' }}
-                          aria-label={`Navegar para ${link.label}`}
-                        >
-                          {link.label}
-                        </motion.button>
-                      ) : (
-                        <motion.span
-                          whileHover={{ x: 5 }}
-                          transition={{ duration: 0.2 }}
-                          className="text-white/70 hover:text-white transition-colors duration-200 inline-block cursor-pointer"
-                        >
-                          {link.label}
-                        </motion.span>
-                      )}
+                      <Link
+                        href={link.href}
+                        className="text-white/70 hover:text-white transition-colors duration-200 inline-block"
+                        aria-label={`Navegar para ${link.label}`}
+                        style={{ textDecoration: 'none', font: 'inherit' }}
+                      >
+                        {link.label}
+                      </Link>
                     </motion.li>
                   ))}
                 </ul>
@@ -182,30 +173,30 @@ export function Footer() {
           >
             <div className="flex flex-col md:flex-row justify-between items-center" style={{ gap: designSystem.spacing[4], width: '100%' }}>
               <div className="text-center md:text-left">
-                <p 
+                <p
                   style={{
                     color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.7),
                     fontSize: designSystem.typography.fontSize.sm,
                     marginBottom: designSystem.spacing[2]
                   }}
                 >
-                  HABTA © {currentYear} — Reabilitação Inteligente e Investimento Sustentável.
+                  HABTA &copy; {currentYear} — Reabilitacao Inteligente e Investimento Sustentavel.
                 </p>
-                <p 
+                <p
                   style={{
                     color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.6),
                     fontSize: designSystem.typography.fontSize.xs
                   }}
                 >
-                  © {currentYear} Jornada Prometida LDA. NIF: 518493644
+                  &copy; {currentYear} Jornada Prometida LDA. NIF: 518493644
                 </p>
-                <p 
+                <p
                   style={{
                     color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.6),
                     fontSize: designSystem.typography.fontSize.xs
                   }}
                 >
-                  Sede Rua Fernão Lopes, nº 23, Cascais 2765 088, Portugal
+                  Sede Rua Fernao Lopes, n 23, Cascais 2765 088, Portugal
                 </p>
               </div>
               <motion.button
@@ -213,7 +204,7 @@ export function Footer() {
                 whileHover={{ scale: 1.1, y: -3 }}
                 whileTap={{ scale: 0.9 }}
                 className="p-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300"
-                aria-label="Voltar ao topo da página"
+                aria-label="Voltar ao topo da pagina"
               >
                 <ArrowUp size={20} />
               </motion.button>

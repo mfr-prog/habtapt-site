@@ -128,3 +128,4 @@ ON public.testimonials FOR SELECT USING (published = true);
 
 COMMENT ON TABLE public.testimonials IS 'Client testimonials';
 
+

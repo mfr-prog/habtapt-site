@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 import { Home, LogOut } from 'lucide-react';
 import { colors, shadows, spacing, radius, typography } from '../../utils/styles';
 import { useRouter } from '../Router';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 interface AdminLayoutProps {
   children: ReactNode;
