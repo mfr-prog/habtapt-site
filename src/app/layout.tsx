@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s | HABTA",
   },
   description:
-    "Património de alta performance. Decisões baseadas em dados. Reabilitação urbana, investimento imobiliário e co-investimento em Portugal.",
+    "Every home, productized. Reabilitação urbana, investimento imobiliário e co-investimento em Portugal.",
   metadataBase: new URL("https://habta.eu"),
   openGraph: {
     type: "website",

@@ -8,7 +8,7 @@ import { Insights } from '@/components/Insights';
 import { Contact } from '@/components/Contact';
 
 export const metadata: Metadata = {
-  description: 'HABTA - Património de alta performance. Reabilitação urbana e investimento imobiliário em Portugal.',
+  description: 'HABTA - Every home, productized. Reabilitação urbana e investimento imobiliário em Portugal.',
 };
 
 export default function HomePage() {
