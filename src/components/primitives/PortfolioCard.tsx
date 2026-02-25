@@ -288,67 +288,6 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
           </div>
         </div>
 
-        {/* Landing Page / Portal Link */}
-        {(project.landingPage || project.portalLink) && (
-          <div
-            className="flex flex-wrap items-center"
-            style={{
-              gap: designSystem.spacing[2],
-              marginBottom: designSystem.spacing[4],
-              paddingBottom: designSystem.spacing[4],
-              borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
-            }}
-          >
-            {project.landingPage && (
-              <a
-                href={project.landingPage}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center rounded-full transition-colors duration-200"
-                style={{
-                  gap: designSystem.spacing[1.5],
-                  paddingLeft: designSystem.spacing[3],
-                  paddingRight: designSystem.spacing[3],
-                  paddingTop: designSystem.spacing[1.5],
-                  paddingBottom: designSystem.spacing[1.5],
-                  fontSize: designSystem.typography.fontSize.xs,
-                  fontWeight: designSystem.typography.fontWeight.semibold,
-                  color: designSystem.colors.neutral.white,
-                  background: designSystem.colors.brand.secondary,
-                  textDecoration: 'none',
-                }}
-              >
-                <ExternalLink size={12} />
-                Ver Landing Page
-              </a>
-            )}
-            {project.portalLink && (
-              <a
-                href={project.portalLink}
-                onClick={(e) => e.stopPropagation()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center rounded-full transition-colors duration-200"
-                style={{
-                  gap: designSystem.spacing[1.5],
-                  paddingLeft: designSystem.spacing[3],
-                  paddingRight: designSystem.spacing[3],
-                  paddingTop: designSystem.spacing[1.5],
-                  paddingBottom: designSystem.spacing[1.5],
-                  fontSize: designSystem.typography.fontSize.xs,
-                  fontWeight: designSystem.typography.fontWeight.semibold,
-                  color: designSystem.colors.brand.secondary,
-                  background: designSystem.helpers.hexToRgba(designSystem.colors.brand.secondary, 0.12),
-                  border: `1px solid ${designSystem.colors.brand.secondary}`,
-                  textDecoration: 'none',
-                }}
-              >
-                <ExternalLink size={12} />
-                Ver Anúncio
-              </a>
-            )}
-          </div>
-        )}
-
         {/* Price and CTA */}
         <div className="flex items-center justify-between">
           <div>
@@ -387,6 +326,62 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
             <ArrowRight size={20} />
           </motion.button>
         </div>
+
+        {/* Links externos — subtle, abaixo do preço */}
+        {(project.landingPage || project.portalLink) && (
+          <div
+            className="flex items-center"
+            style={{
+              gap: designSystem.spacing[4],
+              marginTop: designSystem.spacing[3],
+              paddingTop: designSystem.spacing[3],
+              borderTop: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.08)}`,
+            }}
+          >
+            {project.landingPage && (
+              <a
+                href={project.landingPage}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center transition-opacity duration-200"
+                style={{
+                  gap: designSystem.spacing[1.5],
+                  fontSize: designSystem.typography.fontSize.xs,
+                  fontWeight: designSystem.typography.fontWeight.medium,
+                  color: designSystem.colors.brand.primary,
+                  textDecoration: 'none',
+                  opacity: 0.7,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+              >
+                <ExternalLink size={13} />
+                Página Exclusiva
+              </a>
+            )}
+            {project.portalLink && (
+              <a
+                href={project.portalLink}
+                onClick={(e) => e.stopPropagation()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center transition-opacity duration-200"
+                style={{
+                  gap: designSystem.spacing[1.5],
+                  fontSize: designSystem.typography.fontSize.xs,
+                  fontWeight: designSystem.typography.fontWeight.medium,
+                  color: designSystem.colors.brand.primary,
+                  textDecoration: 'none',
+                  opacity: 0.7,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+              >
+                <ExternalLink size={13} />
+                Ver no Portal
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </CardWrapper>
   );

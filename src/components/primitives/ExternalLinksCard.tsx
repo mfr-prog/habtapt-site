@@ -113,7 +113,7 @@ export function ExternalLinksCard({
               }}
             >
               <ExternalLink size={18} />
-              <span>Ver Landing Page</span>
+              <span>Página Exclusiva do Projeto</span>
             </motion.button>
           )}
 
