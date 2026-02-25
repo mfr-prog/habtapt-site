@@ -5,9 +5,7 @@ import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
-import { ChevronDown } from '@/components/icons';
-import { locationAccordion } from '../_data/velask-data';
-import { c, t, sp, sectionBadge, sectionTitle, bodyText } from './velask-styles';
+import { sp, sectionBadge, sectionTitle, bodyText } from './velask-styles';
 
 interface VelaskBairroProps {
   isMobile: boolean;
@@ -15,11 +13,6 @@ interface VelaskBairroProps {
 
 export function VelaskBairro({ isMobile }: VelaskBairroProps) {
   const bairroInView = useInView({ threshold: 0.1 });
-  const [openIndex, setOpenIndex] = React.useState<number | null>(0);
-
-  const toggleAccordion = (i: number) => {
-    setOpenIndex(openIndex === i ? null : i);
-  };
 
   return (
     <Section background="white">
@@ -41,7 +34,7 @@ export function VelaskBairro({ isMobile }: VelaskBairroProps) {
               />
             </motion.div>
 
-            {/* Right — text + accordion */}
+            {/* Right — text */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={bairroInView.isInView ? { opacity: 1, x: 0 } : {}}
@@ -56,54 +49,6 @@ export function VelaskBairro({ isMobile }: VelaskBairroProps) {
               <p style={{ ...bodyText, marginBottom: sp[8] }}>
                 A três minutos a pé do metro, a cinco do maior shopping da zona, a dez da estação que liga o Porto ao resto do país e ao aeroporto. Mas o que faz Campanhã diferente não são as distâncias — é o facto de ser um bairro real, com vida própria, onde ainda se conhece o dono do café. Uma das últimas zonas do Porto onde ainda é possível comprar bem, viver melhor e chegar a qualquer lado sem carro.
               </p>
-
-              {/* Accordion */}
-              <div style={{ textAlign: 'left' }}>
-                {locationAccordion.map((cat, i) => (
-                  <div
-                    key={i}
-                    style={{ borderBottom: `1px solid ${c.neutral[200]}` }}
-                  >
-                    <button
-                      onClick={() => toggleAccordion(i)}
-                      style={{
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: `${sp[5]} 0`,
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: sp[3] }}>
-                        <span style={{ fontSize: t.fontSize.xl }}>{cat.icon}</span>
-                        <span style={{ fontSize: t.fontSize.base, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{cat.title}</span>
-                      </span>
-                      <ChevronDown style={{
-                        width: 20,
-                        height: 20,
-                        color: c.neutral[500],
-                        transition: 'transform 0.25s',
-                        transform: openIndex === i ? 'rotate(180deg)' : 'rotate(0deg)',
-                      }} />
-                    </button>
-                    {openIndex === i && (
-                      <div style={{ paddingBottom: sp[5], paddingLeft: sp[10] }}>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: sp[2] }}>
-                          {cat.items.map((item, j) => (
-                            <li key={j} style={{ fontSize: t.fontSize.sm, color: c.neutral[600], lineHeight: t.lineHeight.relaxed }}>
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
             </motion.div>
           </div>
         </div>
