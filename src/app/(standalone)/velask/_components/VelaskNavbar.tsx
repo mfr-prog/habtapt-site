@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Calendar } from '@/components/icons';
+import { Logo } from '@/components/Logo';
 import { c, t, sp, ds } from './velask-styles';
 
 const NAV_LINKS = [
@@ -65,6 +66,9 @@ export function VelaskNavbar() {
         <a
           href="https://habta.eu"
           style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: sp[3],
             fontSize: t.fontSize.xl,
             fontWeight: t.fontWeight.black,
             color: '#fff',
@@ -72,6 +76,7 @@ export function VelaskNavbar() {
             letterSpacing: t.letterSpacing.wider,
           }}
         >
+          <Logo variant="white" size={32} />
           HABTA
         </a>
 

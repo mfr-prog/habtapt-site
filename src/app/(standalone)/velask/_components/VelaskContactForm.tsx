@@ -5,6 +5,7 @@ import { Container } from '@/components/Container';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import { CheckCircle, Send, MessageCircle, Mail } from '@/components/icons';
+import { Logo } from '@/components/Logo';
 import { supabaseFetch } from '@/utils/supabase/client';
 import { ds, c, t, sp, sectionTitle, ctaButtonPrimary, inputStyle } from './velask-styles';
 
@@ -60,7 +61,10 @@ export function VelaskContactForm({ isMobile, selectedTypology = '' }: VelaskCon
         <div ref={formInView.ref} style={{ maxWidth: '36rem', margin: '0 auto' }}>
           <motion.div className="text-center" initial={{ opacity: 0, y: 30 }} animate={formInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
             {/* HABTA logo */}
-            <p style={{ fontSize: t.fontSize.xl, fontWeight: t.fontWeight.black, color: '#fff', letterSpacing: t.letterSpacing.wider, marginBottom: sp[6] }}>HABTA</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: sp[3], marginBottom: sp[6] }}>
+              <Logo variant="white" size={36} />
+              <span style={{ fontSize: t.fontSize.xl, fontWeight: t.fontWeight.black, color: '#fff', letterSpacing: t.letterSpacing.wider }}>HABTA</span>
+            </div>
 
             <h2 style={{ ...sectionTitle, color: '#fff', marginBottom: sp[4] }}>Fale Connosco</h2>
             <p style={{ fontSize: t.fontSize.base, color: 'rgba(255,255,255,0.7)', marginBottom: sp[10] }}>
