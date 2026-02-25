@@ -143,7 +143,6 @@ export function AdminPanel() {
 
       if (response.ok) {
         setContacts(data.contacts || []);
-        toast.success(`${data.count} contatos carregados`);
       } else {
         toast.error('Erro ao carregar contatos');
       }
@@ -164,7 +163,6 @@ export function AdminPanel() {
 
       if (response.ok) {
         setSubscribers(data.subscribers || []);
-        toast.success(`${data.count} subscritos carregados`);
       } else {
         toast.error('Erro ao carregar subscritos');
       }
@@ -185,7 +183,6 @@ export function AdminPanel() {
 
       if (response.ok) {
         setProjects(data.projects || []);
-        toast.success(`${data.count} projetos carregados`);
       } else {
         toast.error('Erro ao carregar projetos');
       }
@@ -206,7 +203,6 @@ export function AdminPanel() {
 
       if (response.ok) {
         setInsights(data.insights || []);
-        toast.success(`${data.count} insights carregados`);
       } else {
         toast.error('Erro ao carregar insights');
       }
@@ -396,7 +392,6 @@ export function AdminPanel() {
       value: contacts.length,
       icon: Mail,
       color: 'primary' as const,
-      trend: { value: 12, isPositive: true },
     },
     {
       title: 'Leads em Pipeline',
@@ -409,7 +404,6 @@ export function AdminPanel() {
       value: subscribers.length,
       icon: Users,
       color: 'secondary' as const,
-      trend: { value: 8, isPositive: true },
     },
     {
       title: 'Projetos',

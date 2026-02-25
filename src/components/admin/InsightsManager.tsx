@@ -13,23 +13,16 @@ import {
   TrendingUp,
   Building2,
   Leaf,
-  AlertCircle,
-  RefreshCw,
   Clock,
-  Tag,
   ArrowUp,
   ArrowDown,
   MessageSquare,
-  Image as ImageIcon,
   CheckCircle,
-  ChevronDown,
-  ChevronUp,
   Type,
   List,
 } from '../icons';
 import { toast } from 'sonner';
 import { colors as utilColors, spacing, radius, shadows, typography } from '../../utils/styles';
-import { projectId, publicAnonKey } from '../../utils/supabase/info';
 
 // Helper: remap colors.neutral to colors.gray for consistency
 const colors = {
@@ -97,7 +90,6 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
   const [editingInsight, setEditingInsight] = useState<Insight | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<Partial<Insight>>({
@@ -170,13 +162,17 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
       };
 
       if (editingInsight) {
-        const response = await supabaseFetch(`/insights/${editingInsight.id}`, {
+        const response = await supabaseFetch(`insights/${editingInsight.id}`, {
           method: 'PUT',
           body: JSON.stringify(insightData),
         });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Erro ao atualizar insight');
+        }
         toast.success('Insight atualizado com sucesso!');
       } else {
-        const response = await supabaseFetch('/insights', {
+        const response = await supabaseFetch('insights', {
           method: 'POST',
           body: JSON.stringify({
             ...insightData,
@@ -184,6 +180,10 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
             createdAt: new Date().toISOString(),
           }),
         });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Erro ao criar insight');
+        }
         toast.success('Insight criado com sucesso!');
       }
 
@@ -205,9 +205,13 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
     setIsDeleting(true);
 
     try {
-      await supabaseFetch(`/insights/${insightId}`, {
+      const response = await supabaseFetch(`insights/${insightId}`, {
         method: 'DELETE',
       });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Erro ao excluir insight');
+      }
       toast.success('Insight excluído com sucesso!');
       onRefresh();
     } catch (error) {
@@ -459,74 +463,19 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: spacing[3] }}>
-          <AnimatedButton
-            onClick={async () => {
-              if (confirm('Isso vai deletar todos os insights e recriá-los. Continuar?')) {
-                setIsResetting(true);
-                try {
-                  const response = await fetch(
-                    `https://${projectId}.supabase.co/functions/v1/make-server-4b2936bc/insights/reset`,
-                    {
-                      method: 'POST',
-                      headers: {
-                        'Authorization': `Bearer ${publicAnonKey}`,
-                        'Content-Type': 'application/json',
-                      },
-                    }
-                  );
-                  const data = await response.json();
-                  if (response.ok) {
-                    toast.success(data.message || 'Insights resetados!');
-                    onRefresh();
-                  } else {
-                    toast.error(data.error || 'Erro ao resetar');
-                  }
-                } catch (error) {
-                  toast.error('Erro de conexão');
-                } finally {
-                  setIsResetting(false);
-                }
-              }
-            }}
-            disabled={isResetting}
-            variant="outline"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: spacing[2],
-              borderColor: colors.error,
-              color: colors.error,
-            }}
-          >
-            <Trash2 size={18} />
-            {isResetting ? 'Resetando...' : 'Resetar'}
-          </AnimatedButton>
-
-          <AnimatedButton
-            onClick={onRefresh}
-            disabled={isLoading}
-            variant="outline"
-            style={{ display: 'flex', alignItems: 'center', gap: spacing[2] }}
-          >
-            <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />
-            Atualizar
-          </AnimatedButton>
-
-          <AnimatedButton
-            onClick={() => handleOpenModal()}
-            style={{
-              background: designSystem.colors.brand.secondary,
-              color: designSystem.colors.neutral.white,
-              display: 'flex',
-              alignItems: 'center',
-              gap: spacing[2],
-            }}
-          >
-            <Plus size={18} />
-            Novo Insight
-          </AnimatedButton>
-        </div>
+        <AnimatedButton
+          onClick={() => handleOpenModal()}
+          style={{
+            background: designSystem.colors.brand.secondary,
+            color: designSystem.colors.neutral.white,
+            display: 'flex',
+            alignItems: 'center',
+            gap: spacing[2],
+          }}
+        >
+          <Plus size={18} />
+          Novo Insight
+        </AnimatedButton>
       </div>
 
       {/* Lista de Insights */}

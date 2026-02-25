@@ -17,7 +17,6 @@ import {
   Building2,
   Image,
   AlertCircle,
-  RefreshCw,
 } from '../icons';
 import { toast } from 'sonner';
 import { colors, spacing, radius, shadows, typography } from '../../utils/styles';
@@ -220,137 +219,6 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
     }
   };
 
-  const handleSeedProjects = async () => {
-    if (projects.length > 0) {
-      const confirmSync = confirm(
-        '📋 Sincronizar Projetos do Site\n\n' +
-        'Você já tem ' + projects.length + ' projeto(s) cadastrado(s).\n\n' +
-        'Esta ação irá:\n' +
-        '• Verificar os projetos padrão do código\n' +
-        '• Adicionar apenas os que ainda não existem no banco\n' +
-        '• NÃO modificar ou deletar projetos existentes\n\n' +
-        'Deseja continuar?'
-      );
-      
-      if (!confirmSync) {
-        toast.info('Sincronização cancelada.');
-        return;
-      }
-    }
-
-    setIsSaving(true);
-
-    try {
-      const response = await supabaseFetch('projects/seed', {
-        method: 'POST',
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao popular projetos');
-      }
-
-      toast.success(data.message);
-      onRefresh();
-    } catch (error) {
-      console.error('Error seeding projects:', error);
-      toast.error(error instanceof Error ? error.message : 'Erro ao popular projetos');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleMigrateStatus = async () => {
-    const confirm1 = confirm(
-      '🔄 Migração de Status\n\n' +
-      'Esta ação irá converter todos os status antigos para os novos padrões:\n\n' +
-      '• "analysis" → "in-progress" (Em Andamento)\n' +
-      '• "renovation" → "in-progress" (Em Andamento)\n' +
-      '• "completed" → "available" (Disponível)\n\n' +
-      'Esta ação não pode ser desfeita.\n\n' +
-      'Deseja continuar?'
-    );
-    
-    if (!confirm1) {
-      toast.info('Migração cancelada.');
-      return;
-    }
-
-    setIsSaving(true);
-
-    try {
-      const response = await supabaseFetch('projects/migrate-status', {
-        method: 'POST',
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro na migração');
-      }
-
-      toast.success(data.message);
-      onRefresh();
-    } catch (error) {
-      console.error('Error migrating status:', error);
-      toast.error(error instanceof Error ? error.message : 'Erro na migração');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleResetDatabase = async () => {
-    // Primeira confirmação com aviso claro
-    const firstConfirm = confirm(
-      '⚠️⚠️⚠️ ATENÇÃO - AÇÃO DESTRUTIVA ⚠️⚠️⚠️\n\n' +
-      'Esta ação irá DELETAR PERMANENTEMENTE todos os projetos do banco de dados!\n\n' +
-      'Atualmente você tem ' + projects.length + ' projeto(s) cadastrado(s).\n\n' +
-      'Deseja realmente continuar?'
-    );
-    
-    if (!firstConfirm) {
-      return;
-    }
-
-    // Segunda confirmação com instruções de recuperação
-    const secondConfirm = confirm(
-      '⚠️ ÚLTIMA CONFIRMAÇÃO ⚠️\n\n' +
-      'Confirma que deseja DELETAR TODOS os projetos?\n\n' +
-      'Após deletar, você pode:\n' +
-      '1. Clicar em "Sincronizar Site" para recriar os projetos padrão\n' +
-      '2. Ou adicionar projetos manualmente\n\n' +
-      'Prosseguir com a exclusão?'
-    );
-    
-    if (!secondConfirm) {
-      toast.info('Operação cancelada. Seus projetos estão seguros.');
-      return;
-    }
-
-    setIsSaving(true);
-
-    try {
-      const response = await supabaseFetch('projects/reset', {
-        method: 'POST',
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao resetar banco');
-      }
-
-      toast.success(data.message);
-      onRefresh();
-    } catch (error) {
-      console.error('Error resetting database:', error);
-      toast.error(error instanceof Error ? error.message : 'Erro ao resetar banco');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const statusOptions = [
     { value: 'analysis', label: 'Em Análise' },
     { value: 'in-progress', label: 'Em Andamento' },
@@ -407,59 +275,15 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: spacing[3], flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* Botão perigoso - Resetar DB */}
-          <div style={{ position: 'relative' }}>
-            <AnimatedButton
-              onClick={handleResetDatabase}
-              disabled={isLoading || isSaving}
-              variant="danger"
-              icon={AlertCircle}
-              size="sm"
-              aria-label="Resetar banco de dados - ATENÇÃO: Ação destrutiva!"
-              title="⚠️ PERIGO: Deleta TODOS os projetos do banco de dados!"
-            >
-              ⚠️ Resetar DB
-            </AnimatedButton>
-          </div>
-          
-          <div style={{ width: '1px', height: '32px', background: colors.gray[300] }} />
-          
-          {/* Funções de manutenção */}
-          <AnimatedButton
-            onClick={handleMigrateStatus}
-            disabled={isLoading || isSaving}
-            variant="secondary"
-            icon={RefreshCw}
-            aria-label="Migrar status dos projetos para novos padrões"
-            title="Converte status antigos (analysis, renovation) para os novos padrões (in-progress, available, sold)"
-          >
-            Migrar Status
-          </AnimatedButton>
-          <AnimatedButton
-            onClick={handleSeedProjects}
-            disabled={isLoading || isSaving}
-            variant="secondary"
-            icon={Building2}
-            aria-label="Sincronizar projetos do site"
-            title="Importa projetos padrão do código para o banco de dados"
-          >
-            Sincronizar Site
-          </AnimatedButton>
-          
-          <div style={{ width: '1px', height: '32px', background: colors.gray[300] }} />
-          
-          {/* Ação principal */}
-          <AnimatedButton
-            onClick={() => handleOpenModal()}
-            disabled={isLoading}
-            variant="primary"
-            icon={Plus}
-            aria-label="Adicionar novo projeto"
-          >
-            Novo Projeto
-          </AnimatedButton>
-        </div>
+        <AnimatedButton
+          onClick={() => handleOpenModal()}
+          disabled={isLoading}
+          variant="primary"
+          icon={Plus}
+          aria-label="Adicionar novo projeto"
+        >
+          Novo Projeto
+        </AnimatedButton>
       </div>
 
       {/* Projects Grid */}
@@ -484,16 +308,11 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
             Nenhum projeto cadastrado
           </h3>
           <p style={{ fontSize: typography.fontSize.base, marginBottom: spacing[6] }}>
-            Comece sincronizando os projetos do site ou adicione um novo projeto manualmente
+            Comece adicionando um novo projeto ao portfólio
           </p>
-          <div style={{ display: 'flex', gap: spacing[3], justifyContent: 'center' }}>
-            <AnimatedButton onClick={handleSeedProjects} variant="secondary" icon={Building2} disabled={isSaving}>
-              Sincronizar do Site
-            </AnimatedButton>
-            <AnimatedButton onClick={() => handleOpenModal()} variant="primary" icon={Plus}>
-              Adicionar Projeto
-            </AnimatedButton>
-          </div>
+          <AnimatedButton onClick={() => handleOpenModal()} variant="primary" icon={Plus}>
+            Adicionar Projeto
+          </AnimatedButton>
         </div>
       ) : (
         <div
