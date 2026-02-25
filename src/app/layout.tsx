@@ -16,6 +16,13 @@ export const metadata: Metadata = {
   description:
     "Every home, productized. Reabilitação urbana, investimento imobiliário e co-investimento em Portugal.",
   metadataBase: new URL("https://habta.eu"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     type: "website",
     locale: "pt_PT",
