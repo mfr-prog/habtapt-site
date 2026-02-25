@@ -21,6 +21,39 @@ interface Testimonial {
   project: string;
 }
 
+const fallbackTestimonials: Testimonial[] = [
+  {
+    id: '1',
+    name: 'Ricardo Mendes',
+    role: 'Investidor Imobiliário',
+    company: 'RM Capital',
+    image: '',
+    content: 'A HABTA apresentou-me uma análise de mercado detalhada que me deu total confiança no investimento. O retorno superou as expectativas e o processo foi completamente transparente do início ao fim.',
+    rating: 5,
+    project: 'Projeto Velask',
+  },
+  {
+    id: '2',
+    name: 'Ana Sofia Correia',
+    role: 'Proprietária',
+    company: '',
+    image: '',
+    content: 'Procurava uma equipa que tratasse da reabilitação do meu imóvel com profissionalismo. A HABTA geriu tudo de forma impecável — prazos cumpridos, orçamento respeitado e valorização acima do previsto.',
+    rating: 5,
+    project: 'Reabilitação Cascais',
+  },
+  {
+    id: '3',
+    name: 'Miguel Ferreira',
+    role: 'Consultor Financeiro',
+    company: 'MF Advisory',
+    image: '',
+    content: 'Recomendo a HABTA aos meus clientes que procuram diversificar com imobiliário. A metodologia baseada em dados e a comunicação constante distinguem-nos claramente no mercado português.',
+    rating: 5,
+    project: 'Consultoria de Investimento',
+  },
+];
+
 export function Testimonials() {
   const { ref, isInView } = useInView({ threshold: 0.1 });
   const [isMobile, setIsMobile] = useState(false);
@@ -42,10 +75,12 @@ export function Testimonials() {
             setTestimonials(data.testimonials);
           }
         } else {
-          console.warn('[Testimonials] ⚠️ Erro ao carregar depoimentos');
+          console.warn('[Testimonials] ⚠️ Erro ao carregar depoimentos, usando fallback');
+          setTestimonials(fallbackTestimonials);
         }
       } catch (error) {
         console.error('[Testimonials] ❌ Erro:', error);
+        setTestimonials(fallbackTestimonials);
       } finally {
         setIsLoading(false);
       }

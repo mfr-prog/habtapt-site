@@ -96,10 +96,17 @@ export const supabaseFetch = async (
         await new Promise(resolve => setTimeout(resolve, 500));
       }
 
+      // Timeout de 5s para evitar fetches pendentes indefinidamente (ex: DNS inexistente)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const response = await fetch(url, {
         ...options,
         headers,
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       // Se a resposta for OK, retornar imediatamente
       if (response.ok || response.status < 500) {
