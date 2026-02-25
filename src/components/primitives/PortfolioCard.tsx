@@ -5,7 +5,7 @@
 
 import React, { memo } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, BedDouble, Bath, Maximize, ArrowRight, TrendingUp } from '../icons';
+import { MapPin, BedDouble, Bath, Maximize, ArrowRight, TrendingUp, ExternalLink } from '../icons';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { designSystem } from '../design-system';
 
@@ -25,6 +25,8 @@ interface Project {
   bedrooms: number;
   bathrooms: number;
   price: string;
+  landingPage?: string | null;
+  portalLink?: string | null;
 }
 
 interface PortfolioCardProps {
@@ -285,6 +287,30 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
             </span>
           </div>
         </div>
+
+        {/* Landing Page / Portal Link */}
+        {(project.landingPage || project.portalLink) && (
+          <div
+            className="flex items-center"
+            style={{
+              gap: designSystem.spacing[2],
+              marginBottom: designSystem.spacing[4],
+              paddingBottom: designSystem.spacing[4],
+              borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
+            }}
+          >
+            <ExternalLink size={14} style={{ color: designSystem.colors.brand.secondary }} />
+            <span
+              style={{
+                fontSize: designSystem.typography.fontSize.sm,
+                fontWeight: designSystem.typography.fontWeight.semibold,
+                color: designSystem.colors.brand.secondary,
+              }}
+            >
+              {project.landingPage ? 'Ver Landing Page' : 'Ver Anúncio'}
+            </span>
+          </div>
+        )}
 
         {/* Price and CTA */}
         <div className="flex items-center justify-between">
