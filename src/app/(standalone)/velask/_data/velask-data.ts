@@ -44,7 +44,7 @@ export const galleryItems = [
 export const counters = [
   { value: '3', suffix: '', label: 'Apenas 3 unidades' },
   { value: '60', suffix: 'dias', label: 'Conclusão da obra' },
-  { value: '3', suffix: 'min', label: 'Do metro · Antas' },
+  { value: '3', suffix: 'min', label: 'Do metro · Campanhã' },
 ];
 
 export const highlights = [
@@ -190,7 +190,7 @@ export const locationAccordion = [
 
 export const locationCards = [
   { num: '01', title: 'Transportes', desc: 'Metro Estádio do Dragão a 3 min a pé. Campanhã (comboio intermodal) a 10 min. Aeroporto via metro linha E em 25 min.' },
-  { num: '02', title: 'Zona das Antas', desc: 'Uma envolvente residencial consolidada, com vida de bairro e acessos rápidos ao resto do Porto.' },
+  { num: '02', title: 'Zona de Campanhã', desc: 'Uma envolvente residencial consolidada, com vida de bairro e acessos rápidos ao resto do Porto.' },
   { num: '03', title: 'Parque de S. Roque', desc: 'Perto do portão principal do Parque de S. Roque — opção verde para caminhar e desligar do ritmo da cidade.' },
   { num: '04', title: 'Serviços do dia a dia', desc: 'Alameda Shop & Spot a 5 min a pé. Comércio de bairro (café, farmácia, padaria) na envolvente.' },
   { num: '05', title: 'Mobilidade e acessos', desc: 'Localização prática para circular entre centro, zona oriental e principais vias.' },

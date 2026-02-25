@@ -35,7 +35,7 @@ export function VelaskBairro({ isMobile }: VelaskBairroProps) {
             >
               <img
                 src="/images/velask/common/9.jpeg"
-                alt="Bairro das Antas, Porto"
+                alt="Bairro de Campanhã, Porto"
                 loading="lazy"
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
@@ -50,11 +50,11 @@ export function VelaskBairro({ isMobile }: VelaskBairroProps) {
               <span style={sectionBadge()}>O Bairro</span>
 
               <h2 style={{ ...sectionTitle, textAlign: 'left' }}>
-                Antas — tudo à porta.
+                Campanhã. Porto a sério.
               </h2>
 
               <p style={{ ...bodyText, marginBottom: sp[8] }}>
-                Antas é uma das zonas com mais vida do Porto. A 3 minutos a pé do metro Estádio do Dragão, com o Alameda Shopping à porta — Continente, cinema, restaurantes — e a menos de 15 minutos de carro do aeroporto. Um bairro com identidade própria que mistura a energia da cidade com a calma de uma rua de moradores.
+                Não é o centro histórico para turistas. É onde os portuenses escolhem viver. Campanhã tem metro a 3 minutos a pé, o maior centro comercial da zona a 5 minutos, e a estação de Campanhã — o maior nó intermodal do Porto — a 10 minutos a pé. Daqui chega ao aeroporto em 15 minutos de carro e ao centro do Porto em menos de 20. É um bairro que funciona no dia a dia, não só nos fins de semana.
               </p>
 
               {/* Accordion */}

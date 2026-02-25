@@ -42,7 +42,7 @@ export function VelaskProjeto({ isMobile }: ProjectProps) {
 
           <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', marginBottom: sp[12] }}>
             <p style={bodyText}>
-              O Velask é uma moradia histórica em Antas, Porto, totalmente reabilitada pela HABTA em 2026. Três apartamentos novos — T1 com jardim e garagem, T2 com jardim e anexo, T3 Duplex — com acabamentos de qualidade e entrega em 60 dias. Cada detalhe foi pensado para quem quer estrear, não renovar.
+              O Velask é uma moradia histórica em Campanhã, Porto, totalmente reabilitada pela HABTA em 2026. Três apartamentos novos — T1 com jardim e garagem, T2 com jardim e anexo, T3 Duplex — com acabamentos de qualidade e entrega em 60 dias. Cada detalhe foi pensado para quem quer estrear, não renovar.
             </p>
           </motion.div>
 

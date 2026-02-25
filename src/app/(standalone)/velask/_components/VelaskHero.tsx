@@ -55,7 +55,7 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.h1>
 
             <motion.p {...anim(1)} style={{ fontSize: t.fontSize['2xl'], fontWeight: t.fontWeight.semibold, color: c.brand.secondaryLight, marginBottom: sp[6], letterSpacing: t.letterSpacing.wide }}>
-              Antas &middot; Porto
+              Campanhã &middot; Porto
             </motion.p>
 
             <motion.p {...anim(2)} style={{ fontSize: t.fontSize.xl, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.8)', marginBottom: sp[6] }}>

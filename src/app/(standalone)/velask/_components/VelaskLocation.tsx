@@ -79,7 +79,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
           </motion.h2>
 
           <motion.p initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.15 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[10]}` }}>
-            Antas coloca-o a minutos de tudo o que importa.
+            Campanhã coloca-o a minutos de tudo o que importa.
           </motion.p>
 
           {/* 2-column: map (60%) + sidebar (40%) */}

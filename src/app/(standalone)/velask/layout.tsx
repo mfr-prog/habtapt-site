@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Apartamentos T1 T2 T3 para Venda Porto Antas — Reabilitados 2026 | Velask by HABTA',
+  title: 'Apartamentos T1 T2 T3 para Venda Porto Campanhã — Reabilitados 2026 | Velask by HABTA',
   description:
-    'Velask — 3 apartamentos T1, T2 e T3 Duplex totalmente reabilitados em Antas, Porto. Cozinha equipada, entrega em 60 dias. Every home, productized. habta.eu',
+    'Velask — 3 apartamentos T1, T2 e T3 Duplex totalmente reabilitados em Campanhã, Porto. Cozinha equipada, entrega em 60 dias. Every home, productized. habta.eu',
   keywords: [
     'apartamento porto',
     'T1 porto',
     'T2 porto',
     'T3 duplex porto',
-    'antas porto',
+    'campanhã porto',
     'campanha porto',
     'imóvel novo porto',
     'velask',
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
     'duplex porto',
   ],
   openGraph: {
-    title: 'Velask — Apartamentos Novos em Antas, Porto | HABTA',
+    title: 'Velask — Apartamentos Novos em Campanhã, Porto | HABTA',
     description:
-      '3 apartamentos T1, T2 e T3 Duplex totalmente reabilitados. Cozinha equipada. Entrega em 60 dias. Porto, Antas.',
+      '3 apartamentos T1, T2 e T3 Duplex totalmente reabilitados. Cozinha equipada. Entrega em 60 dias. Porto, Campanhã.',
     type: 'website',
     locale: 'pt_PT',
     siteName: 'HABTA',
@@ -47,7 +47,7 @@ export default function VelaskLayout({
             '@type': 'RealEstateListing',
             name: 'VELASK',
             description:
-              'Três apartamentos a estrear com jardins privados e duplex nas Antas, Porto. Reabilitação total 2026.',
+              'Três apartamentos a estrear com jardins privados e duplex em Campanhã, Porto. Reabilitação total 2026.',
             url: 'https://habta.eu/velask',
             address: {
               '@type': 'PostalAddress',
