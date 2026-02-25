@@ -113,6 +113,7 @@ export function AdminPanel() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
+  const [testimonialsCount, setTestimonialsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -217,11 +218,24 @@ export function AdminPanel() {
     }
   };
 
+  const fetchTestimonialsCount = async () => {
+    try {
+      const response = await supabaseFetch('testimonials', { method: 'GET' }, 1, true);
+      if (response.ok) {
+        const data = await response.json();
+        setTestimonialsCount(data.count || 0);
+      }
+    } catch {
+      // Silently fail - count stays at 0
+    }
+  };
+
   useEffect(() => {
     fetchContacts();
     fetchSubscribers();
     fetchProjects();
     fetchInsights();
+    fetchTestimonialsCount();
   }, []);
 
   // Filtered and sorted data
@@ -468,7 +482,7 @@ export function AdminPanel() {
             { id: 'subscribers' as const, label: 'Newsletter', icon: Inbox, count: subscribers.length },
             { id: 'projects' as const, label: 'Projetos', icon: Building2, count: projects.length },
             { id: 'insights' as const, label: 'Insights', icon: BookOpen, count: insights.length },
-            { id: 'testimonials' as const, label: 'Depoimentos', icon: Users, count: 0 },
+            { id: 'testimonials' as const, label: 'Depoimentos', icon: MessageSquare, count: testimonialsCount },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -759,7 +773,7 @@ export function AdminPanel() {
               ) : activeTab === 'insights' ? (
                 <InsightsManager insights={insights} onRefresh={fetchInsights} isLoading={isLoading} />
               ) : (
-                <TestimonialsManager />
+                <TestimonialsManager onRefresh={fetchTestimonialsCount} />
               )}
             </AnimatePresence>
           )}

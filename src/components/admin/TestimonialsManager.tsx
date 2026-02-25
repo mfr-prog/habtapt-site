@@ -136,6 +136,7 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
         if (response.ok) {
           toast.success('Depoimento atualizado com sucesso!');
           await fetchTestimonials();
+          onRefresh?.();
           handleCloseModal();
         } else {
           const error = await response.json();
@@ -149,13 +150,12 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
         }, 1, true); // isAdmin = true
 
         if (response.ok) {
-          const result = await response.json();
           toast.success('Depoimento criado com sucesso!');
           await fetchTestimonials();
+          onRefresh?.();
           handleCloseModal();
         } else {
           const error = await response.json();
-          console.error('[TestimonialsManager] ❌ Erro ao criar:', error);
           toast.error(error.error || 'Erro ao criar depoimento');
         }
       }
@@ -180,6 +180,7 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
       if (response.ok) {
         toast.success('Depoimento excluído com sucesso!');
         await fetchTestimonials();
+        onRefresh?.();
       } else {
         const error = await response.json();
         toast.error(error.error || 'Erro ao excluir depoimento');
