@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import PortfolioDetailContent from './_components/PortfolioDetailContent';
 
+export const runtime = 'edge';
+
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import InsightDetailContent from './_components/InsightDetailContent';
 
+export const runtime = 'edge';
+
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
