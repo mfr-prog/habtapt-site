@@ -6,15 +6,20 @@ import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import { ArrowRight } from '@/components/icons';
 import { pricingRows } from '../_data/velask-data';
-import { ds, c, t, sp, sectionBadge, sectionTitle, cardBase, ctaButtonPrimary } from './velask-styles';
+import { ds, c, t, sp, sectionBadge, sectionTitle, cardBase } from './velask-styles';
 
 interface VelaskPricingProps {
   isMobile: boolean;
-  onScrollToForm: () => void;
+  onSelectTypology: (typology: string) => void;
 }
 
-export function VelaskPricing({ isMobile, onScrollToForm }: VelaskPricingProps) {
+export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps) {
   const priceInView = useInView({ threshold: 0.1 });
+
+  const handleSaberMais = (typologyKey: string) => {
+    onSelectTypology(typologyKey);
+    document.getElementById('velask-form')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <Section background="muted">
@@ -34,7 +39,7 @@ export function VelaskPricing({ isMobile, onScrollToForm }: VelaskPricingProps) 
                 <table style={{ width: '100%' }}>
                   <thead>
                     <tr style={{ background: c.brand.primary }}>
-                      {['Unidade', 'Piso', 'Tipologia', 'Area bruta (m\u00B2)', 'Preco', 'Estado'].map(h => (
+                      {['Unidade', 'Piso', 'Tipologia', 'Area bruta (m\u00B2)', 'Preco', 'Estado', ''].map(h => (
                         <th key={h} style={{ textAlign: 'left', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: '#fff', padding: `${sp[4]} ${sp[6]}` }}>{h}</th>
                       ))}
                     </tr>
@@ -46,11 +51,34 @@ export function VelaskPricing({ isMobile, onScrollToForm }: VelaskPricingProps) 
                         <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.floor}</td>
                         <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.brand.primary }}>{row.type}</td>
                         <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.area}</td>
-                        <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.brand.secondary }}>{row.price}</td>
+                        <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.base, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</td>
                         <td style={{ padding: `${sp[5]} ${sp[6]}` }}>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: sp[1], fontSize: t.fontSize.xs, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: 'rgba(16,185,129,0.1)', color: c.semantic.success }}>
                             <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.semantic.success }} />{row.status}
                           </span>
+                        </td>
+                        <td style={{ padding: `${sp[5]} ${sp[6]}` }}>
+                          <motion.button
+                            onClick={() => handleSaberMais(row.typologyKey)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: sp[1],
+                              padding: `${sp[2]} ${sp[4]}`,
+                              borderRadius: ds.borderRadius.full,
+                              background: c.gradients.secondary,
+                              color: c.brand.primary,
+                              fontWeight: t.fontWeight.semibold,
+                              fontSize: t.fontSize.xs,
+                              border: 'none',
+                              cursor: 'pointer',
+                              whiteSpace: 'nowrap',
+                            }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            Saber Mais <ArrowRight style={{ width: 14, height: 14 }} />
+                          </motion.button>
                         </td>
                       </tr>
                     ))}
@@ -74,8 +102,27 @@ export function VelaskPricing({ isMobile, onScrollToForm }: VelaskPricingProps) 
                       <div><span style={{ color: c.neutral[500] }}>Piso: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.floor}</span></div>
                       <div><span style={{ color: c.neutral[500] }}>Area: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
                     </div>
-                    <div style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
-                      <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.brand.secondary }}>{row.price}</p>
+                    <div className="flex items-center justify-between" style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
+                      <p style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</p>
+                      <motion.button
+                        onClick={() => handleSaberMais(row.typologyKey)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: sp[1],
+                          padding: `${sp[2]} ${sp[4]}`,
+                          borderRadius: ds.borderRadius.full,
+                          background: c.gradients.secondary,
+                          color: c.brand.primary,
+                          fontWeight: t.fontWeight.semibold,
+                          fontSize: t.fontSize.xs,
+                          border: 'none',
+                          cursor: 'pointer',
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Saber Mais <ArrowRight style={{ width: 14, height: 14 }} />
+                      </motion.button>
                     </div>
                   </div>
                 ))}
@@ -85,12 +132,6 @@ export function VelaskPricing({ isMobile, onScrollToForm }: VelaskPricingProps) 
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], marginTop: sp[6], lineHeight: t.lineHeight.relaxed }}>
               Areas brutas incluem componentes como jardim/patio/varanda/garagem/anexo/sotao conforme unidade. Solicite a brochura para detalhe completo.
             </p>
-
-            <div style={{ marginTop: sp[8] }}>
-              <motion.button onClick={onScrollToForm} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                PEDIR TABELA DE PRECOS <ArrowRight style={{ width: 20, height: 20 }} />
-              </motion.button>
-            </div>
           </motion.div>
         </div>
       </Container>

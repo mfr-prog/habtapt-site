@@ -1,18 +1,20 @@
 'use client';
 
+import React from 'react';
 import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
-  CheckCircle, Home, Building, Ruler, Download, ArrowRight,
+  CheckCircle, Home, Building, Ruler, Download, ArrowRight, Eye,
 } from '@/components/icons';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { benefits, interiorFeatures, units } from '../_data/velask-data';
+import { benefits, interiorFeatures, units, unitImages } from '../_data/velask-data';
 import {
   ds, c, t, sp,
   sectionBadge, sectionTitle, bodyText, cardBase, ctaButtonPrimary,
 } from './velask-styles';
+import { VelaskLightbox } from './VelaskLightbox';
 
 interface VelaskUnitsProps {
   isMobile: boolean;
@@ -23,6 +25,19 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
   const empInView = useInView({ threshold: 0.1 });
   const intInView = useInView({ threshold: 0.1 });
   const planInView = useInView({ threshold: 0.05 });
+
+  const [lightboxOpen, setLightboxOpen] = React.useState(false);
+  const [lightboxImages, setLightboxImages] = React.useState<{ src: string; alt: string }[]>([]);
+  const [lightboxIndex, setLightboxIndex] = React.useState(0);
+
+  const openUnitGallery = (unitId: string) => {
+    const imgs = unitImages[unitId] || [];
+    if (imgs.length) {
+      setLightboxImages(imgs);
+      setLightboxIndex(0);
+      setLightboxOpen(true);
+    }
+  };
 
   return (
     <>
@@ -60,7 +75,7 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
       </Section>
 
       {/* INTERIORES */}
-      <Section background="muted">
+      <Section background="muted" id="interiores">
         <Container>
           <div ref={intInView.ref} className="text-center">
             <motion.div initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
@@ -129,11 +144,30 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
                 <TabsContent key={unit.id} value={unit.id}>
                   <div className="rounded-3xl overflow-hidden" style={{ background: c.neutral[50], border: `1px solid ${c.neutral[200]}` }}>
                     <div className="grid" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
-                      <div className="flex items-center justify-center" style={{ padding: sp[12], minHeight: isMobile ? 200 : 400, background: `linear-gradient(135deg, ${c.neutral[100]} 0%, ${c.neutral[200]} 100%)` }}>
-                        <div className="text-center">
-                          <Building style={{ width: 48, height: 48, margin: '0 auto', marginBottom: sp[4], color: c.neutral[400] }} />
-                          <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.neutral[500] }}>Planta do {unit.title}</p>
-                          <p style={{ fontSize: t.fontSize.xs, color: c.neutral[400], marginTop: sp[1] }}>Imagem ilustrativa</p>
+                      <div
+                        className="relative group cursor-pointer"
+                        style={{ minHeight: isMobile ? 200 : 400, overflow: 'hidden' }}
+                        onClick={() => openUnitGallery(unit.id)}
+                      >
+                        <img
+                          src={(unitImages[unit.id] || [])[0]?.src}
+                          alt={`${unit.title} — render 3D`}
+                          loading="lazy"
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                          }}
+                        />
+                        <div
+                          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          style={{ background: 'rgba(26,62,92,0.35)' }}
+                        >
+                          <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.9)', color: c.brand.primary, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold }}>
+                            <Eye style={{ width: 16, height: 16 }} /> Ver galeria
+                          </div>
                         </div>
                       </div>
 
@@ -175,6 +209,15 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
           </div>
         </Container>
       </Section>
+
+      <VelaskLightbox
+        images={lightboxImages}
+        selectedIndex={lightboxIndex}
+        open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onNext={() => setLightboxIndex((prev) => (prev + 1) % lightboxImages.length)}
+        onPrev={() => setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length)}
+      />
     </>
   );
 }

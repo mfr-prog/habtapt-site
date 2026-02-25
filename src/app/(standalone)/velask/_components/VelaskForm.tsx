@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container } from '@/components/Container';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import { CheckCircle, Send } from '@/components/icons';
+import { supabaseFetch } from '@/utils/supabase/client';
 import { c, t, sp, sectionBadge, sectionTitle, ctaButtonPrimary, inputStyle } from './velask-styles';
 
 interface VelaskFormProps {
   isMobile: boolean;
+  selectedTypology?: string;
 }
 
-export function VelaskForm({ isMobile }: VelaskFormProps) {
+export function VelaskForm({ isMobile, selectedTypology = '' }: VelaskFormProps) {
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', typology: '', message: '',
     consentContact: false, consentPrivacy: false,
@@ -20,31 +22,31 @@ export function VelaskForm({ isMobile }: VelaskFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formInView = useInView({ threshold: 0.1 });
 
+  // Sync selectedTypology from pricing pre-selection
+  useEffect(() => {
+    if (selectedTypology) {
+      setFormData((prev) => ({ ...prev, typology: selectedTypology }));
+    }
+  }, [selectedTypology]);
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/contact`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            typology: formData.typology,
-            message: formData.message,
-            source: 'velask-landing',
-            consentContact: formData.consentContact,
-            consentPrivacy: formData.consentPrivacy,
-          }),
-        }
-      );
+      const response = await supabaseFetch('contacts', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          typology: formData.typology,
+          message: formData.message,
+          source: 'velask-landing',
+          consentContact: formData.consentContact,
+          consentPrivacy: formData.consentPrivacy,
+        }),
+      });
 
       if (response.ok) {
         setFormSubmitted(true);

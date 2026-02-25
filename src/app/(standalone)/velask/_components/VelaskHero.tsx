@@ -26,12 +26,27 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
       ref={heroInView.ref}
       className="relative overflow-hidden"
       style={{
-        background: c.gradients.hero,
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
       }}
     >
+      {/* Background image */}
+      <img
+        src="/images/velask/t2/1.jpeg"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center 40%',
+        }}
+      />
+      {/* Dark overlay gradient */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(135deg, rgba(10,20,35,0.88) 0%, rgba(15,28,46,0.82) 50%, rgba(10,20,35,0.75) 100%)' }} />
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 70% 40%, rgba(184,149,106,0.12) 0%, transparent 70%)' }} />
 
       <Container>

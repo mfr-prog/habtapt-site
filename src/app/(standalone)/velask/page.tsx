@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { designSystem } from '@/components/design-system';
 import { Container } from '@/components/Container';
+import { VelaskNavbar } from './_components/VelaskNavbar';
 import { VelaskHero } from './_components/VelaskHero';
 import { VelaskUnits } from './_components/VelaskUnits';
 import { VelaskGallery } from './_components/VelaskGallery';
@@ -19,6 +20,7 @@ const sp = ds.spacing;
 
 export default function VelaskPage() {
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedTypology, setSelectedTypology] = useState('');
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < parseInt(ds.breakpoints.lg));
@@ -33,20 +35,46 @@ export default function VelaskPage() {
 
   return (
     <>
-      <VelaskHero isMobile={isMobile} onScrollToForm={scrollToForm} />
-      <VelaskUnits isMobile={isMobile} onScrollToForm={scrollToForm} />
-      <VelaskGallery isMobile={isMobile} />
-      <VelaskLocation isMobile={isMobile} />
-      <VelaskPricing isMobile={isMobile} onScrollToForm={scrollToForm} />
-      <VelaskContact isMobile={isMobile} />
-      <VelaskForm isMobile={isMobile} />
-      <VelaskFAQ />
+      <VelaskNavbar />
+
+      <div id="hero">
+        <VelaskHero isMobile={isMobile} onScrollToForm={scrollToForm} />
+      </div>
+
+      <div id="projecto">
+        <VelaskUnits isMobile={isMobile} onScrollToForm={scrollToForm} />
+      </div>
+
+      <div id="galeria">
+        <VelaskGallery isMobile={isMobile} />
+      </div>
+
+      <div id="localizacao">
+        <VelaskLocation isMobile={isMobile} />
+      </div>
+
+      <div id="precos">
+        <VelaskPricing isMobile={isMobile} onSelectTypology={setSelectedTypology} />
+      </div>
+
+      <div id="contacto">
+        <VelaskContact isMobile={isMobile} />
+        <VelaskForm isMobile={isMobile} selectedTypology={selectedTypology} />
+      </div>
+
+      <div id="faq">
+        <VelaskFAQ />
+      </div>
 
       {/* Legal Footer */}
-      <section style={{ background: c.neutral[950], borderTop: `1px solid ${c.neutral[800]}`, padding: `${sp[8]} 0` }}>
+      <section style={{ background: '#0F1C2E', borderTop: `1px solid ${c.neutral[800]}`, padding: `${sp[8]} 0` }}>
         <Container>
           <div className="flex items-center justify-between gap-4" style={{ flexDirection: isMobile ? 'column' : 'row' }}>
-            <p style={{ fontSize: t.fontSize.xs, lineHeight: t.lineHeight.relaxed, color: c.neutral[500], textAlign: isMobile ? 'center' : 'left' }}>
+            <div className="flex items-center gap-4" style={{ flexDirection: isMobile ? 'column' : 'row' }}>
+              <a href="https://habta.eu" style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.black, color: '#fff', textDecoration: 'none', letterSpacing: t.letterSpacing.wider }}>HABTA</a>
+              <a href="https://habta.eu/privacidade" style={{ fontSize: t.fontSize.xs, color: c.neutral[500], textDecoration: 'none' }}>Politica de Privacidade</a>
+            </div>
+            <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], textAlign: isMobile ? 'center' : 'left', maxWidth: '36rem' }}>
               As imagens e renders 3D sao ilustrativos e nao vinculativos. As areas sao aproximadas e devem ser confirmadas com documentacao oficial. Esta informacao nao constitui proposta contratual e pode ser alterada sem aviso.
             </p>
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[600], whiteSpace: 'nowrap' }}>

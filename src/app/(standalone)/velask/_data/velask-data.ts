@@ -2,6 +2,40 @@ import { designSystem } from '@/components/design-system';
 
 const c = designSystem.colors;
 
+// --- Image arrays per unit ---
+
+const makeImages = (folder: string, count: number) =>
+  Array.from({ length: count }, (_, i) => ({
+    src: `/images/velask/${folder}/${i + 1}.jpeg`,
+    alt: `VELASK Residence — ${folder.toUpperCase()} render ${i + 1}`,
+  }));
+
+export const t1Images = makeImages('t1', 13);
+export const t2Images = makeImages('t2', 10);
+export const t3Images = makeImages('t3', 17);
+export const commonImages = makeImages('common', 9);
+
+/** Map unit id → images */
+export const unitImages: Record<string, { src: string; alt: string }[]> = {
+  rc: t1Images,
+  p1: t2Images,
+  p2: t3Images,
+};
+
+// --- Gallery items (with images) ---
+
+export const galleryItems = [
+  { src: '/images/velask/t2/1.jpeg', alt: 'Cozinha integrada com bancada e zona de refeicoes' },
+  { src: '/images/velask/t1/1.jpeg', alt: 'Sala com linhas limpas e solucoes de arrumacao' },
+  { src: '/images/velask/t3/1.jpeg', alt: 'Quarto com linguagem contemporanea e luz natural' },
+  { src: '/images/velask/t3/2.jpeg', alt: 'Zona social com escada e arrumacao integrada' },
+  { src: '/images/velask/t3/3.jpeg', alt: 'Sotao: espaco extra com multiplos usos' },
+  { src: '/images/velask/common/1.jpeg', alt: 'Casa de banho: revestimentos claros e movel suspenso' },
+  { src: '/images/velask/common/9.jpeg', alt: 'Exterior: jardim com zona de lazer e apoio' },
+];
+
+// --- Counters, highlights, benefits, etc. (unchanged) ---
+
 export const counters = [
   { value: '333,89', suffix: 'm\u00B2', label: 'Area bruta total (3 unidades)' },
   { value: '3', suffix: '', label: 'Pisos' },
@@ -96,16 +130,6 @@ export const units = [
   },
 ];
 
-export const galleryItems = [
-  'Cozinha integrada com bancada e zona de refeicoes',
-  'Sala com linhas limpas e solucoes de arrumacao',
-  'Quarto com linguagem contemporanea e luz natural',
-  'Zona social com escada e arrumacao integrada (conceito)',
-  'Sotao: espaco extra com multiplos usos (conceito)',
-  'Casa de banho: revestimentos claros e movel suspenso (conceito)',
-  'Exterior: jardim com zona de lazer e apoio (conceito)',
-];
-
 export const locationCards = [
   { num: '01', title: 'Transportes', desc: 'Paragens de autocarro como S. Crispim e Monte Aventino a cerca de 5 minutos a pe e estacao de metro Combatentes a ~15 minutos a pe.' },
   { num: '02', title: 'Zona das Antas', desc: 'Uma envolvente residencial consolidada, com vida de bairro e acessos rapidos ao resto do Porto.' },
@@ -115,9 +139,9 @@ export const locationCards = [
 ];
 
 export const pricingRows = [
-  { unit: 'A', floor: 'R/C', type: 'T1', area: '118,44', price: 'Sob consulta', status: 'Disponivel' },
-  { unit: 'B', floor: 'Piso 1', type: 'T2', area: '106,78', price: 'Sob consulta', status: 'Disponivel' },
-  { unit: 'C', floor: 'Piso 2 (Duplex)', type: 'T3', area: '108,67', price: 'Sob consulta', status: 'Disponivel' },
+  { unit: 'A', floor: 'R/C', type: 'T1', area: '118,44', price: '419.000', status: 'Disponivel', typologyKey: 't1' },
+  { unit: 'B', floor: 'Piso 1', type: 'T2', area: '106,78', price: '399.000', status: 'Disponivel', typologyKey: 't2' },
+  { unit: 'C', floor: 'Piso 2 (Duplex)', type: 'T3', area: '108,67', price: '449.000', status: 'Disponivel', typologyKey: 't3' },
 ];
 
 export const faqItems = [
