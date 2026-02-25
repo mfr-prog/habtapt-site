@@ -81,7 +81,8 @@ export const supabaseFetch = async (
     throw new Error(error);
   }
 
-  const url = `${getSupabaseUrl()}/functions/v1/${endpoint}`;
+  const cleanEndpoint = endpoint.replace(/^\//, '');
+  const url = `${getSupabaseUrl()}/functions/v1/make-server-4b2936bc/${cleanEndpoint}`;
   const headers = {
     ...getAuthHeaders(undefined, isAdmin),
     ...options.headers,

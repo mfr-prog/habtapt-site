@@ -57,6 +57,14 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
     try {
       const { projectId, publicAnonKey } = await import('../../utils/supabase/info');
       
+      // Mapear bucket names para os nomes reais no Supabase HABTA
+      const bucketMap: Record<string, string> = {
+        'projects': 'make-4b2936bc-projects',
+        'insights': 'make-4b2936bc-insights',
+        'testimonials': 'make-4b2936bc-testimonials',
+      };
+      const actualBucket = bucketMap[bucket] || bucket;
+
       // Gerar nome único para o arquivo
       const timestamp = Date.now();
       const randomStr = Math.random().toString(36).substring(7);
@@ -65,7 +73,7 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
       const filePath = `${fileName}`;
 
       // Upload direto para o Storage usando a API REST
-      const uploadUrl = `https://${projectId}.supabase.co/storage/v1/object/${bucket}/${filePath}`;
+      const uploadUrl = `https://${projectId}.supabase.co/storage/v1/object/${actualBucket}/${filePath}`;
       
       const uploadResponse = await fetch(uploadUrl, {
         method: 'POST',
@@ -85,7 +93,7 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
       const uploadData = await uploadResponse.json();
 
       // Construir URL pública da imagem
-      const publicUrl = `https://${projectId}.supabase.co/storage/v1/object/public/${bucket}/${filePath}`;
+      const publicUrl = `https://${projectId}.supabase.co/storage/v1/object/public/${actualBucket}/${filePath}`;
 
       onChange(publicUrl);
       toast.success('Imagem enviada com sucesso!');

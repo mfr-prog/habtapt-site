@@ -48,6 +48,7 @@ interface Project {
   timelinePhases?: string; // Fases do projeto separadas por linha: "Aquisição|1 mês|completed"
   description: string;
   highlights?: string; // Destaques separados por linha
+  landingPage?: string | null; // Landing page interna (ex: /velask)
   portalLink?: string | null; // Link do portal (Idealista)
   brochureLink?: string | null; // Link da brochura
   createdAt?: string;
@@ -85,6 +86,7 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
     timelinePhases: '',
     description: '',
     highlights: '',
+    landingPage: null,
     portalLink: null,
     brochureLink: null,
   });
@@ -163,6 +165,7 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
       // Clean up empty strings to null for links
       const cleanedFormData = {
         ...formData,
+        landingPage: formData.landingPage?.trim() || null,
         portalLink: formData.portalLink?.trim() || null,
         brochureLink: formData.brochureLink?.trim() || null,
       };
@@ -1411,6 +1414,47 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
                     }}>
                       Links Externos
                     </h3>
+
+                    {/* Landing Page */}
+                    <div style={{ marginBottom: spacing[4] }}>
+                      <label
+                        htmlFor="project-landing-page"
+                        style={{
+                          display: 'block',
+                          fontSize: typography.fontSize.sm,
+                          fontWeight: typography.fontWeight.medium,
+                          color: colors.gray[700],
+                          marginBottom: spacing[2],
+                        }}
+                      >
+                        Landing Page URL
+                      </label>
+                      <input
+                        id="project-landing-page"
+                        type="text"
+                        value={formData.landingPage || ''}
+                        onChange={(e) => setFormData({ ...formData, landingPage: e.target.value })}
+                        placeholder="/velask"
+                        style={{
+                          width: '100%',
+                          padding: `${spacing[3]} ${spacing[4]}`,
+                          border: `1px solid ${colors.gray[300]}`,
+                          borderRadius: radius.md,
+                          fontSize: typography.fontSize.base,
+                          outline: 'none',
+                          transition: 'border-color 0.2s',
+                        }}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = colors.primary;
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = colors.gray[300];
+                        }}
+                      />
+                      <p style={{ fontSize: typography.fontSize.xs, color: colors.gray[500], marginTop: spacing[1] }}>
+                        Caminho interno da landing page do projeto (ex: /velask). Opcional.
+                      </p>
+                    </div>
 
                     {/* Portal Link (Idealista) */}
                     <div style={{ marginBottom: spacing[4] }}>
