@@ -89,7 +89,7 @@ export function LogoFull({ variant = 'white', className = '', showTagline = true
               className={`${config.tagline} tracking-wider uppercase`}
               style={{ color: textColor, letterSpacing: '0.12em' }}
             >
-              Património de Alta Performance
+              Every Home, Productized
             </p>
             <div 
               className="h-0.5 w-12"
