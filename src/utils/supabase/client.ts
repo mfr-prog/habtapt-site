@@ -97,9 +97,9 @@ export const supabaseFetch = async (
         await new Promise(resolve => setTimeout(resolve, 500));
       }
 
-      // Timeout de 5s para evitar fetches pendentes indefinidamente (ex: DNS inexistente)
+      // Timeout de 15s para acomodar cold starts de Supabase Edge Functions
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const response = await fetch(url, {
         ...options,
