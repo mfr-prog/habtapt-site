@@ -7,8 +7,8 @@ import { c, t, sp, ds } from './velask-styles';
 
 const NAV_LINKS = [
   { label: 'O Projecto', target: 'projecto' },
-  { label: 'Galeria', target: 'galeria' },
-  { label: 'Localização', target: 'localizacao' },
+  { label: 'O Bairro', target: 'bairro' },
+  { label: 'Plantas', target: 'plantas' },
   { label: 'Preços', target: 'precos' },
   { label: 'Contacto', target: 'contacto' },
 ];

@@ -116,7 +116,7 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
       </Section>
 
       {/* PLANTAS E TIPOLOGIAS */}
-      <Section background="white">
+      <Section background="white" id="plantas">
         <Container>
           <div ref={planInView.ref} className="text-center">
             <motion.div initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>

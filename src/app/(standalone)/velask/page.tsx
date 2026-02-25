@@ -11,6 +11,7 @@ import { VelaskLocation } from './_components/VelaskLocation';
 import { VelaskPricing } from './_components/VelaskPricing';
 import { VelaskContact } from './_components/VelaskContact';
 import { VelaskForm } from './_components/VelaskForm';
+import { VelaskBairro } from './_components/VelaskBairro';
 import { VelaskFAQ } from './_components/VelaskFAQ';
 
 const ds = designSystem;
@@ -45,6 +46,10 @@ export default function VelaskPage() {
         <VelaskUnits isMobile={isMobile} onScrollToForm={scrollToForm} />
       </div>
 
+      <div id="bairro">
+        <VelaskBairro isMobile={isMobile} />
+      </div>
+
       <div id="galeria">
         <VelaskGallery isMobile={isMobile} />
       </div>
@@ -75,7 +80,8 @@ export default function VelaskPage() {
               <a href="https://habta.eu" style={{ fontSize: t.fontSize.xl, fontWeight: t.fontWeight.black, color: '#fff', textDecoration: 'none', letterSpacing: t.letterSpacing.wider }}>HABTA</a>
               <p style={{ fontSize: t.fontSize.sm, color: c.neutral[400], fontStyle: 'italic' }}>Every home, productized.</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: sp[2], fontSize: t.fontSize.sm, color: c.neutral[400] }}>
-                <span>Cascais, Portugal</span>
+                <span>Rua Fernão Lopes, nº 23</span>
+                <span>Cascais 2765-088, Portugal</span>
                 <a href="tel:+351963290394" style={{ color: c.neutral[400], textDecoration: 'none' }}>+351 963 290 394</a>
                 <a href="mailto:contato@habta.eu" style={{ color: c.neutral[400], textDecoration: 'none' }}>contato@habta.eu</a>
               </div>
@@ -84,11 +90,11 @@ export default function VelaskPage() {
             {/* Right column — links */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: sp[3], alignItems: isMobile ? 'flex-start' : 'flex-end' }}>
               <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[300], marginBottom: sp[1] }}>Secções</p>
-              {['O Projecto', 'Galeria', 'Localização', 'Preços', 'Contacto'].map((label) => (
+              {['O Projecto', 'O Bairro', 'Plantas', 'Preços', 'Contacto'].map((label) => (
                 <button
                   key={label}
                   onClick={() => {
-                    const id = label === 'O Projecto' ? 'projecto' : label === 'Localização' ? 'localizacao' : label === 'Preços' ? 'precos' : label.toLowerCase();
+                    const id = label === 'O Projecto' ? 'projecto' : label === 'O Bairro' ? 'bairro' : label === 'Preços' ? 'precos' : label.toLowerCase();
                     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
                   }}
                   style={{ background: 'none', border: 'none', color: c.neutral[400], fontSize: t.fontSize.sm, cursor: 'pointer', padding: 0, textAlign: isMobile ? 'left' : 'right' }}
@@ -101,7 +107,7 @@ export default function VelaskPage() {
           </div>
 
           {/* Bottom bar */}
-          <div style={{ borderTop: `1px solid ${c.neutral[800]}`, paddingTop: sp[6], display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'center' : 'center', justifyContent: 'space-between', gap: sp[4] }}>
+          <div style={{ borderTop: '1px solid #B8956A', paddingTop: sp[6], display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'center' : 'center', justifyContent: 'space-between', gap: sp[4] }}>
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], textAlign: isMobile ? 'center' : 'left' }}>
               &copy; 2026 Jornada Prometida LDA &middot; NIF 518493644
             </p>

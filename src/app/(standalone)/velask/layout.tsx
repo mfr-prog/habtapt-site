@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'VELASK | Apartamentos T1, T2 e T3 Duplex para Venda nas Antas, Porto — Reabilitados 2026 — HABTA',
+  title: 'Apartamentos T1 T2 T3 para Venda Porto Antas — Reabilitados 2026 | Velask by HABTA',
   description:
-    'Apartamentos T1, T2 e T3 Duplex reabilitados em 2026 nas Antas, Porto. Cozinha equipada, jardins privados e entrega em 60 dias. A partir de 399.000 euros.',
+    'Velask — 3 apartamentos T1, T2 e T3 Duplex totalmente reabilitados em Antas, Porto. Cozinha equipada, entrega em 60 dias. Every home, productized. habta.eu',
   keywords: [
     'apartamento porto',
     'T1 porto',
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
     'duplex porto',
   ],
   openGraph: {
-    title: 'VELASK | Apartamentos T1, T2 e T3 Duplex para Venda nas Antas, Porto — Reabilitados 2026',
+    title: 'Velask — Apartamentos Novos em Antas, Porto | HABTA',
     description:
-      'Apartamentos T1, T2 e T3 Duplex reabilitados em 2026 nas Antas, Porto. Cozinha equipada, jardins privados e entrega em 60 dias. A partir de 399.000 euros.',
+      '3 apartamentos T1, T2 e T3 Duplex totalmente reabilitados. Cozinha equipada. Entrega em 60 dias. Porto, Antas.',
     type: 'website',
     locale: 'pt_PT',
     siteName: 'HABTA',

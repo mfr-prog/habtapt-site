@@ -39,19 +39,20 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                 <table style={{ width: '100%' }}>
                   <thead>
                     <tr style={{ background: c.brand.primary }}>
-                      {['Unidade', 'Piso', 'Tipologia', 'Área bruta (m\u00B2)', 'Preço', 'Estado', ''].map(h => (
-                        <th key={h} style={{ textAlign: 'left', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: '#fff', padding: `${sp[4]} ${sp[6]}` }}>{h}</th>
+                      {['Frac.', 'Tipo', 'Área bruta', 'Interior', 'Diferencial', 'Preço', 'Estado', ''].map(h => (
+                        <th key={h} style={{ textAlign: 'left', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: '#fff', padding: `${sp[4]} ${sp[5]}` }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {pricingRows.map((row, i) => (
                       <tr key={i} style={{ borderBottom: i < pricingRows.length - 1 ? `1px solid ${c.neutral[200]}` : 'none' }}>
-                        <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{row.unit}</td>
-                        <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.floor}</td>
-                        <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.brand.primary }}>{row.type}</td>
-                        <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.area}</td>
-                        <td style={{ padding: `${sp[5]} ${sp[6]}`, fontSize: t.fontSize.base, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</td>
+                        <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{row.unit}</td>
+                        <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.brand.primary }}>{row.type}</td>
+                        <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.area} m&sup2;</td>
+                        <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.interior} m&sup2;</td>
+                        <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, color: c.neutral[600] }}>{row.diferencial}</td>
+                        <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.base, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</td>
                         <td style={{ padding: `${sp[5]} ${sp[6]}` }}>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: sp[1], fontSize: t.fontSize.xs, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: 'rgba(16,185,129,0.1)', color: c.semantic.success }}>
                             <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.semantic.success }} />{row.status}
@@ -99,8 +100,9 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                       <span style={{ fontSize: t.fontSize.xs, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: 'rgba(16,185,129,0.1)', color: c.semantic.success }}>{row.status}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2" style={{ fontSize: t.fontSize.sm }}>
-                      <div><span style={{ color: c.neutral[500] }}>Piso: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.floor}</span></div>
-                      <div><span style={{ color: c.neutral[500] }}>Área: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
+                      <div><span style={{ color: c.neutral[500] }}>Área bruta: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
+                      <div><span style={{ color: c.neutral[500] }}>Interior: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.interior} m&sup2;</span></div>
+                      <div style={{ gridColumn: 'span 2' }}><span style={{ color: c.neutral[500] }}>Diferencial: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.diferencial}</span></div>
                     </div>
                     <div className="flex items-center justify-between" style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
                       <p style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</p>

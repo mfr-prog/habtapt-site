@@ -197,17 +197,17 @@ export const locationCards = [
 ];
 
 export const pricingRows = [
-  { unit: 'A', floor: 'R/C', type: 'T1', area: '118,44', price: '419.000', status: 'Disponível', typologyKey: 't1' },
-  { unit: 'B', floor: 'Piso 1', type: 'T2', area: '106,78', price: '399.000', status: 'Disponível', typologyKey: 't2' },
-  { unit: 'C', floor: 'Piso 2 (Duplex)', type: 'T3', area: '108,67', price: '449.000', status: 'Disponível', typologyKey: 't3' },
+  { unit: 'A', floor: 'R/C', type: 'T1', area: '118,44', interior: '69,6', diferencial: 'Jardim + Garagem', price: '419.000', status: 'Disponível', typologyKey: 't1' },
+  { unit: 'B', floor: 'Piso 1', type: 'T2', area: '106,78', interior: '66,3', diferencial: 'Jardim + Anexo', price: '399.000', status: 'Disponível', typologyKey: 't2' },
+  { unit: 'C', floor: 'Piso 2 (Duplex)', type: 'T3', area: '108,67', interior: '66,3', diferencial: 'Duplex + Varanda', price: '449.000', status: 'Disponível', typologyKey: 't3' },
 ];
 
 export const faqItems = [
   { q: 'Posso visitar o apartamento?', a: 'Sim. Agende uma visita através do formulário, WhatsApp ou email. Segunda a sexta, das 9h às 18h.' },
   { q: 'Os apartamentos têm cozinha equipada?', a: 'Sim. Todos os apartamentos são entregues com cozinha totalmente equipada.' },
-  { q: 'Há possibilidade de financiamento bancário?', a: 'Sim. Os apartamentos são elegíveis para crédito habitação. Temos um parceiro financeiro que pode fazer uma simulação gratuita.' },
-  { q: 'Qual a data de entrega?', a: 'A obra estará concluída em aproximadamente 60 dias. Contacte-nos para reservar a sua unidade.' },
-  { q: 'Qual a certificação energética?', a: 'O certificado energético está em processo de emissão e ficará disponível em breve.' },
-  { q: 'Quem é a HABTA?', a: 'A HABTA é um grupo imobiliário de alta performance. O Velask é o primeiro projecto de reabilitação no Porto.' },
+  { q: 'Há possibilidade de financiamento bancário?', a: 'Sim. Os apartamentos são elegíveis para crédito habitação. Podemos encaminhá-lo para o nosso parceiro financeiro para uma simulação gratuita.' },
+  { q: 'Qual a data de entrega?', a: 'A obra estará concluída em aproximadamente 60 dias. Contacte-nos para reservar já a sua fracção.' },
+  { q: 'Qual a certificação energética?', a: 'A certificação energética está em processo de emissão. Disponível em breve.' },
+  { q: 'Quem é a HABTA?', a: 'A HABTA é um grupo imobiliário de alta performance. O Velask é o nosso primeiro projecto de reabilitação em Porto — entregue com o mesmo rigor de processo que aplicamos a todos os nossos empreendimentos.' },
   { q: 'Posso fazer uma proposta diferente do preço?', a: 'Fale connosco. Analisamos cada situação individualmente.' },
 ];
