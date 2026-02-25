@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'VELASK Residence | T1, T2 e T3 Duplex nas Antas, Porto',
+  title: 'VELASK | Apartamentos T1, T2 e T3 Duplex nas Antas, Porto — HABTA',
   description:
-    'Tres apartamentos a estrear com jardins privados e duplex com sotao. Rua Manuel Carqueja, 259 — Porto (Campanha). Conclusao Abril 2026.',
+    'Reabilitacao total 2026. Tres apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros. Rua Manuel Carqueja, 259.',
   keywords: [
     'apartamento porto',
     'T1 porto',
@@ -12,14 +12,16 @@ export const metadata: Metadata = {
     'antas porto',
     'campanha porto',
     'imovel novo porto',
-    'velask residence',
+    'velask',
     'habta',
     'reabilitacao urbana porto',
+    'apartamento jardim porto',
+    'duplex porto',
   ],
   openGraph: {
-    title: 'VELASK Residence | T1, T2 e T3 Duplex nas Antas, Porto',
+    title: 'VELASK | Apartamentos T1, T2 e T3 Duplex nas Antas, Porto',
     description:
-      'Tres apartamentos a estrear com jardins privados e duplex com sotao na zona das Antas.',
+      'Reabilitacao total 2026. Tres apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros.',
     type: 'website',
     locale: 'pt_PT',
     siteName: 'HABTA',
@@ -43,9 +45,9 @@ export default function VelaskLayout({
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'RealEstateListing',
-            name: 'VELASK Residence',
+            name: 'VELASK',
             description:
-              'Tres apartamentos a estrear com jardins privados e duplex com sotao nas Antas, Porto.',
+              'Tres apartamentos a estrear com jardins privados e duplex nas Antas, Porto. Reabilitacao total 2026.',
             url: 'https://habta.eu/velask',
             address: {
               '@type': 'PostalAddress',
@@ -68,9 +70,12 @@ export default function VelaskLayout({
               unitCode: 'MTK',
             },
             offers: {
-              '@type': 'Offer',
-              availability: 'https://schema.org/InStock',
+              '@type': 'AggregateOffer',
+              lowPrice: 399000,
+              highPrice: 449000,
               priceCurrency: 'EUR',
+              availability: 'https://schema.org/InStock',
+              offerCount: 3,
             },
             provider: {
               '@type': 'Organization',

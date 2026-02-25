@@ -1,12 +1,13 @@
 'use client';
 
+import React from 'react';
 import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
-import { MapPin, ExternalLink } from '@/components/icons';
-import { locationCards } from '../_data/velask-data';
-import { ds, c, t, sp, sectionBadge, sectionTitle, cardBase, ctaButtonPrimary } from './velask-styles';
+import { MapPin, ExternalLink, ChevronDown } from '@/components/icons';
+import { locationAccordion } from '../_data/velask-data';
+import { ds, c, t, sp, sectionBadge, sectionTitle, bodyText, ctaButtonPrimary } from './velask-styles';
 
 interface VelaskLocationProps {
   isMobile: boolean;
@@ -14,6 +15,11 @@ interface VelaskLocationProps {
 
 export function VelaskLocation({ isMobile }: VelaskLocationProps) {
   const locInView = useInView({ threshold: 0.1 });
+  const [openIndex, setOpenIndex] = React.useState<number | null>(null);
+
+  const toggleAccordion = (i: number) => {
+    setOpenIndex(openIndex === i ? null : i);
+  };
 
   return (
     <Section background="white">
@@ -27,20 +33,20 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
             Tudo ao seu alcance
           </motion.h2>
 
-          <motion.p initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.15 }} style={{ fontSize: t.fontSize.base, color: c.neutral[600], marginBottom: sp[4] }}>
-            Rua Manuel Carqueja, 259 — Porto (Campanha)
+          <motion.p initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.15 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[8]}` }}>
+            Antas coloca-o a minutos de tudo o que importa.
           </motion.p>
 
-          {/* Google Maps embed */}
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ marginBottom: sp[8], maxWidth: '56rem', margin: `0 auto ${sp[8]}` }}>
-            <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', borderRadius: '1.5rem', overflow: 'hidden', border: `1px solid ${c.neutral[200]}` }}>
+          {/* Bug #02 — Google Maps embed with proper search URL */}
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '56rem', margin: `0 auto ${sp[8]}` }}>
+            <div style={{ position: 'relative', width: '100%', height: 420, borderRadius: '1rem', overflow: 'hidden', border: `1px solid ${c.neutral[200]}` }}>
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d750.7!2d-8.5955!3d41.1635!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDA5JzQ4LjYiTiA4wrAzNSc0My44Ilc!5e0!3m2!1spt-PT!2spt!4v1"
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Rua+Manuel+Carqueja+259,Porto,Portugal&zoom=16"
+                style={{ width: '100%', height: '100%', border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Localizacao VELASK Residence — Rua Manuel Carqueja 259, Porto"
+                title="Localizacao VELASK — Rua Manuel Carqueja 259, Porto"
               />
             </div>
           </motion.div>
@@ -51,14 +57,55 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
             </motion.a>
           </motion.div>
 
-          <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)' }}>
-            {locationCards.map((card, i) => (
-              <motion.div key={i} style={{ ...cardBase, padding: sp[8], textAlign: 'left' }} initial={{ opacity: 0, y: 20 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
-                <div style={{ width: 40, height: 40, borderRadius: ds.borderRadius.full, background: c.gradients.primary, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.bold, marginBottom: sp[4] }}>
-                  {card.num}
-                </div>
-                <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], marginBottom: sp[2], lineHeight: t.lineHeight.snug }}>{card.title}</h3>
-                <p style={{ fontSize: t.fontSize.sm, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{card.desc}</p>
+          {/* Bug #08 — Accordion with 4 categories */}
+          <div style={{ maxWidth: '42rem', margin: '0 auto', textAlign: 'left' }}>
+            {locationAccordion.map((cat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={locInView.isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.4 + i * 0.08 }}
+                style={{
+                  borderBottom: `1px solid ${c.neutral[200]}`,
+                }}
+              >
+                <button
+                  onClick={() => toggleAccordion(i)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: `${sp[5]} 0`,
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: sp[3] }}>
+                    <span style={{ fontSize: t.fontSize.xl }}>{cat.icon}</span>
+                    <span style={{ fontSize: t.fontSize.base, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{cat.title}</span>
+                  </span>
+                  <ChevronDown style={{
+                    width: 20,
+                    height: 20,
+                    color: c.neutral[500],
+                    transition: 'transform 0.2s',
+                    transform: openIndex === i ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }} />
+                </button>
+                {openIndex === i && (
+                  <div style={{ paddingBottom: sp[5], paddingLeft: sp[10] }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: sp[2] }}>
+                      {cat.items.map((item, j) => (
+                        <li key={j} style={{ fontSize: t.fontSize.sm, color: c.neutral[600], lineHeight: t.lineHeight.relaxed }}>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>

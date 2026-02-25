@@ -130,7 +130,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
             )}
 
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], marginTop: sp[6], lineHeight: t.lineHeight.relaxed }}>
-              Areas brutas incluem componentes como jardim/patio/varanda/garagem/anexo/sotao conforme unidade. Solicite a brochura para detalhe completo.
+              Areas brutas incluem componentes como jardim/patio/varanda/garagem/anexo/duplex conforme unidade. Solicite a brochura para detalhe completo.
             </p>
           </motion.div>
         </div>

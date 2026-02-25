@@ -4,10 +4,10 @@ import { Container } from '@/components/Container';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
-  MapPin, MessageCircle, Download, Calendar, Star, ChevronDown,
+  MapPin, MessageCircle, Download, Calendar, ChevronDown,
 } from '@/components/icons';
 import { counters, highlights } from '../_data/velask-data';
-import { c, t, sp, sectionBadge, ctaButtonPrimary, ctaButtonOutline, anim } from './velask-styles';
+import { c, t, sp, ctaButtonPrimary, ctaButtonOutline, anim } from './velask-styles';
 
 interface VelaskHeroProps {
   isMobile: boolean;
@@ -18,7 +18,7 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
   const heroInView = useInView({ threshold: 0.1 });
 
   const handleWhatsApp = () => {
-    window.open('https://wa.me/351963290394?text=Ola! Gostaria de saber mais sobre o VELASK Residence.', '_blank');
+    window.open('https://wa.me/351963290394?text=Ol%C3%A1%2C+tenho+interesse+no+Projecto+Velask.', '_blank');
   };
 
   return (
@@ -52,37 +52,25 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
       <Container>
         <div style={{ position: 'relative', zIndex: 10, paddingTop: sp[32], paddingBottom: sp[32] }}>
           <div style={{ maxWidth: '48rem' }}>
-            <motion.div {...anim(0)}>
-              <span style={{ ...sectionBadge(true), color: c.brand.secondaryLight, background: 'rgba(184,149,106,0.15)', border: '1px solid rgba(184,149,106,0.25)' }}>
-                <Star style={{ width: 16, height: 16 }} />
-                Novo Empreendimento
-              </span>
-            </motion.div>
-
-            <motion.h1 {...anim(1)} style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight, lineHeight: t.lineHeight.tight, color: '#fff', marginBottom: sp[6] }}>
-              T1, T2 e T3 Duplex<br />
-              <span style={{ color: c.brand.secondaryLight }}>nas Antas (Campanha), Porto</span>
+            {/* Bug #01 — H1 is "VELASK" with subtitle */}
+            <motion.h1 {...anim(0)} style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight, lineHeight: 1, color: '#fff', marginBottom: sp[4] }}>
+              VELASK
             </motion.h1>
 
-            <motion.p {...anim(2)} style={{ fontSize: t.fontSize.xl, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.8)', marginBottom: sp[6] }}>
-              Tres apartamentos a estrear, com jardins privados e um duplex com sotao — numa rua residencial com acessos e transportes por perto.
+            <motion.p {...anim(1)} style={{ fontSize: t.fontSize['2xl'], fontWeight: t.fontWeight.semibold, color: c.brand.secondaryLight, marginBottom: sp[6], letterSpacing: t.letterSpacing.wide }}>
+              Antas &middot; Porto
             </motion.p>
 
-            <motion.div {...anim(3)} className="flex items-center gap-2" style={{ color: 'rgba(255,255,255,0.6)', marginBottom: sp[8] }}>
+            <motion.p {...anim(2)} style={{ fontSize: t.fontSize.xl, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.8)', marginBottom: sp[6] }}>
+              Reabilitacao total 2026. Tres apartamentos. Uma moradia transformada.
+            </motion.p>
+
+            <motion.div {...anim(3)} className="flex items-center gap-2" style={{ color: 'rgba(255,255,255,0.6)', marginBottom: sp[10] }}>
               <MapPin style={{ width: 16, height: 16, flexShrink: 0 }} />
               <span style={{ fontSize: t.fontSize.sm }}>Rua Manuel Carqueja, 259 — Porto (Campanha)</span>
             </motion.div>
 
-            <motion.div {...anim(4)} style={{ marginBottom: sp[10] }}>
-              <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, letterSpacing: t.letterSpacing.widest, textTransform: 'uppercase', color: c.brand.secondaryLight, marginBottom: sp[1] }}>
-                Tabela de Precos Sob Consulta
-              </p>
-              <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.5)' }}>
-                Receba a brochura com plantas, areas e valores.
-              </p>
-            </motion.div>
-
-            <motion.div {...anim(5)} className="flex flex-wrap gap-4 items-center">
+            <motion.div {...anim(4)} className="flex flex-wrap gap-4 items-center">
               <motion.button onClick={onScrollToForm} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Calendar style={{ width: 20, height: 20 }} /> AGENDAR VISITA
               </motion.button>
@@ -95,19 +83,20 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.div>
           </div>
 
-          <motion.div {...anim(6)} className="grid grid-cols-3 gap-6" style={{ marginTop: sp[20], maxWidth: '40rem' }}>
+          {/* Bug #05 — corrected stats */}
+          <motion.div {...anim(5)} className="grid grid-cols-3 gap-6" style={{ marginTop: sp[20], maxWidth: '40rem' }}>
             {counters.map((ct, i) => (
               <div key={i}>
                 <p style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: t.fontWeight.black, color: '#fff', lineHeight: 1 }}>
                   {ct.value}
-                  <span style={{ fontSize: t.fontSize['2xl'], color: c.brand.secondaryLight, marginLeft: sp[1] }}>{ct.suffix}</span>
+                  {ct.suffix && <span style={{ fontSize: t.fontSize['2xl'], color: c.brand.secondaryLight, marginLeft: sp[1] }}>{ct.suffix}</span>}
                 </p>
                 <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.5)', marginTop: sp[2], lineHeight: t.lineHeight.snug }}>{ct.label}</p>
               </div>
             ))}
           </motion.div>
 
-          <motion.div {...anim(7)} className="grid grid-cols-2 gap-4" style={{ marginTop: sp[12] }}>
+          <motion.div {...anim(6)} className="grid grid-cols-2 gap-4" style={{ marginTop: sp[12] }}>
             {highlights.map((h, i) => (
               <motion.div key={i} className="flex items-start gap-3 p-4 rounded-3xl" style={{ background: 'linear-gradient(135deg, rgba(26,62,92,0.35), rgba(15,39,56,0.45))', border: '2px solid rgba(255,255,255,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }} whileHover={isMobile ? {} : { y: -4, scale: 1.01 }}>
                 <span style={{ fontSize: t.fontSize.xl, flexShrink: 0, marginTop: 2 }}>{h.icon}</span>

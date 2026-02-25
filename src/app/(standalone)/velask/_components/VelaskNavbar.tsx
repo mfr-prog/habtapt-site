@@ -17,20 +17,25 @@ const NAV_LINKS = [
 export function VelaskNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
+    const onResize = () => setIsMobile(window.innerWidth < parseInt(ds.breakpoints.lg));
     onScroll();
+    onResize();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+    };
   }, []);
 
   const scrollTo = (id: string) => {
     setMenuOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < parseInt(ds.breakpoints.lg);
 
   return (
     <nav
@@ -40,10 +45,10 @@ export function VelaskNavbar() {
         left: 0,
         right: 0,
         zIndex: 1000,
-        transition: 'background 0.3s, box-shadow 0.3s',
-        background: scrolled ? 'rgba(15,28,46,0.85)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
+        transition: 'background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s',
+        background: scrolled ? 'rgba(26,62,92,0.92)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(8px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(8px)' : 'none',
         boxShadow: scrolled ? '0 1px 0 rgba(255,255,255,0.06)' : 'none',
       }}
     >
@@ -146,7 +151,7 @@ export function VelaskNavbar() {
               top: '100%',
               left: 0,
               right: 0,
-              background: 'rgba(15,28,46,0.95)',
+              background: 'rgba(26,62,92,0.95)',
               backdropFilter: 'blur(16px)',
               WebkitBackdropFilter: 'blur(16px)',
               padding: `${sp[6]} ${sp[6]} ${sp[8]}`,

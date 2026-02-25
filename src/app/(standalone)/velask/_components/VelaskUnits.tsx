@@ -6,7 +6,7 @@ import { Section } from '@/components/Section';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
-  CheckCircle, Home, Building, Ruler, Download, ArrowRight, Eye,
+  CheckCircle, Home, Ruler, Download, ArrowRight, Eye,
 } from '@/components/icons';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { benefits, interiorFeatures, units, unitImages } from '../_data/velask-data';
@@ -41,21 +41,21 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
 
   return (
     <>
-      {/* O EMPREENDIMENTO */}
+      {/* O PROJECTO — Bug #06 */}
       <Section background="white">
         <Container>
           <div ref={empInView.ref} className="text-center">
             <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
-              <span style={sectionBadge()}>O Empreendimento</span>
+              <span style={sectionBadge()}>O Projecto</span>
             </motion.div>
 
             <motion.h2 initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
-              VELASK Residence
+              O Velask
             </motion.h2>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', marginBottom: sp[12] }}>
               <p style={{ ...bodyText, marginBottom: sp[5] }}>
-                O VELASK Residence foi pensado para quem quer viver o Porto com mais espaco exterior — sem abdicar de um interior contemporaneo e funcional. Sao apenas tres apartamentos, cada um com um diferencial claro: jardim + garagem, jardim + anexo, ou duplex com sotao.
+                O VELASK foi pensado para quem quer viver o Porto com mais espaco exterior — sem abdicar de um interior contemporaneo e funcional. Sao apenas tres apartamentos, cada um com um diferencial claro: jardim + garagem, jardim + anexo, ou duplex com piso superior.
               </p>
               <p style={bodyText}>
                 As plantas privilegiam zonas sociais integradas e arrumacao, com areas exteriores desenhadas para refeicoes ao ar livre e momentos de descanso. <em style={{ fontSize: t.fontSize.sm, color: c.neutral[500] }}>(Imagens 3D ilustrativas.)</em>
