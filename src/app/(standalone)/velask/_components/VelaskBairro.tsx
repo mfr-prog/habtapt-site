@@ -54,7 +54,7 @@ export function VelaskBairro({ isMobile }: VelaskBairroProps) {
               </h2>
 
               <p style={{ ...bodyText, marginBottom: sp[8] }}>
-                Não é o centro histórico para turistas. É onde os portuenses escolhem viver. Campanhã tem metro a 3 minutos a pé, o maior centro comercial da zona a 5 minutos, e a estação de Campanhã — o maior nó intermodal do Porto — a 10 minutos a pé. Daqui chega ao aeroporto em 15 minutos de carro e ao centro do Porto em menos de 20. É um bairro que funciona no dia a dia, não só nos fins de semana.
+                A três minutos a pé do metro, a cinco do maior shopping da zona, a dez da estação que liga o Porto ao resto do país e ao aeroporto. Mas o que faz Campanhã diferente não são as distâncias — é o facto de ser um bairro real, com vida própria, onde ainda se conhece o dono do café. Uma das últimas zonas do Porto onde ainda é possível comprar bem, viver melhor e chegar a qualquer lado sem carro.
               </p>
 
               {/* Accordion */}
