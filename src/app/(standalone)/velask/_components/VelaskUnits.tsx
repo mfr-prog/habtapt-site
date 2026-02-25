@@ -6,7 +6,8 @@ import { Section } from '@/components/Section';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
-  CheckCircle, Home, Ruler, Download, ArrowRight, Eye,
+  Construction, Key, ChefHat,
+  Home, Ruler, Download, ArrowRight, Eye,
 } from '@/components/icons';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { benefits, interiorFeatures, units, unitImages } from '../_data/velask-data';
@@ -15,6 +16,8 @@ import {
   sectionBadge, sectionTitle, bodyText, cardBase, ctaButtonPrimary,
 } from './velask-styles';
 import { VelaskLightbox } from './VelaskLightbox';
+
+const benefitIcons = { Construction, Key, ChefHat } as const;
 
 interface VelaskUnitsProps {
   isMobile: boolean;
@@ -54,23 +57,24 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
             </motion.h2>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', marginBottom: sp[12] }}>
-              <p style={{ ...bodyText, marginBottom: sp[5] }}>
-                O VELASK foi pensado para quem quer viver o Porto com mais espaço exterior — sem abdicar de um interior contemporâneo e funcional. São apenas três apartamentos, cada um com um diferencial claro: jardim + garagem, jardim + anexo, ou duplex com piso superior.
-              </p>
               <p style={bodyText}>
-                As plantas privilegiam zonas sociais integradas e arrumação, com áreas exteriores desenhadas para refeições ao ar livre e momentos de descanso. <em style={{ fontSize: t.fontSize.sm, color: c.neutral[500] }}>(Imagens 3D ilustrativas.)</em>
+                O Velask é uma moradia histórica em Antas, Porto, totalmente reabilitada pela HABTA em 2026. Três apartamentos novos — T1 com jardim e garagem, T2 com jardim e anexo, T3 Duplex — com acabamentos de qualidade e entrega em 60 dias. Cada detalhe foi pensado para quem quer estrear, não renovar.
               </p>
             </motion.div>
 
             <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
-              {benefits.map((b, i) => (
-                <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3] }} initial={{ opacity: 0, y: 20 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <CheckCircle style={{ width: 20, height: 20, color: c.brand.secondary }} />
-                  </div>
-                  <p style={{ fontSize: t.fontSize.base, lineHeight: t.lineHeight.relaxed, color: c.neutral[700] }}>{b}</p>
-                </motion.div>
-              ))}
+              {benefits.map((b, i) => {
+                const Icon = benefitIcons[b.iconName];
+                return (
+                  <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3] }} initial={{ opacity: 0, y: 20 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon style={{ width: 24, height: 24, color: c.brand.secondary }} />
+                    </div>
+                    <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], lineHeight: t.lineHeight.snug }}>{b.title}</h3>
+                    <p style={{ fontSize: t.fontSize.base, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{b.desc}</p>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </Container>
@@ -120,11 +124,11 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
             </motion.div>
 
             <motion.h2 initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
-              Escolha a sua fracção
+              Três apartamentos com carácter próprio
             </motion.h2>
 
             <motion.p initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[6]}` }}>
-              Cada fracção tem características únicas. Selecione para explorar.
+              Escolha o que se encaixa na sua vida.
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.3 }} style={{ marginBottom: sp[12] }}>

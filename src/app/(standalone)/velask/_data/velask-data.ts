@@ -55,9 +55,21 @@ export const highlights = [
 ];
 
 export const benefits = [
-  'Apenas 3 unidades: mais privacidade, menos ruído de "condomínio grande".',
-  'Áreas exteriores reais (não "varandinhas").',
-  'Tipologias complementares: dá para escolher por estilo de vida (não por "o que sobrou").',
+  {
+    iconName: 'Construction' as const,
+    title: 'Reabilitação total',
+    desc: 'Estrutura, instalações, acabamentos. Tudo novo.',
+  },
+  {
+    iconName: 'Key' as const,
+    title: 'Entrega em 60 dias',
+    desc: 'Conclusão em 60 dias. Disponível em breve.',
+  },
+  {
+    iconName: 'ChefHat' as const,
+    title: 'Cozinha equipada',
+    desc: 'Electrodomésticos incluídos. Sem mais gastos.',
+  },
 ];
 
 export const interiorFeatures = [
@@ -152,7 +164,7 @@ export const locationAccordion = [
     icon: '\uD83D\uDED2',
     title: 'Comércio',
     items: [
-      'Alameda Shop & Spot (Continente, Fnac, 7 salas NOS) — 5 min a pé',
+      'Alameda Shop & Spot (Continente, Fnac, Zara, cinema 7 salas NOS) — 5 min a pé',
       'Comércio de bairro (café, farmácia, padaria) — no bairro',
     ],
   },
@@ -162,6 +174,7 @@ export const locationAccordion = [
     items: [
       'Hospital CUF Porto — 10 min de carro',
       'Hospital São João — 15 min de carro',
+      'Farmácias no bairro',
     ],
   },
   {
@@ -190,9 +203,11 @@ export const pricingRows = [
 ];
 
 export const faqItems = [
-  { q: 'As áreas exteriores são privativas?', a: 'Confirme na documentação da propriedade horizontal. Na brochura indicamos o detalhe por unidade.' },
-  { q: 'O que inclui a "área bruta" de cada unidade?', a: 'Cada unidade integra componentes diferentes (ex.: garagem, anexo, duplex). Por isso mostramos a decomposição completa na brochura.' },
-  { q: 'O piso superior do duplex conta como área habitacional?', a: 'Depende do licenciamento e do pé-direito/condições. Esclarecemos isso no processo (e deve estar refletido no CPCV).' },
-  { q: 'Há garagem?', a: 'A unidade do R/C inclui garagem privativa.' },
-  { q: 'Como posso agendar visita?', a: 'Clique em "Agendar visita" e indique o melhor dia/horário. Respondemos no próprio dia útil.' },
+  { q: 'Posso visitar o apartamento?', a: 'Sim. Agende uma visita através do formulário, WhatsApp ou email. Segunda a sexta, das 9h às 18h.' },
+  { q: 'Os apartamentos têm cozinha equipada?', a: 'Sim. Todos os apartamentos são entregues com cozinha totalmente equipada.' },
+  { q: 'Há possibilidade de financiamento bancário?', a: 'Sim. Os apartamentos são elegíveis para crédito habitação. Temos um parceiro financeiro que pode fazer uma simulação gratuita.' },
+  { q: 'Qual a data de entrega?', a: 'A obra estará concluída em aproximadamente 60 dias. Contacte-nos para reservar a sua unidade.' },
+  { q: 'Qual a certificação energética?', a: 'O certificado energético está em processo de emissão e ficará disponível em breve.' },
+  { q: 'Quem é a HABTA?', a: 'A HABTA é um grupo imobiliário de alta performance. O Velask é o primeiro projecto de reabilitação no Porto.' },
+  { q: 'Posso fazer uma proposta diferente do preço?', a: 'Fale connosco. Analisamos cada situação individualmente.' },
 ];

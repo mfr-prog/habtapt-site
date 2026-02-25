@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'VELASK | Apartamentos T1, T2 e T3 Duplex nas Antas, Porto — HABTA',
+  title: 'VELASK | Apartamentos T1, T2 e T3 Duplex para Venda nas Antas, Porto — Reabilitados 2026 — HABTA',
   description:
-    'Reabilitação total 2026. Três apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros. Rua Manuel Carqueja, 259.',
+    'Apartamentos T1, T2 e T3 Duplex reabilitados em 2026 nas Antas, Porto. Cozinha equipada, jardins privados e entrega em 60 dias. A partir de 399.000 euros.',
   keywords: [
     'apartamento porto',
     'T1 porto',
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
     'duplex porto',
   ],
   openGraph: {
-    title: 'VELASK | Apartamentos T1, T2 e T3 Duplex nas Antas, Porto',
+    title: 'VELASK | Apartamentos T1, T2 e T3 Duplex para Venda nas Antas, Porto — Reabilitados 2026',
     description:
-      'Reabilitação total 2026. Três apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros.',
+      'Apartamentos T1, T2 e T3 Duplex reabilitados em 2026 nas Antas, Porto. Cozinha equipada, jardins privados e entrega em 60 dias. A partir de 399.000 euros.',
     type: 'website',
     locale: 'pt_PT',
     siteName: 'HABTA',

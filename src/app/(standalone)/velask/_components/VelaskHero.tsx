@@ -4,7 +4,7 @@ import { Container } from '@/components/Container';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
-  MapPin, MessageCircle, Download, Calendar, ChevronDown,
+  MapPin, Calendar, ChevronDown, ArrowRight,
 } from '@/components/icons';
 import { counters, highlights } from '../_data/velask-data';
 import { c, t, sp, ctaButtonPrimary, ctaButtonOutline, anim } from './velask-styles';
@@ -17,8 +17,8 @@ interface VelaskHeroProps {
 export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
   const heroInView = useInView({ threshold: 0.1 });
 
-  const handleWhatsApp = () => {
-    window.open('https://wa.me/351963290394?text=Ol%C3%A1%2C+tenho+interesse+no+Projecto+Velask.', '_blank');
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -68,14 +68,11 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.div>
 
             <motion.div {...anim(4)} className="flex flex-wrap gap-4 items-center">
-              <motion.button onClick={onScrollToForm} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Calendar style={{ width: 20, height: 20 }} /> AGENDAR VISITA
+              <motion.button onClick={() => scrollToSection('precos')} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <ArrowRight style={{ width: 20, height: 20 }} /> Ver Apartamentos
               </motion.button>
-              <motion.button onClick={onScrollToForm} style={ctaButtonOutline} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Download style={{ width: 20, height: 20 }} /> DOWNLOAD PLANTAS (PDF)
-              </motion.button>
-              <motion.button onClick={handleWhatsApp} style={{ display: 'inline-flex', alignItems: 'center', gap: sp[2], padding: sp[3], fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: 'rgba(255,255,255,0.7)', background: 'none', border: 'none', cursor: 'pointer' }} whileHover={{ color: '#fff' }}>
-                <MessageCircle style={{ width: 16, height: 16 }} /> Falar por WhatsApp
+              <motion.button onClick={() => scrollToSection('contacto')} style={ctaButtonOutline} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Calendar style={{ width: 20, height: 20 }} /> Marcar Visita
               </motion.button>
             </motion.div>
           </div>

@@ -130,7 +130,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
             )}
 
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], marginTop: sp[6], lineHeight: t.lineHeight.relaxed }}>
-              Áreas brutas incluem componentes como jardim/pátio/varanda/garagem/anexo/duplex conforme unidade. Solicite a brochura para detalhe completo.
+              Preços incluem IVA. Sujeito a disponibilidade. Para informação sobre financiamento, contacte-nos.
             </p>
           </motion.div>
         </div>

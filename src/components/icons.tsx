@@ -74,6 +74,11 @@ export {
   Ruler,
   Bookmark,
   
+  // Construction & Home
+  Construction,
+  Key,
+  ChefHat,
+
   // Misc
   Quote,
   Info,
