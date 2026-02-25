@@ -92,7 +92,6 @@ export function Insights() {
       // Verificar cache primeiro
       const cached = projectsCache.get<Insight[]>(CACHE_KEYS.INSIGHTS);
       if (cached) {
-        console.log('[Insights] ⚡ Using cached insights');
         setArticles(cached);
         setIsLoading(false);
         return;
@@ -100,7 +99,6 @@ export function Insights() {
 
       try {
         setIsLoading(true);
-        console.log('[Insights] Fetching insights from server...');
         const response = await supabaseFetch('insights');
 
         if (!response.ok) {
@@ -109,7 +107,6 @@ export function Insights() {
         }
 
         const data = await response.json();
-        console.log('[Insights] Received data:', data);
 
         // Map server data to component format
         const mappedInsights = (data.insights || []).map((insight: any) => {
@@ -131,13 +128,11 @@ export function Insights() {
         });
 
         if (mappedInsights.length > 0) {
-          console.log('[Insights] ✅ Loaded insights:', mappedInsights.length);
           setArticles(mappedInsights);
           
           // Salvar no cache
           projectsCache.set(CACHE_KEYS.INSIGHTS, mappedInsights);
         } else {
-          console.log('[Insights] ℹ️ No insights from server, using fallback');
           setArticles(fallbackInsights);
         }
       } catch (error) {

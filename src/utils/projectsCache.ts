@@ -22,7 +22,6 @@ class ProjectsCache {
       timestamp: Date.now(),
       expiresIn: ttl,
     });
-    console.log(`[Cache] ✅ Cached: ${key} (TTL: ${ttl}ms)`);
   }
 
   /**
@@ -30,21 +29,18 @@ class ProjectsCache {
    */
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
-      console.log(`[Cache] ❌ Miss: ${key}`);
       return null;
     }
 
     const age = Date.now() - entry.timestamp;
-    
+
     if (age > entry.expiresIn) {
-      console.log(`[Cache] ⏰ Expired: ${key} (age: ${age}ms)`);
       this.cache.delete(key);
       return null;
     }
 
-    console.log(`[Cache] ✅ Hit: ${key} (age: ${age}ms)`);
     return entry.data as T;
   }
 
@@ -53,7 +49,6 @@ class ProjectsCache {
    */
   invalidate(key: string): void {
     this.cache.delete(key);
-    console.log(`[Cache] 🗑️ Invalidated: ${key}`);
   }
 
   /**
@@ -61,7 +56,6 @@ class ProjectsCache {
    */
   clear(): void {
     this.cache.clear();
-    console.log('[Cache] 🗑️ Cleared all cache');
   }
 
   /**

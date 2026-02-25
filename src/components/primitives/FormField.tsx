@@ -1,3 +1,5 @@
+'use client';
+
 // Primitive: Reusable Form Field Component
 import React, { useState, InputHTMLAttributes } from 'react';
 import { motion } from 'motion/react';

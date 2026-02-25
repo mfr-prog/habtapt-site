@@ -173,7 +173,6 @@ export function Portfolio() {
       // Verificar cache primeiro
       const cached = projectsCache.get<Project[]>(CACHE_KEYS.ALL_PROJECTS);
       if (cached) {
-        console.log('[Portfolio] ⚡ Using cached projects');
         setProjects(cached);
         setIsLoadingProjects(false);
         return;
@@ -186,8 +185,6 @@ export function Portfolio() {
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.projects && data.projects.length > 0) {
-            console.log(`[Portfolio] ✅ Loaded ${data.projects.length} projects from database`);
-            
             // Validar status
             data.projects.forEach((p: any) => {
               if (!['analysis', 'in-progress', 'available', 'sold'].includes(p.status)) {
@@ -200,7 +197,6 @@ export function Portfolio() {
             // Salvar no cache
             projectsCache.set(CACHE_KEYS.ALL_PROJECTS, data.projects);
           } else {
-            console.log('[Portfolio] ℹ️ No projects in database, using fallback data');
             setProjects(fallbackProjects);
           }
         } else {
@@ -235,7 +231,6 @@ export function Portfolio() {
   // Handler memoizado
   const handleProjectClick = useCallback(
     (id: string) => {
-      console.log('[Portfolio] Navigating to project:', id);
       router.push(`/portfolio/${id}`);
     },
     [router]

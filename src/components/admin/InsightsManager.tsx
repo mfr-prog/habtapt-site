@@ -169,19 +169,11 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
         updatedAt: new Date().toISOString(),
       };
 
-      console.log('[InsightsManager] Salvando insight:', {
-        id: editingInsight?.id,
-        title: insightData.title,
-        contentBlocksCount: insightData.contentBlocks?.length || 0,
-        contentBlocks: insightData.contentBlocks,
-      });
-
       if (editingInsight) {
         const response = await supabaseFetch(`/insights/${editingInsight.id}`, {
           method: 'PUT',
           body: JSON.stringify(insightData),
         });
-        console.log('[InsightsManager] Resposta do PUT:', response);
         toast.success('Insight atualizado com sucesso!');
       } else {
         const response = await supabaseFetch('/insights', {
@@ -192,7 +184,6 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
             createdAt: new Date().toISOString(),
           }),
         });
-        console.log('[InsightsManager] Resposta do POST:', response);
         toast.success('Insight criado com sucesso!');
       }
 

@@ -1,7 +1,11 @@
-'use client';
-
+import type { Metadata } from 'next';
 import { Insights } from '@/components/Insights';
 import { Section } from '@/components/Section';
+
+export const metadata: Metadata = {
+  title: 'Insights',
+  description: 'Artigos sobre investimento imobiliario, regulamentacao e sustentabilidade',
+};
 
 export default function BlogPage() {
   return (

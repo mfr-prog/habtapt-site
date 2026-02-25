@@ -1,3 +1,5 @@
+'use client';
+
 // Primitive: Authentication Card Wrapper
 import React, { ReactNode } from 'react';
 import { motion } from 'motion/react';

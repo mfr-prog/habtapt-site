@@ -67,8 +67,7 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
 
       if (response.ok) {
         const data = await response.json();
-        console.log('[TestimonialsManager] ✅ Depoimentos carregados:', data);
-        
+
         if (data.testimonials && Array.isArray(data.testimonials)) {
           setTestimonials(data.testimonials);
         }
@@ -104,7 +103,6 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
   };
 
   const handleCloseModal = () => {
-    console.log('[TestimonialsManager] Closing modal');
     setIsModalOpen(false);
     setEditingTestimonial(null);
     setFormData({
@@ -152,7 +150,6 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
 
         if (response.ok) {
           const result = await response.json();
-          console.log('[TestimonialsManager] ✅ Depoimento criado:', result);
           toast.success('Depoimento criado com sucesso!');
           await fetchTestimonials();
           handleCloseModal();
@@ -620,7 +617,6 @@ export function TestimonialsManager({ onRefresh, isLoading: parentLoading }: Tes
                     <ImageUpload
                       value={formData.image || ''}
                       onChange={(url) => {
-                        console.log('[TestimonialsManager] Image uploaded, URL:', url);
                         setFormData({ ...formData, image: url });
                       }}
                       bucket="testimonials"

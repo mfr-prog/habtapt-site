@@ -293,37 +293,21 @@ export function AdminPanel() {
 
   // Delete subscriber
   const handleDeleteSubscriber = async (id: string, email: string) => {
-    console.log('[AdminPanelNew] 🗑️ Iniciando exclusão de subscriber:', { id, email });
-    
     if (!confirm(`Tem certeza que deseja excluir o assinante ${email}?`)) {
-      console.log('[AdminPanelNew] ❌ Exclusão cancelada pelo usuário');
       return;
     }
 
     try {
-      console.log('[AdminPanelNew] 📡 Enviando requisição DELETE para:', `subscribers/${id}`);
-      
       const response = await supabaseFetch(`subscribers/${id}`, {
         method: 'DELETE',
       });
 
-      console.log('[AdminPanelNew] 📨 Resposta recebida:', { 
-        ok: response.ok, 
-        status: response.status 
-      });
-
       if (response.ok) {
         const data = await response.json();
-        console.log('[AdminPanelNew] ✅ Subscriber excluído com sucesso:', data);
-        
+
         // Atualizar o estado local removendo o subscriber
         setSubscribers(prev => {
           const updated = prev.filter(sub => sub.id !== id);
-          console.log('[AdminPanelNew] 📊 Estado atualizado:', {
-            before: prev.length,
-            after: updated.length,
-            removedId: id
-          });
           return updated;
         });
         

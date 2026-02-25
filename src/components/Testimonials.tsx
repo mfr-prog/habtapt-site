@@ -37,8 +37,7 @@ export function Testimonials() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('[Testimonials] ✅ Depoimentos carregados:', data.testimonials);
-          
+
           if (data.testimonials && Array.isArray(data.testimonials)) {
             setTestimonials(data.testimonials);
           }

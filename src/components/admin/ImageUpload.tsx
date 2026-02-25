@@ -33,8 +33,6 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log('[ImageUpload] File selected:', file.name, file.type, file.size);
-
     // Validação de tipo
     if (!file.type.startsWith('image/')) {
       toast.error('Por favor, selecione apenas arquivos de imagem');
@@ -51,13 +49,11 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
-      console.log('[ImageUpload] Preview set');
     };
     reader.readAsDataURL(file);
 
     // Upload para o Supabase Storage
     setIsUploading(true);
-    console.log('[ImageUpload] Starting upload to bucket:', bucket);
     try {
       const { projectId, publicAnonKey } = await import('../../utils/supabase/info');
       
@@ -67,8 +63,6 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
       const fileExt = file.name.split('.').pop();
       const fileName = `${timestamp}-${randomStr}.${fileExt}`;
       const filePath = `${fileName}`;
-
-      console.log('[ImageUpload] Uploading to path:', filePath);
 
       // Upload direto para o Storage usando a API REST
       const uploadUrl = `https://${projectId}.supabase.co/storage/v1/object/${bucket}/${filePath}`;
@@ -89,12 +83,10 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
       }
 
       const uploadData = await uploadResponse.json();
-      console.log('[ImageUpload] Upload response:', uploadData);
-      
+
       // Construir URL pública da imagem
       const publicUrl = `https://${projectId}.supabase.co/storage/v1/object/public/${bucket}/${filePath}`;
-      
-      console.log('[ImageUpload] Public URL:', publicUrl);
+
       onChange(publicUrl);
       toast.success('Imagem enviada com sucesso!');
     } catch (error) {

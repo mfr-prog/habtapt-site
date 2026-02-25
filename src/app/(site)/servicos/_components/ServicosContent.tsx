@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container } from '../components/Container';
-import { Section } from '../components/Section';
-import { Search, Hammer, TrendingUp, ArrowRight, CheckCircle, Target, Phone, MessageCircle } from '../components/icons';
+import { Container } from '@/components/Container';
+import { Section } from '@/components/Section';
+import { Search, Hammer, TrendingUp, ArrowRight, CheckCircle, Target, Phone, MessageCircle } from '@/components/icons';
 import { motion } from 'motion/react';
-import { useInView } from '../components/useInView';
-import { designSystem } from '../components/design-system';
-import { useRouter } from '../components/Router';
+import { useInView } from '@/components/useInView';
+import { designSystem } from '@/components/design-system';
+import { useRouter } from 'next/navigation';
 
-export function ServicesPage() {
+export default function ServicosContent() {
   const { ref, isInView } = useInView({ threshold: 0.1 });
-  const { navigate } = useRouter();
+  const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -362,7 +362,7 @@ export function ServicesPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button
-                  onClick={() => navigate('contact')}
+                  onClick={() => router.push('/contacto')}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center gap-3 px-10 py-5 rounded-full transition-all duration-300"
@@ -379,7 +379,7 @@ export function ServicesPage() {
                   <Phone size={20} />
                   Agendar Reunião
                 </motion.button>
-                
+
                 <motion.button
                   onClick={handleWhatsApp}
                   whileHover={{ scale: 1.05, y: -2 }}
@@ -398,11 +398,11 @@ export function ServicesPage() {
                   Saiba Mais
                 </motion.button>
               </div>
-              
+
               <div className="mt-6 pt-6 border-t border-white/20">
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <motion.button
-                    onClick={() => navigate('process')}
+                    onClick={() => router.push('/processo')}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors"
@@ -417,11 +417,11 @@ export function ServicesPage() {
                     Ver Nosso Processo
                     <ArrowRight size={16} />
                   </motion.button>
-                  
-                  <span className="hidden sm:block text-white/40">•</span>
-                  
+
+                  <span className="hidden sm:block text-white/40">&bull;</span>
+
                   <motion.button
-                    onClick={() => navigate('portfolio')}
+                    onClick={() => router.push('/portfolio')}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors"

@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container } from '../components/Container';
-import { Section } from '../components/Section';
-import { Search, ClipboardCheck, Building2, Hammer, Camera, TrendingUp, DollarSign, ArrowRight, Workflow } from '../components/icons';
+import { Container } from '@/components/Container';
+import { Section } from '@/components/Section';
+import { Search, ClipboardCheck, Building2, Hammer, Camera, TrendingUp, DollarSign, ArrowRight, Workflow } from '@/components/icons';
 import { motion } from 'motion/react';
-import { useInView } from '../components/useInView';
-import { designSystem } from '../components/design-system';
-import { useRouter } from '../components/Router';
+import { useInView } from '@/components/useInView';
+import { designSystem } from '@/components/design-system';
+import { useRouter } from 'next/navigation';
 
-export function ProcessPage() {
+export default function ProcessoContent() {
   const { ref, isInView } = useInView({ threshold: 0.1 });
-  const { navigate } = useRouter();
+  const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -265,7 +265,7 @@ export function ProcessPage() {
             className="text-center mt-16"
           >
             <motion.button
-              onClick={() => navigate('portfolio')}
+              onClick={() => router.push('/portfolio')}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center gap-3 px-10 py-5 rounded-full transition-all duration-300"
