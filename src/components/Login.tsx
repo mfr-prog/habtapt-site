@@ -2,7 +2,7 @@ import React, { useState, FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { Shield, Lock, User, LogIn } from './icons';
 import { toast } from 'sonner';
-import { useRouter } from './Router';
+import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
 import { AuthCard } from './primitives/AuthCard';
 import { FormField } from './primitives/FormField';
@@ -12,7 +12,7 @@ import { animations } from '../utils/animations';
 import { designSystem } from './design-system';
 
 export function Login() {
-  const { navigate } = useRouter();
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +46,7 @@ export function Login() {
         sessionStorage.setItem('habta_admin_user', username);
 
         toast.success('Login realizado com sucesso!');
-        setTimeout(() => navigate('admin'), 500);
+        setTimeout(() => router.push('/admin'), 500);
       } else {
         setErrors({ username: '', password: 'Credenciais inválidas' });
         toast.error('Credenciais inválidas. Tente novamente.');

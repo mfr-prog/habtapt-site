@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { colors, shadows, radius, spacing, gradients } from '../../utils/styles';
 import { animations } from '../../utils/animations';
-import { useRouter } from '../Router';
+import { useRouter } from 'next/navigation';
 
 interface AuthCardProps {
   children: ReactNode;
@@ -23,7 +23,7 @@ export function AuthCard({
   backRoute = 'home',
   maxWidth = '480px',
 }: AuthCardProps) {
-  const { navigate } = useRouter();
+  const router = useRouter();
 
   return (
     <div
@@ -73,7 +73,7 @@ export function AuthCard({
       {/* Back Button */}
       {showBackButton && (
         <motion.button
-          onClick={() => navigate(backRoute as any)}
+          onClick={() => router.push(backRoute === 'home' ? '/' : `/${backRoute}`)}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           whileHover={{ x: -5 }}
@@ -106,7 +106,7 @@ export function AuthCard({
           }}
         >
           <ArrowLeft size={18} />
-          <span style={{ display: window.innerWidth < 640 ? 'none' : 'inline' }}>
+          <span className="hidden sm:inline">
             Voltar
           </span>
         </motion.button>

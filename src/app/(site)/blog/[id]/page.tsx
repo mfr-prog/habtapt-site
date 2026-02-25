@@ -1,0 +1,427 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Container } from '@/components/Container';
+import { Section } from '@/components/Section';
+import { motion } from 'motion/react';
+import { useInView } from '@/components/useInView';
+import { designSystem } from '@/components/design-system';
+import { useParams, useRouter } from 'next/navigation';
+import {
+  ArrowLeft, Calendar, Clock, User, Share2, TrendingUp, Building2, Leaf, CheckCircle, ChevronRight,
+} from '@/components/icons';
+import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
+import { supabaseFetch } from '@/utils/supabase/client';
+import { projectsCache, CACHE_KEYS } from '@/utils/projectsCache';
+import { InsightDetailSkeleton } from '@/components/primitives/InsightDetailSkeleton';
+import { NewsletterModal } from '@/components/NewsletterModal';
+
+interface ContentBlock {
+  type: 'heading2' | 'heading3' | 'paragraph' | 'list' | 'callout';
+  content: string | string[];
+}
+
+interface Insight {
+  id: string;
+  title: string;
+  description?: string;
+  category: string;
+  readTime: string;
+  icon?: string;
+  iconColor?: string;
+  gradient?: string;
+  author: string;
+  authorRole: string;
+  date: string;
+  excerpt: string;
+  image: string;
+  tags: string[];
+  content?: string | ContentBlock[];
+  contentBlocks?: ContentBlock[];
+  relatedInsights?: string[];
+}
+
+const categoryConfig = {
+  Investimento: {
+    name: 'Investimento',
+    icon: TrendingUp,
+    color: designSystem.colors.brand.primary,
+    gradient: designSystem.colors.gradients.primary,
+  },
+  Regulamentação: {
+    name: 'Regulamentação',
+    icon: Building2,
+    color: designSystem.colors.brand.accent,
+    gradient: designSystem.colors.gradients.accent,
+  },
+  Sustentabilidade: {
+    name: 'Sustentabilidade',
+    icon: Leaf,
+    color: designSystem.colors.brand.secondary,
+    gradient: designSystem.colors.gradients.secondary,
+  },
+};
+
+export default function InsightDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const { ref: sectionRef, isInView } = useInView({ threshold: 0.1 });
+  const [insight, setInsight] = useState<Insight | null>(null);
+  const [relatedInsights, setRelatedInsights] = useState<Insight[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareLinkCopied, setShareLinkCopied] = useState(false);
+  const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchInsight = async () => {
+      if (!id) {
+        setIsLoading(false);
+        return;
+      }
+
+      const cached = projectsCache.get<Insight>(CACHE_KEYS.INSIGHT_BY_ID(id));
+      if (cached) {
+        setInsight(cached);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await supabaseFetch('/insights');
+        if (!response.ok) throw new Error(`Server returned ${response.status}`);
+
+        const data = await response.json();
+
+        if (data && data.success && data.insights) {
+          const foundInsight = data.insights.find((i: Insight) => i.id === id);
+
+          if (foundInsight) {
+            projectsCache.set(CACHE_KEYS.INSIGHT_BY_ID(id), foundInsight);
+          }
+
+          setInsight(foundInsight || null);
+
+          if (foundInsight) {
+            const related = data.insights
+              .filter((i: Insight) => i.id !== foundInsight.id && i.category === foundInsight.category)
+              .slice(0, 3);
+
+            if (related.length < 3) {
+              const otherArticles = data.insights
+                .filter((i: Insight) => i.id !== foundInsight.id && i.category !== foundInsight.category && !related.some((r: Insight) => r.id === i.id))
+                .slice(0, 3 - related.length);
+              related.push(...otherArticles);
+            }
+            setRelatedInsights(related);
+          }
+        }
+      } catch (error) {
+        console.error('[InsightDetailPage] Erro:', error);
+        setInsight(null);
+      }
+      setIsLoading(false);
+    };
+    fetchInsight();
+  }, [id]);
+
+  useEffect(() => {
+    const mdBreakpoint = parseInt(designSystem.breakpoints.md);
+    const checkMobile = () => setIsMobile(window.innerWidth < mdBreakpoint);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Section background="white" style={{ paddingTop: '7.5rem', minHeight: '100vh' }}>
+        <Container><InsightDetailSkeleton /></Container>
+      </Section>
+    );
+  }
+
+  if (!insight) {
+    return (
+      <Section background="white" style={{ paddingTop: '7.5rem', minHeight: '60vh' }}>
+        <Container>
+          <div className="text-center">
+            <h1 style={{ marginBottom: designSystem.spacing[4] }}>Artigo não encontrado</h1>
+            <p style={{ fontSize: '1.125rem', color: designSystem.colors.neutral[600], marginBottom: designSystem.spacing[8] }}>
+              O artigo que você está procurando não existe ou foi removido.
+            </p>
+            <motion.button
+              onClick={() => router.push('/blog')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ padding: `${designSystem.spacing[3]} ${designSystem.spacing[6]}`, background: designSystem.colors.gradients.primary, color: designSystem.colors.neutral.white, border: 'none', borderRadius: designSystem.borderRadius.lg, cursor: 'pointer', fontWeight: designSystem.typography.fontWeight.semibold }}
+            >
+              Voltar aos Insights
+            </motion.button>
+          </div>
+        </Container>
+      </Section>
+    );
+  }
+
+  const category = categoryConfig[insight.category as keyof typeof categoryConfig] || categoryConfig.Investimento;
+  const CategoryIcon = category?.icon || TrendingUp;
+
+  const handleShare = () => {
+    setShowShareModal(true);
+    setShareLinkCopied(false);
+  };
+
+  const copyShareLink = () => {
+    const link = window.location.href;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(() => {
+        setShareLinkCopied(true);
+        setTimeout(() => setShareLinkCopied(false), 3000);
+      }).catch(() => fallbackCopy(link));
+    } else {
+      fallbackCopy(link);
+    }
+  };
+
+  const fallbackCopy = (text: string) => {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      setShareLinkCopied(true);
+      setTimeout(() => setShareLinkCopied(false), 3000);
+    } catch (err) { /* ignore */ }
+    document.body.removeChild(textArea);
+  };
+
+  const renderContent = () => {
+    if (insight.contentBlocks && Array.isArray(insight.contentBlocks)) {
+      return renderStructuredContent(insight.contentBlocks);
+    }
+    if (Array.isArray(insight.content)) {
+      return renderStructuredContent(insight.content);
+    }
+    if (typeof insight.content === 'string' && insight.content) {
+      const paragraphs = insight.content.split('\n\n').filter(p => p.trim());
+      if (paragraphs.length > 0) {
+        return (
+          <div style={{ fontSize: '1.0625rem', lineHeight: '1.8', color: designSystem.colors.neutral[700] }}>
+            {paragraphs.map((paragraph, idx) => (
+              <p key={idx} style={{ marginBottom: designSystem.spacing[6], textAlign: 'justify' }}>{paragraph}</p>
+            ))}
+          </div>
+        );
+      }
+    }
+    return <p style={{ color: designSystem.colors.neutral[500], fontStyle: 'italic', padding: designSystem.spacing[8], textAlign: 'center' }}>Conteúdo não disponível.</p>;
+  };
+
+  const renderStructuredContent = (blocks: ContentBlock[]) => {
+    return blocks.map((block, index) => {
+      switch (block.type) {
+        case 'heading2':
+          return <h2 key={index} style={{ fontSize: '1.875rem', fontWeight: designSystem.typography.fontWeight.black, color: designSystem.colors.brand.primary, marginTop: index === 0 ? '0' : designSystem.spacing[12], marginBottom: designSystem.spacing[4] }}>{block.content as string}</h2>;
+        case 'heading3':
+          return <h3 key={index} style={{ fontSize: '1.5rem', fontWeight: designSystem.typography.fontWeight.bold, color: designSystem.colors.brand.primary, marginTop: designSystem.spacing[8], marginBottom: designSystem.spacing[3] }}>{block.content as string}</h3>;
+        case 'paragraph':
+          return <p key={index} style={{ fontSize: '1.0625rem', lineHeight: '1.8', color: designSystem.colors.neutral[700], marginBottom: designSystem.spacing[6], textAlign: 'justify' }}>{block.content as string}</p>;
+        case 'list':
+          return (
+            <ul key={index} style={{ listStyle: 'none', padding: 0, marginBottom: designSystem.spacing[8] }}>
+              {(block.content as string[]).map((item, idx) => (
+                <li key={idx} className="flex items-start gap-3" style={{ marginBottom: designSystem.spacing[3] }}>
+                  <CheckCircle size={20} style={{ color: category.color, flexShrink: 0, marginTop: '0.25rem' }} />
+                  <span style={{ fontSize: '1.0625rem', lineHeight: '1.7', color: designSystem.colors.neutral[700] }}>{item}</span>
+                </li>
+              ))}
+            </ul>
+          );
+        case 'callout':
+          return (
+            <div key={index} style={{ padding: designSystem.spacing[6], background: `${category.color}08`, borderLeft: `4px solid ${category.color}`, borderRadius: designSystem.borderRadius.lg, marginBottom: designSystem.spacing[8] }}>
+              <p style={{ fontSize: '1.0625rem', color: designSystem.colors.brand.primary, fontWeight: designSystem.typography.fontWeight.medium, margin: 0, fontStyle: 'italic' }}>{block.content as string}</p>
+            </div>
+          );
+        default:
+          return null;
+      }
+    });
+  };
+
+  return (
+    <>
+      <Section background="white" style={{ paddingTop: '100px', paddingBottom: '0' }}>
+        <Container>
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} style={{ marginBottom: designSystem.spacing[6] }}>
+            <button
+              onClick={() => router.push('/blog')}
+              className="flex items-center gap-2 group"
+              style={{ background: 'transparent', border: 'none', color: designSystem.colors.brand.primary, cursor: 'pointer', padding: `${designSystem.spacing[2]} 0`, fontWeight: designSystem.typography.fontWeight.semibold }}
+            >
+              <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
+              Voltar aos Insights
+            </button>
+          </motion.div>
+
+          <div ref={sectionRef}>
+            <motion.div className="flex flex-wrap items-center gap-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: designSystem.spacing[6] }}>
+              <div className="flex items-center gap-2" style={{ padding: `${designSystem.spacing[2]} ${designSystem.spacing[4]}`, background: category.gradient, color: designSystem.colors.neutral.white, borderRadius: designSystem.borderRadius.full, fontWeight: designSystem.typography.fontWeight.semibold, fontSize: '0.875rem' }}>
+                <CategoryIcon size={16} />
+                {category.name}
+              </div>
+              {insight.tags?.map((tag, index) => (
+                <span key={index} style={{ padding: `${designSystem.spacing[1]} ${designSystem.spacing[3]}`, background: designSystem.colors.neutral[100], color: designSystem.colors.neutral[700], borderRadius: designSystem.borderRadius.full, fontSize: '0.875rem' }}>{tag}</span>
+              ))}
+            </motion.div>
+
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} style={{ marginBottom: designSystem.spacing[6], color: designSystem.colors.brand.primary }}>
+              {insight.title}
+            </motion.h1>
+
+            <motion.div className="flex flex-wrap items-center gap-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} style={{ marginBottom: designSystem.spacing[8], paddingBottom: designSystem.spacing[8], borderBottom: `2px solid ${designSystem.colors.neutral[200]}` }}>
+              <div className="flex items-center gap-3">
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: category.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: designSystem.colors.neutral.white, fontWeight: designSystem.typography.fontWeight.bold, fontSize: '1.25rem' }}>
+                  {insight.author.charAt(0)}
+                </div>
+                <div>
+                  <p style={{ fontWeight: designSystem.typography.fontWeight.semibold, color: designSystem.colors.neutral[900], marginBottom: '0.125rem' }}>{insight.author}</p>
+                  <p style={{ fontSize: '0.875rem', color: designSystem.colors.neutral[600] }}>{insight.authorRole}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1" style={{ color: designSystem.colors.neutral[600] }}>
+                <Calendar size={16} />
+                <span style={{ fontSize: '0.875rem' }}>{insight.date}</span>
+              </div>
+              <div className="flex items-center gap-1" style={{ color: designSystem.colors.neutral[600] }}>
+                <Clock size={16} />
+                <span style={{ fontSize: '0.875rem' }}>{insight.readTime}</span>
+              </div>
+              <div className="flex items-center gap-4 ml-auto">
+                <button onClick={handleShare} className="flex items-center gap-2 group" style={{ background: 'transparent', border: 'none', color: designSystem.colors.neutral[600], cursor: 'pointer', padding: designSystem.spacing[2] }}>
+                  <Share2 size={18} className="group-hover:scale-110 transition-transform" />
+                  <span style={{ fontSize: '0.875rem' }}>Compartilhar</span>
+                </button>
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} style={{ marginBottom: designSystem.spacing[12], borderRadius: designSystem.borderRadius['2xl'], overflow: 'hidden', boxShadow: designSystem.shadows.lg }}>
+              <ImageWithFallback src={insight.image} alt={insight.title} style={{ width: '100%', height: isMobile ? '250px' : '500px', objectFit: 'cover' }} />
+            </motion.div>
+
+            <motion.article initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
+              {renderContent()}
+            </motion.article>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} style={{ marginTop: designSystem.spacing[12], padding: designSystem.spacing[8], background: designSystem.colors.neutral[50], borderRadius: designSystem.borderRadius['2xl'], textAlign: 'center' }}>
+              <h3 style={{ color: designSystem.colors.brand.primary, marginBottom: designSystem.spacing[4] }}>Gostou deste artigo?</h3>
+              <p style={{ color: designSystem.colors.neutral[600], marginBottom: designSystem.spacing[6] }}>
+                Compartilhe com quem também se interessa por reabilitação urbana e investimento imobiliário.
+              </p>
+              <div className="flex justify-center gap-4">
+                <motion.button onClick={handleShare} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={{ padding: `${designSystem.spacing[3]} ${designSystem.spacing[6]}`, background: designSystem.colors.gradients.primary, color: designSystem.colors.neutral.white, border: 'none', borderRadius: designSystem.borderRadius.lg, cursor: 'pointer', fontWeight: designSystem.typography.fontWeight.semibold }}>
+                  Compartilhar
+                </motion.button>
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} className="text-center" style={{ marginTop: designSystem.spacing[8] }}>
+              <p style={{ color: designSystem.colors.neutral[500], fontSize: designSystem.typography.fontSize.sm }}>
+                Gostou do conteúdo?{' '}
+                <button
+                  onClick={() => setIsNewsletterOpen(true)}
+                  style={{ color: designSystem.colors.brand.secondary, fontWeight: designSystem.typography.fontWeight.semibold, textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                >
+                  Receba mais insights por email
+                </button>
+              </p>
+            </motion.div>
+          </div>
+        </Container>
+      </Section>
+
+      {relatedInsights.length > 0 && (
+        <Section background="neutral.50" style={{ paddingTop: designSystem.spacing[16], paddingBottom: designSystem.spacing[16] }}>
+          <Container>
+            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ textAlign: 'center', marginBottom: designSystem.spacing[12] }}>
+                <h2 style={{ color: designSystem.colors.brand.primary, marginBottom: designSystem.spacing[4] }}>Artigos Relacionados</h2>
+                <p style={{ fontSize: '1.125rem', color: designSystem.colors.neutral[600] }}>Continue aprendendo sobre reabilitação urbana e investimento imobiliário</p>
+              </motion.div>
+
+              <motion.div className="grid gap-8" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))' }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
+                {relatedInsights.map((related) => {
+                  const relatedCategory = categoryConfig[related.category as keyof typeof categoryConfig] || categoryConfig.Investimento;
+                  const RelatedIcon = relatedCategory.icon;
+                  return (
+                    <motion.div
+                      key={related.id}
+                      whileHover={{ y: -8 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={() => router.push(`/blog/${related.id}`)}
+                      className="group cursor-pointer"
+                      style={{ background: designSystem.colors.neutral.white, borderRadius: designSystem.borderRadius['2xl'], overflow: 'hidden', boxShadow: designSystem.shadows.md }}
+                    >
+                      <div style={{ position: 'relative', overflow: 'hidden', height: '200px' }}>
+                        <ImageWithFallback src={related.image} alt={related.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} className="group-hover:scale-110" />
+                        <div className="flex items-center gap-2" style={{ position: 'absolute', top: designSystem.spacing[4], left: designSystem.spacing[4], padding: `${designSystem.spacing[2]} ${designSystem.spacing[3]}`, background: relatedCategory.gradient, color: designSystem.colors.neutral.white, borderRadius: designSystem.borderRadius.full, fontSize: '0.75rem', fontWeight: designSystem.typography.fontWeight.bold }}>
+                          <RelatedIcon size={14} />
+                          {relatedCategory.name}
+                        </div>
+                      </div>
+                      <div style={{ padding: designSystem.spacing[6] }}>
+                        <h3 style={{ color: designSystem.colors.brand.primary, marginBottom: designSystem.spacing[3] }}>{related.title}</h3>
+                        <p style={{ fontSize: '0.9375rem', color: designSystem.colors.neutral[600], lineHeight: '1.6', marginBottom: designSystem.spacing[4] }}>{related.excerpt}</p>
+                        <div className="flex items-center gap-3 text-sm">
+                          <div className="flex items-center gap-1">
+                            <Clock size={14} style={{ color: designSystem.colors.neutral[500] }} />
+                            <span style={{ color: designSystem.colors.neutral[600], fontSize: '0.875rem' }}>{related.readTime}</span>
+                          </div>
+                          <span className="flex items-center gap-1.5 ml-auto group-hover:gap-2.5 transition-all duration-300" style={{ color: designSystem.colors.brand.primary, fontWeight: designSystem.typography.fontWeight.semibold, fontSize: '0.875rem' }}>
+                            Ler artigo
+                            <ChevronRight size={16} />
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </div>
+          </Container>
+        </Section>
+      )}
+
+      {/* Modal de Compartilhamento */}
+      {showShareModal && (
+        <div onClick={() => setShowShareModal(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: designSystem.spacing[4] }}>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} onClick={(e) => e.stopPropagation()} style={{ background: designSystem.colors.neutral.white, borderRadius: designSystem.borderRadius['2xl'], padding: designSystem.spacing[8], maxWidth: '500px', width: '100%', boxShadow: designSystem.shadows['2xl'] }}>
+            <div style={{ marginBottom: designSystem.spacing[6] }}>
+              <h3 style={{ color: designSystem.colors.brand.primary, marginBottom: designSystem.spacing[2] }}>Compartilhar Artigo</h3>
+              <p style={{ fontSize: '0.9375rem', color: designSystem.colors.neutral[600] }}>Copie o link abaixo para compartilhar este artigo</p>
+            </div>
+            <div style={{ padding: designSystem.spacing[4], background: designSystem.colors.neutral[50], borderRadius: designSystem.borderRadius.lg, marginBottom: designSystem.spacing[6], border: `2px solid ${designSystem.colors.neutral[200]}` }}>
+              <p style={{ fontSize: '0.875rem', color: designSystem.colors.neutral[700], wordBreak: 'break-all', margin: 0 }}>{typeof window !== 'undefined' ? window.location.href : ''}</p>
+            </div>
+            <div className="flex gap-3">
+              <motion.button onClick={copyShareLink} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ flex: 1, padding: `${designSystem.spacing[3]} ${designSystem.spacing[6]}`, background: shareLinkCopied ? designSystem.colors.brand.secondary : designSystem.colors.gradients.primary, color: designSystem.colors.neutral.white, border: 'none', borderRadius: designSystem.borderRadius.lg, cursor: 'pointer', fontWeight: designSystem.typography.fontWeight.semibold }}>
+                {shareLinkCopied ? '✓ Copiado!' : 'Copiar Link'}
+              </motion.button>
+              <motion.button onClick={() => setShowShareModal(false)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: `${designSystem.spacing[3]} ${designSystem.spacing[6]}`, background: designSystem.colors.neutral[200], color: designSystem.colors.neutral[700], border: 'none', borderRadius: designSystem.borderRadius.lg, cursor: 'pointer', fontWeight: designSystem.typography.fontWeight.semibold }}>
+                Fechar
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      <NewsletterModal isOpen={isNewsletterOpen} onClose={() => setIsNewsletterOpen(false)} />
+    </>
+  );
+}

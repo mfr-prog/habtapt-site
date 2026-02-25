@@ -8,7 +8,7 @@ import { Building2 } from './icons';
 import { motion, AnimatePresence } from 'motion/react';
 import { useInView } from './useInView';
 import { designSystem } from './design-system';
-import { useRouter } from './Router';
+import { useRouter } from 'next/navigation';
 import { supabaseFetch } from '../utils/supabase/client';
 import { projectsCache, CACHE_KEYS } from '../utils/projectsCache';
 import { PortfolioCard } from './primitives/PortfolioCard';
@@ -38,7 +38,7 @@ interface Project {
 
 export function Portfolio() {
   const { ref, isInView } = useInView({ threshold: 0.1 });
-  const { navigate } = useRouter();
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<ProjectStatus>('all');
   const [isMobile, setIsMobile] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -236,9 +236,9 @@ export function Portfolio() {
   const handleProjectClick = useCallback(
     (id: string) => {
       console.log('[Portfolio] Navigating to project:', id);
-      navigate('portfolio-detail', { id });
+      router.push(`/portfolio/${id}`);
     },
-    [navigate]
+    [router]
   );
 
   return (

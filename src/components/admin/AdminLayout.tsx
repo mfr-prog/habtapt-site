@@ -2,7 +2,7 @@
 import React, { ReactNode } from 'react';
 import { Home, LogOut } from 'lucide-react';
 import { colors, shadows, spacing, radius, typography } from '../../utils/styles';
-import { useRouter } from '../Router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface AdminLayoutProps {
@@ -10,13 +10,13 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { navigate } = useRouter();
+  const router = useRouter();
 
   const handleLogout = () => {
     sessionStorage.removeItem('habta_admin_auth');
     sessionStorage.removeItem('habta_admin_user');
     toast.success('Sessão encerrada');
-    setTimeout(() => navigate('login'), 600);
+    setTimeout(() => router.push('/login'), 600);
   };
 
   return (
@@ -74,7 +74,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <nav aria-label="Ações do painel administrativo">
             <div style={{ display: 'flex', gap: spacing[2] }}>
               <button
-                onClick={() => navigate('home')}
+                onClick={() => router.push('/')}
                 aria-label="Voltar para o site principal"
                 style={{
                   display: 'flex',
@@ -100,7 +100,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 }}
               >
                 <Home size={16} aria-hidden="true" />
-                <span style={{ display: window.innerWidth < 768 ? 'none' : 'inline' }}>
+                <span className="hidden md:inline">
                   Site
                 </span>
               </button>
@@ -132,7 +132,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 }}
               >
                 <LogOut size={16} aria-hidden="true" />
-                <span style={{ display: window.innerWidth < 768 ? 'none' : 'inline' }}>
+                <span className="hidden md:inline">
                   Sair
                 </span>
               </button>

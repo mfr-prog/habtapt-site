@@ -9,11 +9,10 @@ import { useInView } from './useInView';
 import { designSystem } from './design-system';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
-import { useRouter } from './Router';
+import Link from 'next/link';
 
 export function Services() {
   const { ref, isInView } = useInView({ threshold: 0.1 });
-  const { navigate } = useRouter();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -332,24 +331,25 @@ export function Services() {
           >
             Cada etapa é executada com precisão para garantir o máximo retorno do seu investimento.
           </p>
-          <motion.button
-            onClick={() => navigate('process')}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-3 px-10 py-5 rounded-full transition-all duration-300"
-            style={{
-              background: designSystem.colors.gradients.primary,
-              color: designSystem.colors.neutral.white,
-              fontWeight: designSystem.typography.fontWeight.semibold,
-              fontSize: designSystem.typography.fontSize['17'],
-              boxShadow: '0 8px 24px rgba(26, 62, 92, 0.2)',
-              cursor: 'pointer',
-              border: 'none',
-            }}
-          >
-            Conheça Nosso Processo
-            <TrendingUp size={20} />
-          </motion.button>
+          <Link href="/processo" style={{ textDecoration: 'none' }}>
+            <motion.span
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-full transition-all duration-300"
+              style={{
+                background: designSystem.colors.gradients.primary,
+                color: designSystem.colors.neutral.white,
+                fontWeight: designSystem.typography.fontWeight.semibold,
+                fontSize: designSystem.typography.fontSize['17'],
+                boxShadow: '0 8px 24px rgba(26, 62, 92, 0.2)',
+                cursor: 'pointer',
+                border: 'none',
+              }}
+            >
+              Conheça Nosso Processo
+              <TrendingUp size={20} />
+            </motion.span>
+          </Link>
         </motion.div>
         </section>
       </Container>

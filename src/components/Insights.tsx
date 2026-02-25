@@ -8,7 +8,7 @@ import { BookOpen, TrendingUp, Building2, Leaf } from './icons';
 import { motion } from 'motion/react';
 import { useInView } from './useInView';
 import { designSystem } from './design-system';
-import { useRouter } from './Router';
+import { useRouter } from 'next/navigation';
 import { NewsletterModal } from './NewsletterModal';
 import { supabaseFetch } from '../utils/supabase/client';
 import { projectsCache, CACHE_KEYS } from '../utils/projectsCache';
@@ -28,7 +28,7 @@ interface Insight {
 
 export function Insights() {
   const { ref, isInView } = useInView({ threshold: 0.1 });
-  const { navigate } = useRouter();
+  const router = useRouter();
   const [isMobile, setIsMobile] = useState(false);
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
   const [articles, setArticles] = useState<Insight[]>([]);
@@ -154,9 +154,9 @@ export function Insights() {
   // Handler memoizado
   const handleInsightClick = useCallback(
     (id: string) => {
-      navigate('insight-detail', { id });
+      router.push(`/blog/${id}`);
     },
-    [navigate]
+    [router]
   );
 
   // Categorias para filtros

@@ -29,7 +29,7 @@ import {
 } from './icons';
 import { toast } from 'sonner';
 import { supabaseFetch } from '../utils/supabase/client';
-import { useRouter } from './Router';
+import { useRouter } from 'next/navigation';
 import { AdminLayout } from './admin/AdminLayout';
 import { MetricCard } from './admin/MetricCard';
 import { ProjectsManager } from './admin/ProjectsManager';
@@ -107,7 +107,7 @@ interface Insight {
 }
 
 export function AdminPanel() {
-  const { navigate } = useRouter();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'contacts' | 'leads' | 'subscribers' | 'projects' | 'insights' | 'testimonials'>('contacts');
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -128,9 +128,9 @@ export function AdminPanel() {
     const isAuthenticated = sessionStorage.getItem('habta_admin_auth') === 'true';
     if (!isAuthenticated) {
       toast.error('Acesso negado. Por favor, faça login.');
-      navigate('login');
+      router.push('/login');
     }
-  }, [navigate]);
+  }, [router]);
 
   // Fetch data
   const fetchContacts = async () => {
@@ -671,7 +671,7 @@ export function AdminPanel() {
               }}
             >
               {sortOrder === 'newest' ? <TrendingUp size={14} aria-hidden="true" /> : <Clock size={14} aria-hidden="true" />}
-              <span style={{ display: window.innerWidth < 1024 ? 'none' : 'inline' }}>
+              <span className="hidden lg:inline">
                 {sortOrder === 'newest' ? 'Recentes' : 'Antigos'}
               </span>
             </button>
@@ -741,7 +741,7 @@ export function AdminPanel() {
               }}
             >
               <Download size={14} aria-hidden="true" />
-              <span style={{ display: window.innerWidth < 768 ? 'none' : 'inline' }}>
+              <span className="hidden md:inline">
                 Exportar
               </span>
             </button>

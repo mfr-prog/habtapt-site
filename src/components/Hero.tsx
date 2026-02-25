@@ -8,10 +8,9 @@ import { designSystem } from './design-system';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { LogoPattern } from './LogoPatterns';
-import { useRouter } from './Router';
+import Link from 'next/link';
 
 export function Hero() {
-  const { navigate } = useRouter();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const { scrollY } = useScroll();
@@ -236,56 +235,60 @@ export function Hero() {
                 marginBottom: designSystem.spacing[16]
               }}
             >
-              <motion.button
-                onClick={() => navigate('portfolio')}
-                whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className="group inline-flex items-center justify-center rounded-full transition-all w-full sm:w-auto"
-                aria-label="Ver oportunidades de investimento disponíveis"
-                style={{
-                  gap: designSystem.spacing[3],
-                  paddingLeft: designSystem.spacing[10],
-                  paddingRight: designSystem.spacing[10],
-                  paddingTop: designSystem.spacing[5],
-                  paddingBottom: designSystem.spacing[5],
-                  background: designSystem.colors.gradients.secondary,
-                  boxShadow: '0 10px 40px rgba(184, 149, 106, 0.3)',
-                  color: designSystem.colors.neutral.white,
-                  fontWeight: designSystem.typography.fontWeight.semibold,
-                  fontSize: designSystem.typography.fontSize['17'],
-                  minWidth: designSystem.sizes?.button?.minWidth?.md || '220px',
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                Ver Oportunidades
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </motion.button>
+              <Link href="/portfolio" style={{ textDecoration: 'none', width: isMobile ? '100%' : 'auto' }}>
+                <motion.span
+                  whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="group inline-flex items-center justify-center rounded-full transition-all w-full sm:w-auto"
+                  aria-label="Ver oportunidades de investimento disponíveis"
+                  style={{
+                    gap: designSystem.spacing[3],
+                    paddingLeft: designSystem.spacing[10],
+                    paddingRight: designSystem.spacing[10],
+                    paddingTop: designSystem.spacing[5],
+                    paddingBottom: designSystem.spacing[5],
+                    background: designSystem.colors.gradients.secondary,
+                    boxShadow: '0 10px 40px rgba(184, 149, 106, 0.3)',
+                    color: designSystem.colors.neutral.white,
+                    fontWeight: designSystem.typography.fontWeight.semibold,
+                    fontSize: designSystem.typography.fontSize['17'],
+                    minWidth: designSystem.sizes?.button?.minWidth?.md || '220px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                  }}
+                >
+                  Ver Oportunidades
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </motion.span>
+              </Link>
 
-              <motion.button
-                onClick={() => navigate('contact')}
-                whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center justify-center rounded-full backdrop-blur-md transition-all w-full sm:w-auto"
-                aria-label="Agendar consultoria gratuita"
-                style={{
-                  gap: designSystem.spacing[3],
-                  paddingLeft: designSystem.spacing[10],
-                  paddingRight: designSystem.spacing[10],
-                  paddingTop: designSystem.spacing[5],
-                  paddingBottom: designSystem.spacing[5],
-                  borderWidth: '2px',
-                  borderColor: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.3),
-                  background: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.1),
-                  color: designSystem.colors.neutral.white,
-                  fontWeight: designSystem.typography.fontWeight.semibold,
-                  fontSize: designSystem.typography.fontSize['17'],
-                  minWidth: designSystem.sizes?.button?.minWidth?.md || '220px',
-                  cursor: 'pointer',
-                }}
-              >
-                Agendar Consultoria
-              </motion.button>
+              <Link href="/contacto" style={{ textDecoration: 'none', width: isMobile ? '100%' : 'auto' }}>
+                <motion.span
+                  whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center justify-center rounded-full backdrop-blur-md transition-all w-full sm:w-auto"
+                  aria-label="Agendar consultoria gratuita"
+                  style={{
+                    gap: designSystem.spacing[3],
+                    paddingLeft: designSystem.spacing[10],
+                    paddingRight: designSystem.spacing[10],
+                    paddingTop: designSystem.spacing[5],
+                    paddingBottom: designSystem.spacing[5],
+                    borderWidth: '2px',
+                    borderColor: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.3),
+                    background: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.1),
+                    color: designSystem.colors.neutral.white,
+                    fontWeight: designSystem.typography.fontWeight.semibold,
+                    fontSize: designSystem.typography.fontSize['17'],
+                    minWidth: designSystem.sizes?.button?.minWidth?.md || '220px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                  }}
+                >
+                  Agendar Consultoria
+                </motion.span>
+              </Link>
             </motion.div>
 
             {/* Stats */}
