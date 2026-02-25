@@ -358,6 +358,7 @@ app.post("/make-server-4b2936bc/projects", async (c) => {
       highlights,
       portalLink,
       brochureLink,
+      landingPage,
     } = body;
 
     // Validation
@@ -390,6 +391,7 @@ app.post("/make-server-4b2936bc/projects", async (c) => {
       highlights: highlights || "",
       portalLink: portalLink || null,
       brochureLink: brochureLink || null,
+      landingPage: landingPage || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       timestamp,
@@ -442,6 +444,7 @@ app.put("/make-server-4b2936bc/projects/:id", async (c) => {
       highlights,
       portalLink,
       brochureLink,
+      landingPage,
     } = body;
 
     // Validation
@@ -470,6 +473,7 @@ app.put("/make-server-4b2936bc/projects/:id", async (c) => {
       highlights: highlights || "",
       portalLink: portalLink || null,
       brochureLink: brochureLink || null,
+      landingPage: landingPage || null,
       updatedAt: new Date().toISOString(),
     };
 
