@@ -11,6 +11,7 @@ import { designSystem } from '../design-system';
 interface ExternalLinksCardProps {
   portalLink?: string | null;
   brochureLink?: string | null;
+  landingPage?: string | null;
   animated?: boolean;
   delay?: number;
   isMobile?: boolean;
@@ -19,11 +20,12 @@ interface ExternalLinksCardProps {
 export function ExternalLinksCard({
   portalLink,
   brochureLink,
+  landingPage,
   animated = true,
   delay = 0.3,
   isMobile = false,
 }: ExternalLinksCardProps) {
-  if (!portalLink && !brochureLink) return null;
+  if (!portalLink && !brochureLink && !landingPage) return null;
 
   const Wrapper = animated ? motion.div : 'div';
   const wrapperProps = animated
@@ -88,6 +90,33 @@ export function ExternalLinksCard({
             margin: '0 auto',
           }}
         >
+          {landingPage && (
+            <motion.button
+              onClick={() => window.open(landingPage, '_self')}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center justify-center rounded-full transition-all"
+              style={{
+                flex: 1,
+                gap: designSystem.spacing[2],
+                paddingLeft: designSystem.spacing[8],
+                paddingRight: designSystem.spacing[8],
+                paddingTop: designSystem.spacing[4],
+                paddingBottom: designSystem.spacing[4],
+                background: designSystem.colors.brand.primary,
+                color: designSystem.colors.neutral.white,
+                fontWeight: designSystem.typography.fontWeight.semibold,
+                fontSize: designSystem.typography.fontSize.base,
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: `0 4px 12px ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.3)}`,
+              }}
+            >
+              <ExternalLink size={18} />
+              <span>Ver Landing Page</span>
+            </motion.button>
+          )}
+
           {portalLink && (
             <motion.button
               onClick={() => window.open(portalLink, '_blank', 'noopener,noreferrer')}

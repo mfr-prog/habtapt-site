@@ -248,17 +248,12 @@ export function Portfolio() {
     [activeFilter, projects]
   );
 
-  // Handler memoizado - verifica se o projeto tem landing page própria
+  // Handler memoizado - abre sempre a página de detalhes do projeto
   const handleProjectClick = useCallback(
     (id: string) => {
-      const proj = projects.find(p => p.id === id);
-      if (proj?.landingPage) {
-        router.push(proj.landingPage);
-      } else {
-        router.push(`/portfolio/${id}`);
-      }
+      router.push(`/portfolio/${id}`);
     },
-    [router, projects]
+    [router]
   );
 
   return (

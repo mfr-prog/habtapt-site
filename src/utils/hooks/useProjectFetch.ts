@@ -24,6 +24,7 @@ export interface Project {
   salePrice: string | null;
   portalLink: string | null;
   brochureLink: string | null;
+  landingPage?: string | null;
   type?: string;
   description: string;
   highlights: string[];
@@ -139,6 +140,7 @@ export const useProjectFetch = (
         salePrice: priceValue,
         portalLink: data.project.portalLink || null,
         brochureLink: data.project.brochureLink || null,
+        landingPage: data.project.landingPage || null,
         type: 'Apartamento',
         description: data.project.description || '',
         highlights: data.project.highlights

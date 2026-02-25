@@ -371,8 +371,17 @@ export default function PortfolioDetailContent() {
                 <FinancialMetricCard label="Valor de Venda" value={project.financials.sale} highlight />
                 <FinancialMetricCard label="Lucro Líquido" value={project.financials.profit} subtitle={`ROI: ${project.financials.roi}`} success />
               </div>
-              <ExternalLinksCard portalLink={project.portalLink} brochureLink={project.brochureLink} animated={true} delay={0.3} isMobile={isMobile} />
+              <ExternalLinksCard portalLink={project.portalLink} brochureLink={project.brochureLink} landingPage={project.landingPage} animated={true} delay={0.3} isMobile={isMobile} />
             </motion.div>
+          </Container>
+        </Section>
+      )}
+
+      {/* Links Externos (quando não há financials) */}
+      {!project.financials && (project.portalLink || project.brochureLink || project.landingPage) && (
+        <Section background="muted">
+          <Container>
+            <ExternalLinksCard portalLink={project.portalLink} brochureLink={project.brochureLink} landingPage={project.landingPage} animated={true} delay={0.1} isMobile={isMobile} />
           </Container>
         </Section>
       )}
