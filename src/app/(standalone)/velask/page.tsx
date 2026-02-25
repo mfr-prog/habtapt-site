@@ -72,10 +72,10 @@ export default function VelaskPage() {
           <div className="flex items-center justify-between gap-4" style={{ flexDirection: isMobile ? 'column' : 'row' }}>
             <div className="flex items-center gap-4" style={{ flexDirection: isMobile ? 'column' : 'row' }}>
               <a href="https://habta.eu" style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.black, color: '#fff', textDecoration: 'none', letterSpacing: t.letterSpacing.wider }}>HABTA</a>
-              <a href="https://habta.eu/privacidade" style={{ fontSize: t.fontSize.xs, color: c.neutral[500], textDecoration: 'none' }}>Politica de Privacidade</a>
+              <a href="https://habta.eu/privacidade" style={{ fontSize: t.fontSize.xs, color: c.neutral[500], textDecoration: 'none' }}>Política de Privacidade</a>
             </div>
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], textAlign: isMobile ? 'center' : 'left', maxWidth: '36rem' }}>
-              As imagens e renders 3D sao ilustrativos e nao vinculativos. As areas sao aproximadas e devem ser confirmadas com documentacao oficial. Esta informacao nao constitui proposta contratual e pode ser alterada sem aviso.
+              As imagens e renders 3D são ilustrativos e não vinculativos. As áreas são aproximadas e devem ser confirmadas com documentação oficial. Esta informação não constitui proposta contratual e pode ser alterada sem aviso.
             </p>
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[600], whiteSpace: 'nowrap' }}>
               VELASK Residence &copy; {new Date().getFullYear()}

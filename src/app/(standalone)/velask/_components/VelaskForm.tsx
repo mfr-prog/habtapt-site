@@ -74,7 +74,6 @@ export function VelaskForm({ isMobile, selectedTypology = '' }: VelaskFormProps)
               </motion.div>
             ) : (
               <form onSubmit={handleFormSubmit} className="rounded-3xl" style={{ padding: isMobile ? sp[8] : sp[10], background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(12px)', textAlign: 'left' }}>
-                {/* Bug #09 — simplified to 3 fields */}
                 <div style={{ marginBottom: sp[5] }}>
                   <label style={{ display: 'block', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: 'rgba(255,255,255,0.8)', marginBottom: sp[2] }}>Nome completo <span style={{ color: c.brand.secondaryLight }}>*</span></label>
                   <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} style={inputStyle} placeholder="O seu nome" />
@@ -88,16 +87,16 @@ export function VelaskForm({ isMobile, selectedTypology = '' }: VelaskFormProps)
                 <div style={{ marginBottom: sp[8] }}>
                   <label style={{ display: 'block', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: 'rgba(255,255,255,0.8)', marginBottom: sp[2] }}>Qual apartamento lhe interessa? <span style={{ color: c.brand.secondaryLight }}>*</span></label>
                   <select required value={formData.typology} onChange={(e) => setFormData({ ...formData, typology: e.target.value })} style={inputStyle}>
-                    <option value="" style={{ color: '#333' }}>Selecione...</option>
-                    <option value="t1" style={{ color: '#333' }}>Fraccao A — T1</option>
-                    <option value="t2" style={{ color: '#333' }}>Fraccao B — T2</option>
-                    <option value="t3" style={{ color: '#333' }}>Fraccao C — T3 Duplex</option>
-                    <option value="unsure" style={{ color: '#333' }}>Todos / Ainda nao sei</option>
+                    <option value="" style={{ color: '#333' }}>Selecione…</option>
+                    <option value="t1" style={{ color: '#333' }}>Fracção A — T1</option>
+                    <option value="t2" style={{ color: '#333' }}>Fracção B — T2</option>
+                    <option value="t3" style={{ color: '#333' }}>Fracção C — T3 Duplex</option>
+                    <option value="unsure" style={{ color: '#333' }}>Todos / Ainda não sei</option>
                   </select>
                 </div>
 
                 <motion.button type="submit" disabled={isSubmitting} className="flex items-center justify-center gap-2" style={{ ...ctaButtonPrimary, width: '100%', justifyContent: 'center', opacity: isSubmitting ? 0.7 : 1 }} whileHover={isMobile ? {} : { scale: 1.02 }} whileTap={{ scale: 0.95 }}>
-                  <Send style={{ width: 20, height: 20 }} /> {isSubmitting ? 'A ENVIAR...' : 'QUERO SER CONTACTADO'}
+                  <Send style={{ width: 20, height: 20 }} /> {isSubmitting ? 'A ENVIAR…' : 'QUERO SER CONTACTADO'}
                 </motion.button>
               </form>
             )}

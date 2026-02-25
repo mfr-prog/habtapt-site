@@ -41,7 +41,7 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
 
   return (
     <>
-      {/* O PROJECTO — Bug #06 */}
+      {/* O PROJECTO */}
       <Section background="white">
         <Container>
           <div ref={empInView.ref} className="text-center">
@@ -55,10 +55,10 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', marginBottom: sp[12] }}>
               <p style={{ ...bodyText, marginBottom: sp[5] }}>
-                O VELASK foi pensado para quem quer viver o Porto com mais espaco exterior — sem abdicar de um interior contemporaneo e funcional. Sao apenas tres apartamentos, cada um com um diferencial claro: jardim + garagem, jardim + anexo, ou duplex com piso superior.
+                O VELASK foi pensado para quem quer viver o Porto com mais espaço exterior — sem abdicar de um interior contemporâneo e funcional. São apenas três apartamentos, cada um com um diferencial claro: jardim + garagem, jardim + anexo, ou duplex com piso superior.
               </p>
               <p style={bodyText}>
-                As plantas privilegiam zonas sociais integradas e arrumacao, com areas exteriores desenhadas para refeicoes ao ar livre e momentos de descanso. <em style={{ fontSize: t.fontSize.sm, color: c.neutral[500] }}>(Imagens 3D ilustrativas.)</em>
+                As plantas privilegiam zonas sociais integradas e arrumação, com áreas exteriores desenhadas para refeições ao ar livre e momentos de descanso. <em style={{ fontSize: t.fontSize.sm, color: c.neutral[500] }}>(Imagens 3D ilustrativas.)</em>
               </p>
             </motion.div>
 
@@ -83,7 +83,7 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
             </motion.div>
 
             <motion.h2 initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
-              Interiores contemporaneos, luz e funcionalidade
+              Interiores contemporâneos, luz e funcionalidade
             </motion.h2>
 
             <motion.p initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '48rem', margin: `0 auto ${sp[12]}` }}>
@@ -103,7 +103,7 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
             </div>
 
             <motion.p initial={{ opacity: 0 }} animate={intInView.isInView ? { opacity: 1 } : {}} transition={{ duration: 0.5, delay: 0.8 }} style={{ fontSize: t.fontSize.xs, fontStyle: 'italic', color: c.neutral[500], marginTop: sp[10] }}>
-              As imagens e renders sao meramente ilustrativos. Mobiliario e decoracao nao incluidos. Solucoes finais dependem de projeto de acabamentos.
+              As imagens e renders são meramente ilustrativos. Mobiliário e decoração não incluídos. Soluções finais dependem de projeto de acabamentos.
             </motion.p>
           </div>
         </Container>
@@ -122,11 +122,11 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
             </motion.h2>
 
             <motion.p initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[6]}` }}>
-              Compare as tres unidades lado a lado. Aqui as areas estao detalhadas (interior + exterior + extras) para evitar confusao com "area bruta".
+              Compare as três unidades lado a lado. Aqui as áreas estão detalhadas (interior + exterior + extras) para evitar confusão com "área bruta".
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.3 }} style={{ marginBottom: sp[12] }}>
-              <motion.button onClick={onScrollToForm} style={{ ...ctaButtonPrimary, background: c.gradients.primary, boxShadow: ds.shadows.primaryHover }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+              <motion.button onClick={onScrollToForm} style={{ ...ctaButtonPrimary, background: c.gradients.primary, color: '#fff', boxShadow: ds.shadows.primaryHover }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Download style={{ width: 18, height: 18 }} /> DOWNLOAD PLANTAS (PDF)
               </motion.button>
             </motion.div>
@@ -153,13 +153,7 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
                           src={(unitImages[unit.id] || [])[0]?.src}
                           alt={`${unit.title} — render 3D`}
                           loading="lazy"
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                         <div
                           className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"

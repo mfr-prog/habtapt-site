@@ -9,8 +9,8 @@ const NAV_LINKS = [
   { label: 'O Projecto', target: 'projecto' },
   { label: 'Interiores', target: 'interiores' },
   { label: 'Galeria', target: 'galeria' },
-  { label: 'Localizacao', target: 'localizacao' },
-  { label: 'Precos', target: 'precos' },
+  { label: 'Localização', target: 'localizacao' },
+  { label: 'Preços', target: 'precos' },
   { label: 'Contacto', target: 'contacto' },
 ];
 

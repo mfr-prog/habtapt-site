@@ -31,7 +31,6 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
         alignItems: 'center',
       }}
     >
-      {/* Background image */}
       <img
         src="/images/velask/t2/1.jpeg"
         alt=""
@@ -45,14 +44,12 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
           objectPosition: 'center 40%',
         }}
       />
-      {/* Dark overlay gradient */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(135deg, rgba(10,20,35,0.88) 0%, rgba(15,28,46,0.82) 50%, rgba(10,20,35,0.75) 100%)' }} />
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 70% 40%, rgba(184,149,106,0.12) 0%, transparent 70%)' }} />
 
       <Container>
         <div style={{ position: 'relative', zIndex: 10, paddingTop: sp[32], paddingBottom: sp[32] }}>
           <div style={{ maxWidth: '48rem' }}>
-            {/* Bug #01 — H1 is "VELASK" with subtitle */}
             <motion.h1 {...anim(0)} style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight, lineHeight: 1, color: '#fff', marginBottom: sp[4] }}>
               VELASK
             </motion.h1>
@@ -62,12 +59,12 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.p>
 
             <motion.p {...anim(2)} style={{ fontSize: t.fontSize.xl, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.8)', marginBottom: sp[6] }}>
-              Reabilitacao total 2026. Tres apartamentos. Uma moradia transformada.
+              Reabilitação total 2026. Três apartamentos. Uma moradia transformada.
             </motion.p>
 
             <motion.div {...anim(3)} className="flex items-center gap-2" style={{ color: 'rgba(255,255,255,0.6)', marginBottom: sp[10] }}>
               <MapPin style={{ width: 16, height: 16, flexShrink: 0 }} />
-              <span style={{ fontSize: t.fontSize.sm }}>Rua Manuel Carqueja, 259 — Porto (Campanha)</span>
+              <span style={{ fontSize: t.fontSize.sm }}>Rua Manuel Carqueja, 259 — Porto (Campanhã)</span>
             </motion.div>
 
             <motion.div {...anim(4)} className="flex flex-wrap gap-4 items-center">
@@ -83,7 +80,6 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.div>
           </div>
 
-          {/* Bug #05 — corrected stats */}
           <motion.div {...anim(5)} className="grid grid-cols-3 gap-6" style={{ marginTop: sp[20], maxWidth: '40rem' }}>
             {counters.map((ct, i) => (
               <div key={i}>

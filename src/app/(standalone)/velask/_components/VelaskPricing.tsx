@@ -30,7 +30,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
           </motion.div>
 
           <motion.h2 initial={{ opacity: 0, y: 30 }} animate={priceInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={{ ...sectionTitle, marginBottom: sp[12] }}>
-            Precos e Disponibilidade
+            Preços e Disponibilidade
           </motion.h2>
 
           <motion.div initial={{ opacity: 0, y: 30 }} animate={priceInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '56rem', margin: '0 auto' }}>
@@ -39,7 +39,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                 <table style={{ width: '100%' }}>
                   <thead>
                     <tr style={{ background: c.brand.primary }}>
-                      {['Unidade', 'Piso', 'Tipologia', 'Area bruta (m\u00B2)', 'Preco', 'Estado', ''].map(h => (
+                      {['Unidade', 'Piso', 'Tipologia', 'Área bruta (m\u00B2)', 'Preço', 'Estado', ''].map(h => (
                         <th key={h} style={{ textAlign: 'left', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: '#fff', padding: `${sp[4]} ${sp[6]}` }}>{h}</th>
                       ))}
                     </tr>
@@ -100,7 +100,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                     </div>
                     <div className="grid grid-cols-2 gap-2" style={{ fontSize: t.fontSize.sm }}>
                       <div><span style={{ color: c.neutral[500] }}>Piso: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.floor}</span></div>
-                      <div><span style={{ color: c.neutral[500] }}>Area: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
+                      <div><span style={{ color: c.neutral[500] }}>Área: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
                     </div>
                     <div className="flex items-center justify-between" style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
                       <p style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</p>
@@ -130,7 +130,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
             )}
 
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], marginTop: sp[6], lineHeight: t.lineHeight.relaxed }}>
-              Areas brutas incluem componentes como jardim/patio/varanda/garagem/anexo/duplex conforme unidade. Solicite a brochura para detalhe completo.
+              Áreas brutas incluem componentes como jardim/pátio/varanda/garagem/anexo/duplex conforme unidade. Solicite a brochura para detalhe completo.
             </p>
           </motion.div>
         </div>

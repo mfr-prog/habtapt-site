@@ -40,7 +40,7 @@ export function VelaskGallery({ isMobile }: VelaskGalleryProps) {
     setSelectedIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length);
   }, [lightboxImages.length]);
 
-  // Bug #07 — asymmetric grid: row of 1 large + 2 small
+  // Asymmetric grid: row of 1 large + 2 small
   const rows: { src: string; alt: string; caption: string; big: boolean; idx: number }[][] = [];
   let i = 0;
   while (i < galleryItems.length) {
@@ -61,14 +61,13 @@ export function VelaskGallery({ isMobile }: VelaskGalleryProps) {
           </motion.div>
 
           <motion.h2 initial={{ opacity: 0, y: 30 }} animate={galInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={{ ...sectionTitle, marginBottom: sp[4] }}>
-            Ambientes e inspiracao
+            Ambientes e inspiração
           </motion.h2>
 
           <motion.p initial={{ opacity: 0, y: 30 }} animate={galInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[12]}` }}>
             Explore o conceito de interiores e exteriores. <em>(Imagens 3D ilustrativas.)</em>
           </motion.p>
 
-          {/* Asymmetric grid: 1 big + 2 small per row */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: sp[4] }}>
             {rows.map((row, ri) => (
               <div
@@ -97,22 +96,14 @@ export function VelaskGallery({ isMobile }: VelaskGalleryProps) {
                       src={item.src}
                       alt={item.alt}
                       loading="lazy"
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     />
-                    {/* Hover overlay with Eye icon */}
                     <div
                       className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                       style={{ background: 'rgba(26,62,92,0.3)' }}
                     >
                       <Eye style={{ width: 32, height: 32, color: '#fff' }} />
                     </div>
-                    {/* Caption overlay in gold */}
                     <div className="absolute" style={{ inset: '0', top: 'auto', padding: sp[4], background: 'linear-gradient(to top, rgba(26,62,92,0.75), transparent)' }}>
                       <p style={{ color: c.brand.secondaryLight, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, lineHeight: t.lineHeight.snug }}>{item.caption}</p>
                     </div>
@@ -122,11 +113,10 @@ export function VelaskGallery({ isMobile }: VelaskGalleryProps) {
             ))}
           </div>
 
-          {/* Bug #07 — "Ver todas as fotografias" button */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={galInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.8 }} style={{ marginTop: sp[10] }}>
             <motion.button
               onClick={openFullGallery}
-              style={{ ...ctaButtonPrimary, background: c.gradients.primary, boxShadow: ds.shadows.primaryHover }}
+              style={{ ...ctaButtonPrimary, background: c.gradients.primary, color: '#fff', boxShadow: ds.shadows.primaryHover }}
               whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
             >

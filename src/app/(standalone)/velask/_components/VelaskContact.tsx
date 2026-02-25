@@ -14,16 +14,11 @@ interface VelaskContactProps {
 export function VelaskContact({ isMobile }: VelaskContactProps) {
   const contactInView = useInView({ threshold: 0.1 });
 
-  const handleWhatsApp = () => {
-    window.open('https://wa.me/351963290394?text=Ol%C3%A1%2C+tenho+interesse+no+Projecto+Velask.', '_blank');
-  };
-
   return (
     <Section background="white">
       <Container>
         <div ref={contactInView.ref} style={{ maxWidth: '48rem', margin: '0 auto' }}>
           <motion.div className="text-center" initial={{ opacity: 0, y: 30 }} animate={contactInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
-            {/* Bug #04 — "Fale Connosco" instead of "Gestor de Vendas" */}
             <span style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -42,7 +37,7 @@ export function VelaskContact({ isMobile }: VelaskContactProps) {
 
             <h2 style={{ ...sectionTitle, marginBottom: sp[4] }}>Fale Connosco</h2>
             <p style={{ ...bodyText, marginBottom: sp[10] }}>
-              Estamos disponiveis para responder a todas as suas questoes e agendar uma visita ao imovel.
+              Estamos disponíveis para responder a todas as suas questões e agendar uma visita ao imóvel.
             </p>
 
             <div className="flex gap-4 justify-center flex-wrap" style={{ marginBottom: sp[8] }}>
@@ -53,6 +48,7 @@ export function VelaskContact({ isMobile }: VelaskContactProps) {
                 style={{
                   ...ctaButtonPrimary,
                   background: '#25d366',
+                  color: '#fff',
                   boxShadow: '0 4px 14px rgba(37,211,102,0.3)',
                   textDecoration: 'none',
                   justifyContent: 'center',
@@ -68,6 +64,7 @@ export function VelaskContact({ isMobile }: VelaskContactProps) {
                 style={{
                   ...ctaButtonPrimary,
                   background: c.gradients.primary,
+                  color: '#fff',
                   boxShadow: ds.shadows.primaryHover,
                   textDecoration: 'none',
                   justifyContent: 'center',
@@ -82,10 +79,8 @@ export function VelaskContact({ isMobile }: VelaskContactProps) {
                 href="tel:+351963290394"
                 style={{
                   ...ctaButtonPrimary,
-                  background: c.gradients.secondary,
-                  color: c.brand.primary,
-                  textDecoration: 'none',
                   justifyContent: 'center',
+                  textDecoration: 'none',
                 }}
                 whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}

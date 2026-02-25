@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'VELASK | Apartamentos T1, T2 e T3 Duplex nas Antas, Porto — HABTA',
   description:
-    'Reabilitacao total 2026. Tres apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros. Rua Manuel Carqueja, 259.',
+    'Reabilitação total 2026. Três apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros. Rua Manuel Carqueja, 259.',
   keywords: [
     'apartamento porto',
     'T1 porto',
@@ -11,17 +11,17 @@ export const metadata: Metadata = {
     'T3 duplex porto',
     'antas porto',
     'campanha porto',
-    'imovel novo porto',
+    'imóvel novo porto',
     'velask',
     'habta',
-    'reabilitacao urbana porto',
+    'reabilitação urbana porto',
     'apartamento jardim porto',
     'duplex porto',
   ],
   openGraph: {
     title: 'VELASK | Apartamentos T1, T2 e T3 Duplex nas Antas, Porto',
     description:
-      'Reabilitacao total 2026. Tres apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros.',
+      'Reabilitação total 2026. Três apartamentos a estrear com jardins privados e duplex nas Antas, Porto. A partir de 399.000 euros.',
     type: 'website',
     locale: 'pt_PT',
     siteName: 'HABTA',
@@ -47,7 +47,7 @@ export default function VelaskLayout({
             '@type': 'RealEstateListing',
             name: 'VELASK',
             description:
-              'Tres apartamentos a estrear com jardins privados e duplex nas Antas, Porto. Reabilitacao total 2026.',
+              'Três apartamentos a estrear com jardins privados e duplex nas Antas, Porto. Reabilitação total 2026.',
             url: 'https://habta.eu/velask',
             address: {
               '@type': 'PostalAddress',
