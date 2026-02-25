@@ -41,7 +41,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '56rem', margin: `0 auto ${sp[8]}` }}>
             <div style={{ position: 'relative', width: '100%', height: 420, borderRadius: '1rem', overflow: 'hidden', border: `1px solid ${c.neutral[200]}` }}>
               <iframe
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Rua+Manuel+Carqueja+259,Porto,Portugal&zoom=16"
+                src="https://maps.google.com/maps?q=Rua+Manuel+Carqueja+259,+Porto,+Portugal&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 style={{ width: '100%', height: '100%', border: 0 }}
                 allowFullScreen
                 loading="lazy"

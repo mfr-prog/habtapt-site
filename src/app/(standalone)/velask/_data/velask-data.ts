@@ -71,7 +71,7 @@ export const interiorFeatures = [
 export const units = [
   {
     id: 'rc',
-    tab: 'R/C \u2014 T1',
+    tab: 'Fracção A \u2014 T1',
     title: 'T1 Garden Garage',
     area: '118,44 m\u00B2',
     summary: 'Jardim amplo + garagem privativa: a solução "casa" dentro da cidade.',
@@ -92,7 +92,7 @@ export const units = [
   },
   {
     id: 'p1',
-    tab: 'Piso 1 \u2014 T2',
+    tab: 'Fracção B \u2014 T2',
     title: 'T2 Garden Annex',
     area: '106,78 m\u00B2',
     summary: 'Dois quartos, exterior completo e um anexo que dá flexibilidade (arrumos/office/…).',
@@ -114,7 +114,7 @@ export const units = [
   },
   {
     id: 'p2',
-    tab: 'Piso 2 \u2014 T3 Duplex',
+    tab: 'Fracção C \u2014 T3 Duplex',
     title: 'T3 Duplex',
     area: '108,67 m\u00B2',
     summary: 'Duplex com piso extra: espaço para família + trabalho + lazer.',

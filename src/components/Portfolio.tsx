@@ -62,8 +62,8 @@ export function Portfolio() {
       price: 'Sob consulta',
       investment: 'Sob consulta',
       timeline: 'Entrega 2026',
-      description: 'Três apartamentos a estrear nas Antas (Porto), com jardins privados, garagem e duplex com sótão.',
-      highlights: 'Jardins privados até 27,80 m²\nExterior total até 34,06 m²\nGaragem privativa (R/C)\nSótão 33,11 m² (Duplex)\nApenas 3 unidades\nLocalização premium nas Antas',
+      description: 'Três apartamentos a estrear nas Antas (Porto), com jardins privados, garagem e duplex com piso superior.',
+      highlights: 'Jardins privados até 27,80 m²\nExterior total até 34,06 m²\nGaragem privativa (R/C)\nPiso superior 33,11 m² (Duplex)\nApenas 3 unidades\nLocalização premium nas Antas',
       landingPage: '/velask',
     },
     {

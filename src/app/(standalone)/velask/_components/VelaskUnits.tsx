@@ -64,8 +64,10 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
 
             <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
               {benefits.map((b, i) => (
-                <motion.div key={i} className="flex items-start gap-3" style={{ ...cardBase, padding: sp[8], textAlign: 'left' }} initial={{ opacity: 0, y: 20 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
-                  <CheckCircle style={{ width: 20, height: 20, flexShrink: 0, marginTop: 2, color: c.brand.secondary }} />
+                <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3] }} initial={{ opacity: 0, y: 20 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <CheckCircle style={{ width: 20, height: 20, color: c.brand.secondary }} />
+                  </div>
                   <p style={{ fontSize: t.fontSize.base, lineHeight: t.lineHeight.relaxed, color: c.neutral[700] }}>{b}</p>
                 </motion.div>
               ))}
@@ -92,8 +94,8 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
 
             <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
               {interiorFeatures.map((f, i) => (
-                <motion.div key={i} style={{ ...cardBase, padding: sp[8], textAlign: 'left' }} initial={{ opacity: 0, y: 20 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: ds.borderRadius.lg, background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: sp[4] }}>
+                <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3] }} initial={{ opacity: 0, y: 20 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: ds.borderRadius.lg, background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Home style={{ width: 20, height: 20, color: c.brand.primary }} />
                   </div>
                   <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], marginBottom: sp[2], lineHeight: t.lineHeight.snug }}>{f.title}</h3>
@@ -118,11 +120,11 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
             </motion.div>
 
             <motion.h2 initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
-              Compare as 3 unidades
+              Escolha a sua fracção
             </motion.h2>
 
             <motion.p initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[6]}` }}>
-              Compare as três unidades lado a lado. Aqui as áreas estão detalhadas (interior + exterior + extras) para evitar confusão com "área bruta".
+              Cada fracção tem características únicas. Selecione para explorar.
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.3 }} style={{ marginBottom: sp[12] }}>
