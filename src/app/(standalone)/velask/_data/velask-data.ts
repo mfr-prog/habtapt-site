@@ -42,9 +42,9 @@ export const galleryItems = [
 // --- Counters ---
 
 export const counters = [
-  { value: '3', suffix: '', label: 'Apartamentos' },
-  { value: '353', suffix: 'm\u00B2', label: 'Área bruta total' },
-  { value: '2026', suffix: '', label: 'Reabilitação completa' },
+  { value: '3', suffix: '', label: 'Apenas 3 unidades' },
+  { value: '60', suffix: 'dias', label: 'Conclusão da obra' },
+  { value: '3', suffix: 'min', label: 'Do metro · Antas' },
 ];
 
 export const highlights = [

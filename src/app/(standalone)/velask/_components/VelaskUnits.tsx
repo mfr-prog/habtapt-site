@@ -19,14 +19,107 @@ import { VelaskLightbox } from './VelaskLightbox';
 
 const benefitIcons = { Construction, Key, ChefHat } as const;
 
-interface VelaskUnitsProps {
+/* ── O PROJECTO ── */
+
+interface ProjectProps {
+  isMobile: boolean;
+}
+
+export function VelaskProjeto({ isMobile }: ProjectProps) {
+  const empInView = useInView({ threshold: 0.1 });
+
+  return (
+    <Section background="white">
+      <Container>
+        <div ref={empInView.ref} className="text-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+            <span style={sectionBadge()}>O Projecto</span>
+          </motion.div>
+
+          <motion.h2 initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
+            O Velask
+          </motion.h2>
+
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', marginBottom: sp[12] }}>
+            <p style={bodyText}>
+              O Velask é uma moradia histórica em Antas, Porto, totalmente reabilitada pela HABTA em 2026. Três apartamentos novos — T1 com jardim e garagem, T2 com jardim e anexo, T3 Duplex — com acabamentos de qualidade e entrega em 60 dias. Cada detalhe foi pensado para quem quer estrear, não renovar.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
+            {benefits.map((b, i) => {
+              const Icon = benefitIcons[b.iconName];
+              return (
+                <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3] }} initial={{ opacity: 0, y: 20 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Icon style={{ width: 24, height: 24, color: c.brand.secondary }} />
+                  </div>
+                  <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], lineHeight: t.lineHeight.snug }}>{b.title}</h3>
+                  <p style={{ fontSize: t.fontSize.base, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{b.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+/* ── INTERIORES ── */
+
+interface InterioresProps {
+  isMobile: boolean;
+}
+
+export function VelaskInteriores({ isMobile }: InterioresProps) {
+  const intInView = useInView({ threshold: 0.1 });
+
+  return (
+    <Section background="muted" id="interiores">
+      <Container>
+        <div ref={intInView.ref} className="text-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+            <span style={sectionBadge(true)}>Conceito de Interiores</span>
+          </motion.div>
+
+          <motion.h2 initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
+            Interiores contemporâneos, luz e funcionalidade
+          </motion.h2>
+
+          <motion.p initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '48rem', margin: `0 auto ${sp[12]}` }}>
+            Um conceito de interiores minimalista e quente, com tons claros, detalhes em madeira e linhas limpas. Cozinha integrada com bancada escura e zonas pensadas para viver e receber.
+          </motion.p>
+
+          <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
+            {interiorFeatures.map((f, i) => (
+              <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3], height: '100%' }} initial={{ opacity: 0, y: 20 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
+                <div style={{ width: 40, height: 40, borderRadius: ds.borderRadius.lg, background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Home style={{ width: 20, height: 20, color: c.brand.primary }} />
+                </div>
+                <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], marginBottom: sp[2], lineHeight: t.lineHeight.snug }}>{f.title}</h3>
+                <p style={{ fontSize: t.fontSize.sm, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{f.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.p initial={{ opacity: 0 }} animate={intInView.isInView ? { opacity: 1 } : {}} transition={{ duration: 0.5, delay: 0.8 }} style={{ fontSize: t.fontSize.xs, fontStyle: 'italic', color: c.neutral[500], marginTop: sp[10] }}>
+            As imagens e renders são meramente ilustrativos. Mobiliário e decoração não incluídos. Soluções finais dependem de projeto de acabamentos.
+          </motion.p>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+/* ── PLANTAS E TIPOLOGIAS ── */
+
+interface PlantasProps {
   isMobile: boolean;
   onScrollToForm: () => void;
 }
 
-export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
-  const empInView = useInView({ threshold: 0.1 });
-  const intInView = useInView({ threshold: 0.1 });
+export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
   const planInView = useInView({ threshold: 0.05 });
 
   const [lightboxOpen, setLightboxOpen] = React.useState(false);
@@ -44,78 +137,6 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
 
   return (
     <>
-      {/* O PROJECTO */}
-      <Section background="white">
-        <Container>
-          <div ref={empInView.ref} className="text-center">
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
-              <span style={sectionBadge()}>O Projecto</span>
-            </motion.div>
-
-            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
-              O Velask
-            </motion.h2>
-
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', marginBottom: sp[12] }}>
-              <p style={bodyText}>
-                O Velask é uma moradia histórica em Antas, Porto, totalmente reabilitada pela HABTA em 2026. Três apartamentos novos — T1 com jardim e garagem, T2 com jardim e anexo, T3 Duplex — com acabamentos de qualidade e entrega em 60 dias. Cada detalhe foi pensado para quem quer estrear, não renovar.
-              </p>
-            </motion.div>
-
-            <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
-              {benefits.map((b, i) => {
-                const Icon = benefitIcons[b.iconName];
-                return (
-                  <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3] }} initial={{ opacity: 0, y: 20 }} animate={empInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon style={{ width: 24, height: 24, color: c.brand.secondary }} />
-                    </div>
-                    <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], lineHeight: t.lineHeight.snug }}>{b.title}</h3>
-                    <p style={{ fontSize: t.fontSize.base, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{b.desc}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      {/* INTERIORES */}
-      <Section background="muted" id="interiores">
-        <Container>
-          <div ref={intInView.ref} className="text-center">
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
-              <span style={sectionBadge(true)}>Conceito de Interiores</span>
-            </motion.div>
-
-            <motion.h2 initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
-              Interiores contemporâneos, luz e funcionalidade
-            </motion.h2>
-
-            <motion.p initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '48rem', margin: `0 auto ${sp[12]}` }}>
-              Um conceito de interiores minimalista e quente, com tons claros, detalhes em madeira e linhas limpas. Cozinha integrada com bancada escura e zonas pensadas para viver e receber.
-            </motion.p>
-
-            <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>
-              {interiorFeatures.map((f, i) => (
-                <motion.div key={i} style={{ ...cardBase, padding: sp[8], display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: sp[3] }} initial={{ opacity: 0, y: 20 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }} whileHover={isMobile ? {} : { y: -8, scale: 1.02 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: ds.borderRadius.lg, background: 'rgba(26,62,92,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Home style={{ width: 20, height: 20, color: c.brand.primary }} />
-                  </div>
-                  <h3 style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.neutral[900], marginBottom: sp[2], lineHeight: t.lineHeight.snug }}>{f.title}</h3>
-                  <p style={{ fontSize: t.fontSize.sm, lineHeight: t.lineHeight.relaxed, color: c.neutral[600] }}>{f.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.p initial={{ opacity: 0 }} animate={intInView.isInView ? { opacity: 1 } : {}} transition={{ duration: 0.5, delay: 0.8 }} style={{ fontSize: t.fontSize.xs, fontStyle: 'italic', color: c.neutral[500], marginTop: sp[10] }}>
-              As imagens e renders são meramente ilustrativos. Mobiliário e decoração não incluídos. Soluções finais dependem de projeto de acabamentos.
-            </motion.p>
-          </div>
-        </Container>
-      </Section>
-
-      {/* PLANTAS E TIPOLOGIAS */}
       <Section background="white" id="plantas">
         <Container>
           <div ref={planInView.ref} className="text-center">
@@ -218,6 +239,17 @@ export function VelaskUnits({ isMobile, onScrollToForm }: VelaskUnitsProps) {
         onNext={() => setLightboxIndex((prev) => (prev + 1) % lightboxImages.length)}
         onPrev={() => setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length)}
       />
+    </>
+  );
+}
+
+/** @deprecated Use VelaskProjeto, VelaskInteriores, VelaskPlantas separately */
+export function VelaskUnits({ isMobile, onScrollToForm }: { isMobile: boolean; onScrollToForm: () => void }) {
+  return (
+    <>
+      <VelaskProjeto isMobile={isMobile} />
+      <VelaskInteriores isMobile={isMobile} />
+      <VelaskPlantas isMobile={isMobile} onScrollToForm={onScrollToForm} />
     </>
   );
 }

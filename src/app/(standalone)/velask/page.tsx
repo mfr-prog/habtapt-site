@@ -5,13 +5,12 @@ import { designSystem } from '@/components/design-system';
 import { Container } from '@/components/Container';
 import { VelaskNavbar } from './_components/VelaskNavbar';
 import { VelaskHero } from './_components/VelaskHero';
-import { VelaskUnits } from './_components/VelaskUnits';
+import { VelaskProjeto, VelaskInteriores, VelaskPlantas } from './_components/VelaskUnits';
+import { VelaskBairro } from './_components/VelaskBairro';
 import { VelaskGallery } from './_components/VelaskGallery';
 import { VelaskLocation } from './_components/VelaskLocation';
 import { VelaskPricing } from './_components/VelaskPricing';
-import { VelaskContact } from './_components/VelaskContact';
-import { VelaskForm } from './_components/VelaskForm';
-import { VelaskBairro } from './_components/VelaskBairro';
+import { VelaskContactForm } from './_components/VelaskContactForm';
 import { VelaskFAQ } from './_components/VelaskFAQ';
 
 const ds = designSystem;
@@ -43,12 +42,16 @@ export default function VelaskPage() {
       </div>
 
       <div id="projecto">
-        <VelaskUnits isMobile={isMobile} onScrollToForm={scrollToForm} />
+        <VelaskProjeto isMobile={isMobile} />
       </div>
 
       <div id="bairro">
         <VelaskBairro isMobile={isMobile} />
       </div>
+
+      <VelaskInteriores isMobile={isMobile} />
+
+      <VelaskPlantas isMobile={isMobile} onScrollToForm={scrollToForm} />
 
       <div id="galeria">
         <VelaskGallery isMobile={isMobile} />
@@ -63,8 +66,7 @@ export default function VelaskPage() {
       </div>
 
       <div id="contacto">
-        <VelaskContact isMobile={isMobile} />
-        <VelaskForm isMobile={isMobile} selectedTypology={selectedTypology} />
+        <VelaskContactForm isMobile={isMobile} selectedTypology={selectedTypology} />
       </div>
 
       <div id="faq">
@@ -107,7 +109,7 @@ export default function VelaskPage() {
           </div>
 
           {/* Bottom bar */}
-          <div style={{ borderTop: '1px solid #B8956A', paddingTop: sp[6], display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'center' : 'center', justifyContent: 'space-between', gap: sp[4] }}>
+          <div style={{ borderTop: '1px solid #B8956A', paddingTop: sp[6], display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', justifyContent: 'space-between', gap: sp[4] }}>
             <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], textAlign: isMobile ? 'center' : 'left' }}>
               &copy; 2026 Jornada Prometida LDA &middot; NIF 518493644
             </p>
