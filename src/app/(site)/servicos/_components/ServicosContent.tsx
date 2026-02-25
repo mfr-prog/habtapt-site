@@ -85,7 +85,7 @@ export default function ServicosContent() {
   ];
 
   const handleWhatsApp = () => {
-    window.open('https://wa.me/351912345678?text=Olá! Gostaria de saber mais sobre os serviços da HABTA.', '_blank');
+    window.open('https://wa.me/351963290394?text=Olá! Gostaria de saber mais sobre os serviços da HABTA.', '_blank');
   };
 
   return (
@@ -132,7 +132,7 @@ export default function ServicosContent() {
                   letterSpacing: designSystem.typography.letterSpacing.wider,
                 }}
               >
-                Nossos Serviços
+                Os Nossos Serviços
               </span>
             </motion.div>
 
@@ -358,7 +358,7 @@ export default function ServicosContent() {
                   lineHeight: designSystem.typography.lineHeight.relaxed,
                 }}
               >
-                Conheça nosso processo completo em 7 etapas e entenda como transformamos cada fase em resultado.
+                Conheça o nosso processo completo em 7 etapas e entenda como transformamos cada fase em resultado.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button
@@ -414,7 +414,7 @@ export default function ServicosContent() {
                       cursor: 'pointer',
                     }}
                   >
-                    Ver Nosso Processo
+                    Ver o Nosso Processo
                     <ArrowRight size={16} />
                   </motion.button>
 

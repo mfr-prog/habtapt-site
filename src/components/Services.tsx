@@ -117,7 +117,7 @@ export function Services() {
                 letterSpacing: designSystem.typography.letterSpacing.wider,
               }}
             >
-              Nossos Serviços
+              Os Nossos Serviços
             </span>
           </motion.div>
 
@@ -346,7 +346,7 @@ export function Services() {
                 border: 'none',
               }}
             >
-              Conheça Nosso Processo
+              Conheça o Nosso Processo
               <TrendingUp size={20} />
             </motion.span>
           </Link>

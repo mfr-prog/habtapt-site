@@ -10,12 +10,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { designSystem } from './design-system';
 
 const navItems = [
-  { label: 'Inicio', href: '/' },
-  { label: 'Servicos', href: '/servicos' },
+  { label: 'Início', href: '/' },
+  { label: 'Serviços', href: '/servicos' },
   { label: 'Portfolio', href: '/portfolio' },
   { label: 'Processo', href: '/processo' },
   { label: 'Insights', href: '/blog' },
-  { label: 'Contato', href: '/contacto' },
+  { label: 'Contacto', href: '/contacto' },
 ];
 
 export function Header() {

@@ -298,7 +298,7 @@ export function Portfolio() {
                 marginRight: 'auto',
               }}
             >
-              Conheça nossos casos de sucesso em reabilitação urbana e investimento imobiliário de alto rendimento em Portugal
+              Conheça os nossos casos de sucesso em reabilitação urbana e investimento imobiliário de alto rendimento em Portugal
             </p>
           </motion.div>
 
@@ -334,7 +334,7 @@ export function Portfolio() {
                       : designSystem.colors.neutral.white,
                   color:
                     activeFilter === filter.value
-                      ? designSystem.colors.neutral.white
+                      ? designSystem.colors.brand.primary
                       : designSystem.colors.brand.primary,
                   border: `2px solid ${
                     activeFilter === filter.value

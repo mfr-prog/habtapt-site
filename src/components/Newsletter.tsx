@@ -198,7 +198,7 @@ export function Newsletter({ variant = 'card', theme = 'light' }: NewsletterProp
                     padding: `${designSystem.spacing[3]} ${designSystem.spacing[5]}`,
                     borderRadius: designSystem.borderRadius.lg,
                     background: designSystem.colors.gradients.secondary,
-                    color: designSystem.colors.neutral.white,
+                    color: designSystem.colors.brand.primary,
                     border: 'none',
                     cursor: isSubmitting ? 'not-allowed' : 'pointer',
                     fontWeight: designSystem.typography.fontWeight.semibold,

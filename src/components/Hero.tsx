@@ -249,7 +249,7 @@ export function Hero() {
                     paddingBottom: designSystem.spacing[5],
                     background: designSystem.colors.gradients.secondary,
                     boxShadow: '0 10px 40px rgba(184, 149, 106, 0.3)',
-                    color: designSystem.colors.neutral.white,
+                    color: designSystem.colors.brand.primary,
                     fontWeight: designSystem.typography.fontWeight.semibold,
                     fontSize: designSystem.typography.fontSize['17'],
                     minWidth: designSystem.sizes?.button?.minWidth?.md || '220px',

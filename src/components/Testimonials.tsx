@@ -99,15 +99,6 @@ export function Testimonials() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const partners = [
-    { name: 'Millennium BCP', logo: '🏦' },
-    { name: 'EDP', logo: '⚡' },
-    { name: 'Certificação Energética', logo: '🌿' },
-    { name: 'ARU Lisboa', logo: '🏛️' },
-    { name: 'Ordem Arquitetos', logo: '📐' },
-    { name: 'IMI Premium', logo: '⭐' },
-  ];
-
   return (
     <Section id="testimonials" background="white">
       <Container>
@@ -159,7 +150,7 @@ export function Testimonials() {
               letterSpacing: designSystem.typography.letterSpacing.tight,
             }}
           >
-            O Que Dizem Nossos Parceiros
+            O Que Dizem os Nossos Parceiros
           </h2>
 
           <p
@@ -320,68 +311,6 @@ export function Testimonials() {
           </div>
         )}
 
-        {/* Trust Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="rounded-3xl p-10 text-center mb-16"
-          style={{
-            background: designSystem.colors.gradients.heroLuxury,
-          }}
-        >
-          <h3
-            className="mb-4"
-            style={{
-              fontSize: designSystem.typography.fontSize['2xl'],
-              fontWeight: designSystem.typography.fontWeight.bold,
-              color: designSystem.colors.neutral.white,
-            }}
-          >
-            Resultados Validados
-          </h3>
-          <p
-            className="max-w-2xl mx-auto mb-8"
-            style={{
-              fontSize: designSystem.typography.fontSize.base,
-              color: 'rgba(255, 255, 255, 0.85)',
-              lineHeight: designSystem.typography.lineHeight.relaxed,
-            }}
-          >
-            Mais de 10 projetos executados com gestão transparente, retorno previsível e metodologia técnica comprovada.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {partners.map((partner) => (
-              <div
-                key={partner.name}
-                className="flex flex-col items-center gap-2 p-4 rounded-2xl backdrop-blur-sm"
-                style={{
-                  background: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.1),
-                  border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.2)}`,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: designSystem.typography.fontSize['3xl'],
-                  }}
-                >
-                  {partner.logo}
-                </div>
-                <div
-                  style={{
-                    fontSize: designSystem.typography.fontSize.xs,
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    fontWeight: designSystem.typography.fontWeight.medium,
-                    textAlign: 'center',
-                  }}
-                >
-                  {partner.name}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
         </section>
       </Container>
     </Section>

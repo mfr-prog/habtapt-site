@@ -10,11 +10,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "HABTA | Reabilitacao Inteligente e Investimento Sustentavel",
+    default: "HABTA | Reabilitação Inteligente e Investimento Sustentável",
     template: "%s | HABTA",
   },
   description:
-    "Patrimonio de alta performance. Decisoes baseadas em dados. Reabilitacao urbana, investimento imobiliario e co-investimento em Portugal.",
+    "Património de alta performance. Decisões baseadas em dados. Reabilitação urbana, investimento imobiliário e co-investimento em Portugal.",
   metadataBase: new URL("https://habta.eu"),
   openGraph: {
     type: "website",

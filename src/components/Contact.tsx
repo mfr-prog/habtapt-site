@@ -180,7 +180,7 @@ export function Contact() {
   const faqs = [
     {
       question: 'Como funciona o processo de investimento?',
-      answer: 'Nosso processo é estruturado em 7 etapas: prospecção, avaliação técnica e jurídica, negociação, reforma com gestão controlada, marketing 360°, venda e distribuição de lucros. Cada fase é transparente e acompanhada em tempo real pelos investidores.',
+      answer: 'O nosso processo é estruturado em 7 etapas: prospecção, avaliação técnica e jurídica, negociação, reforma com gestão controlada, marketing 360°, venda e distribuição de lucros. Cada fase é transparente e acompanhada em tempo real pelos investidores.',
     },
     {
       question: 'Qual o prazo médio de um projeto?',
@@ -188,15 +188,15 @@ export function Contact() {
     },
     {
       question: 'Qual o retorno esperado de investimento (ROI)?',
-      answer: 'Nossos projetos visam ROI anual pelo menos de 20% e na maioria dos casos, acima de 30%, sempre calculado com base em análise de mercado rigorosa e due diligence completa. Cada oportunidade é apresentada com projeções financeiras validadas.',
+      answer: 'Os nossos projetos visam ROI anual pelo menos de 20% e na maioria dos casos, acima de 30%, sempre calculado com base em análise de mercado rigorosa e due diligence completa. Cada oportunidade é apresentada com projeções financeiras validadas.',
     },
     {
       question: 'Preciso ter conhecimento técnico para investir?',
-      answer: 'Não. Nossa equipa cuida de todo o processo técnico, jurídico e operacional. Você recebe relatórios simplificados e tem acesso a consultoria especializada sempre que necessário.',
+      answer: 'Não. A nossa equipa cuida de todo o processo técnico, jurídico e operacional. Recebe relatórios simplificados e tem acesso a consultoria especializada sempre que necessário.',
     },
     {
       question: 'Como acompanho o andamento do projeto?',
-      answer: 'Disponibilizamos acompanhamento online 24/7 com fotos, vídeos e relatórios semanais. Além disso, você pode visitar a obra presencialmente mediante agendamento e tem acesso direto à equipa de gestão.',
+      answer: 'Disponibilizamos acompanhamento online 24/7 com fotos, vídeos e relatórios semanais. Além disso, pode visitar a obra presencialmente mediante agendamento e tem acesso direto à equipa de gestão.',
     },
   ];
 
@@ -230,7 +230,7 @@ export function Contact() {
                 letterSpacing: designSystem.typography.letterSpacing.wider,
               }}
             >
-              Contato
+              Contacto
             </span>
           </motion.div>
 
@@ -256,7 +256,7 @@ export function Contact() {
               lineHeight: designSystem.typography.lineHeight.relaxed,
             }}
           >
-            Fale com nossa equipa e descubra como podemos colaborar no seu próximo projeto.
+            Fale com a nossa equipa e descubra como podemos colaborar no seu próximo projeto.
           </p>
         </motion.div>
 
@@ -542,7 +542,7 @@ export function Contact() {
                   background: isSubmitting
                     ? designSystem.colors.neutral[500]
                     : designSystem.colors.gradients.secondary,
-                  color: designSystem.colors.neutral.white,
+                  color: isSubmitting ? designSystem.colors.neutral.white : designSystem.colors.brand.primary,
                   fontWeight: designSystem.typography.fontWeight.semibold,
                   boxShadow: isSubmitting
                     ? 'none'
@@ -686,7 +686,7 @@ export function Contact() {
                   lineHeight: designSystem.typography.lineHeight.relaxed,
                 }}
               >
-                Nossa equipe está pronta para ajudá-lo a encontrar a melhor oportunidade de investimento imobiliário.
+                A nossa equipa está pronta para ajudá-lo a encontrar a melhor oportunidade de investimento imobiliário.
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -904,7 +904,7 @@ export function Contact() {
                 color: designSystem.colors.neutral[600],
               }}
             >
-              Entre em contato diretamente com nossa equipa através do{' '}
+              Entre em contacto diretamente com a nossa equipa através do{' '}
               <a
                 href="#contact-title"
                 onClick={(e) => {

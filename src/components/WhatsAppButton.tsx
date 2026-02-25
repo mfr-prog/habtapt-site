@@ -100,7 +100,7 @@ export function WhatsAppButton() {
                       lineHeight: '1.4',
                     }}
                   >
-                    Clique para abrir o WhatsApp e conversar diretamente com nossa equipe.
+                    Clique para abrir o WhatsApp e conversar diretamente com a nossa equipa.
                   </p>
                   <div
                     style={{
@@ -111,7 +111,7 @@ export function WhatsAppButton() {
                       lineHeight: '1.3',
                     }}
                   >
-                    Prefere email? <span style={{ fontWeight: 600 }}>contato@habta.eu</span>
+                    Prefere email? <span style={{ fontWeight: 600 }}>contacto@habta.eu</span>
                   </div>
                 </motion.div>
               )}

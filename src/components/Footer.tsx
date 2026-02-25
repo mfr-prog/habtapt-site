@@ -12,10 +12,10 @@ import { LogoPattern } from './LogoPatterns';
 const links = {
   menu: [
     { label: 'Home', href: '/' },
-    { label: 'Servicos', href: '/servicos' },
+    { label: 'Serviços', href: '/servicos' },
     { label: 'Processo', href: '/processo' },
     { label: 'Projetos', href: '/portfolio' },
-    { label: 'Contato', href: '/contacto' },
+    { label: 'Contacto', href: '/contacto' },
   ],
   recursos: [
     { label: 'Insights', href: '/blog' },
@@ -23,13 +23,13 @@ const links = {
     { label: 'Painel Admin', href: '/login' },
   ],
   legal: [
-    { label: 'Politica de Privacidade', href: '/privacidade' },
+    { label: 'Política de Privacidade', href: '/privacidade' },
   ],
 };
 
 const socialLinks = [
-  { icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:bg-blue-700' },
-  { icon: Instagram, href: '#', label: 'Instagram', color: 'hover:bg-pink-600' },
+  { icon: Linkedin, href: 'https://www.linkedin.com/company/habta', label: 'LinkedIn', color: 'hover:bg-blue-700' },
+  { icon: Instagram, href: 'https://www.instagram.com/habta.eu', label: 'Instagram', color: 'hover:bg-pink-600' },
 ];
 
 export function Footer() {
@@ -97,7 +97,7 @@ export function Footer() {
                   maxWidth: '24rem'
                 }}
               >
-                Reabilitacao Inteligente e Investimento Sustentavel.
+                Reabilitação Inteligente e Investimento Sustentável.
               </p>
               <div
                 className="flex"
@@ -180,7 +180,7 @@ export function Footer() {
                     marginBottom: designSystem.spacing[2]
                   }}
                 >
-                  HABTA &copy; {currentYear} — Reabilitacao Inteligente e Investimento Sustentavel.
+                  HABTA &copy; {currentYear} — Reabilitação Inteligente e Investimento Sustentável.
                 </p>
                 <p
                   style={{
@@ -196,7 +196,7 @@ export function Footer() {
                     fontSize: designSystem.typography.fontSize.xs
                   }}
                 >
-                  Sede Rua Fernao Lopes, n 23, Cascais 2765 088, Portugal
+                  Sede: Rua Fernão Lopes, n.º 23, Cascais 2765-088, Portugal
                 </p>
               </div>
               <motion.button

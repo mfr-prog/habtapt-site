@@ -127,7 +127,7 @@ export default function ProcessoContent() {
                   letterSpacing: designSystem.typography.letterSpacing.wider,
                 }}
               >
-                Nosso Processo
+                O Nosso Processo
               </span>
             </motion.div>
 
@@ -141,7 +141,7 @@ export default function ProcessoContent() {
                 lineHeight: designSystem.typography.lineHeight.tight,
               }}
             >
-              Nosso Processo
+              O Nosso Processo
             </h1>
 
             <p

@@ -55,7 +55,7 @@ export const ctaButtonPrimary: React.CSSProperties = {
   padding: `${sp[5]} ${sp[10]}`,
   borderRadius: ds.borderRadius.full,
   background: c.gradients.secondary,
-  color: c.neutral.white,
+  color: c.brand.primary,
   fontWeight: t.fontWeight.semibold,
   fontSize: t.fontSize.base,
   boxShadow: '0 10px 40px rgba(184,149,106,0.3)',

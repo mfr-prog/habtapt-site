@@ -132,7 +132,7 @@ export function PageTransition({ children }: PageTransitionProps) {
                     textTransform: 'uppercase',
                   }}
                 >
-                  Every Home, Productized
+                  Património de Alta Performance
                 </motion.p>
               </motion.div>
 

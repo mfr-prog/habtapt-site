@@ -108,9 +108,14 @@ export const typography = {
   },
   
   fontSize: {
+    '11.7': '0.731rem', // ~11.7px
+    '12.8': '0.8rem',   // ~12.8px
     xs: '0.75rem',      // 12px
     sm: '0.875rem',     // 14px
+    '15': '0.9375rem',  // 15px
+    '15.2': '0.95rem',  // ~15.2px
     base: '1rem',       // 16px
+    '17': '1.0625rem',  // 17px
     lg: '1.125rem',     // 18px
     xl: '1.25rem',      // 20px
     '2xl': '1.5rem',    // 24px
@@ -158,6 +163,7 @@ export const spacing = {
   4: '1rem',
   5: '1.25rem',
   6: '1.5rem',
+  md: '1.5rem',
   8: '2rem',
   10: '2.5rem',
   12: '3rem',
@@ -209,6 +215,8 @@ export const shadows = {
   tertiaryHover: '0 8px 20px rgba(107, 124, 147, 0.25)',
   accentHover: '0 8px 20px rgba(201, 168, 114, 0.35)',
   luxuryGlow: '0 0 40px rgba(184, 149, 106, 0.3), 0 8px 20px rgba(184, 149, 106, 0.25)',
+  focus: '0 0 0 3px rgba(184, 149, 106, 0.3)',
+  focusPrimary: '0 0 0 3px rgba(26, 62, 92, 0.3)',
 } as const;
 
 // ========== ANIMAÇÕES ==========
@@ -301,7 +309,7 @@ export const components = {
     },
     secondary: {
       background: colors.gradients.secondary,
-      color: colors.neutral.white,
+      color: colors.brand.primary,
       boxShadow: shadows.md,
       hover: {
         boxShadow: shadows.secondaryHover,

@@ -408,7 +408,7 @@ export default function PortfolioDetailContent() {
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => window.open('https://wa.me/351912345678?text=Olá! Tenho interesse no projeto: ' + encodeURIComponent(project.title), '_blank')}
+                  onClick={() => window.open('https://wa.me/351963290394?text=Olá! Tenho interesse no projeto: ' + encodeURIComponent(project.title), '_blank')}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: designSystem.spacing[2], padding: `${designSystem.spacing[5]} ${designSystem.spacing[10]}`, background: 'transparent', color: designSystem.colors.neutral.white, borderRadius: designSystem.borderRadius.full, fontWeight: designSystem.typography.fontWeight.semibold, fontSize: designSystem.typography.fontSize.base, border: `2px solid ${designSystem.colors.neutral.white}`, cursor: 'pointer' }}
                 >
                   <MessageSquare size={20} />

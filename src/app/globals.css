@@ -83,21 +83,21 @@
   --destructive-foreground: #ffffff;
 
   /* UI Elements */
-  --border: rgba(10, 54, 84, 0.12);
-  --border-light: rgba(10, 54, 84, 0.06);
+  --border: rgba(26, 62, 92, 0.12);
+  --border-light: rgba(26, 62, 92, 0.06);
   --input: transparent;
   --input-background: #f8fafc;
   --switch-background: #cbd5e1;
-  --ring: #0A3654;
+  --ring: #1A3E5C;
   --ring-offset: #ffffff;
 
   /* Shadows - Layered & Subtle */
-  --shadow-sm: 0 1px 2px 0 rgba(10, 54, 84, 0.05);
-  --shadow: 0 1px 3px 0 rgba(10, 54, 84, 0.1), 0 1px 2px -1px rgba(10, 54, 84, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(10, 54, 84, 0.1), 0 2px 4px -2px rgba(10, 54, 84, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(10, 54, 84, 0.1), 0 4px 6px -4px rgba(10, 54, 84, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(10, 54, 84, 0.1), 0 8px 10px -6px rgba(10, 54, 84, 0.1);
-  --shadow-2xl: 0 25px 50px -12px rgba(10, 54, 84, 0.25);
+  --shadow-sm: 0 1px 2px 0 rgba(26, 62, 92, 0.05);
+  --shadow: 0 1px 3px 0 rgba(26, 62, 92, 0.1), 0 1px 2px -1px rgba(26, 62, 92, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(26, 62, 92, 0.1), 0 2px 4px -2px rgba(26, 62, 92, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(26, 62, 92, 0.1), 0 4px 6px -4px rgba(26, 62, 92, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(26, 62, 92, 0.1), 0 8px 10px -6px rgba(26, 62, 92, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(26, 62, 92, 0.25);
 
   /* Border Radius Scale */
   --radius-sm: 0.375rem;
@@ -109,7 +109,7 @@
   --radius-full: 9999px;
 
   /* Charts */
-  --chart-1: #0A3654;
+  --chart-1: #1A3E5C;
   --chart-2: #5A7C99;
   --chart-3: #8ba5b8;
   --chart-4: #e8f3f9;
@@ -118,12 +118,12 @@
   /* Sidebar */
   --sidebar: #f9fafb;
   --sidebar-foreground: #0f1729;
-  --sidebar-primary: #0A3654;
+  --sidebar-primary: #1A3E5C;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f5f7fa;
   --sidebar-accent-foreground: #0f1729;
-  --sidebar-border: rgba(10, 54, 84, 0.1);
-  --sidebar-ring: #0A3654;
+  --sidebar-border: rgba(26, 62, 92, 0.1);
+  --sidebar-ring: #1A3E5C;
 }
 
 @theme inline {
@@ -265,7 +265,7 @@
   }
 
   .glass-dark {
-    background: rgba(10, 54, 84, 0.7);
+    background: rgba(26, 62, 92, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
