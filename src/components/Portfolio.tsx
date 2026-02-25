@@ -34,6 +34,7 @@ interface Project {
   timeline: string;
   description: string;
   highlights?: string;
+  landingPage?: string;
 }
 
 export function Portfolio() {
@@ -46,6 +47,25 @@ export function Portfolio() {
 
   // Fallback projects (dados originais do site)
   const fallbackProjects: Project[] = useMemo(() => [
+    {
+      id: 'velask',
+      title: 'VELASK Residence',
+      location: 'Antas, Porto',
+      status: 'available',
+      statusLabel: 'Disponível',
+      strategy: 'fix-flip',
+      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
+      roi: '+25%',
+      area: '334 m²',
+      bedrooms: 6,
+      bathrooms: 7,
+      price: 'Sob consulta',
+      investment: 'Sob consulta',
+      timeline: 'Entrega 2026',
+      description: 'Três apartamentos a estrear nas Antas (Porto), com jardins privados, garagem e duplex com sótão.',
+      highlights: 'Jardins privados até 27,80 m²\nExterior total até 34,06 m²\nGaragem privativa (R/C)\nSótão 33,11 m² (Duplex)\nApenas 3 unidades\nLocalização premium nas Antas',
+      landingPage: '/velask',
+    },
     {
       id: '1',
       title: 'Apartamento Premium Centro Lisboa',
@@ -228,12 +248,17 @@ export function Portfolio() {
     [activeFilter, projects]
   );
 
-  // Handler memoizado
+  // Handler memoizado - verifica se o projeto tem landing page própria
   const handleProjectClick = useCallback(
     (id: string) => {
-      router.push(`/portfolio/${id}`);
+      const proj = projects.find(p => p.id === id);
+      if (proj?.landingPage) {
+        router.push(proj.landingPage);
+      } else {
+        router.push(`/portfolio/${id}`);
+      }
     },
-    [router]
+    [router, projects]
   );
 
   return (
