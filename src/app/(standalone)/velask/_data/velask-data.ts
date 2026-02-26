@@ -112,10 +112,9 @@ export const units = [
     specs: [
       { label: 'Área bruta', value: '106,78 m\u00B2' },
       { label: 'Interior', value: '66,30 m\u00B2' },
-      { label: 'Pátio', value: '6,26 m\u00B2' },
-      { label: 'Varanda frente', value: '3,00 m\u00B2' },
-      { label: 'Jardim', value: '23,85 m\u00B2' },
+      { label: 'Exterior', value: '33,11 m\u00B2' },
       { label: 'Anexo', value: '7,37 m\u00B2' },
+      { label: 'Jardim', value: '23,85 m\u00B2' },
       { label: 'Casas de banho', value: '2' },
     ],
     copy: [

@@ -219,7 +219,7 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
 
                         <div className="grid grid-cols-2 gap-2" style={{ marginBottom: sp[8] }}>
                           {unit.specs.map((s, i) => (
-                            <div key={i} style={{ padding: `${sp[3]} ${sp[4]}`, borderRadius: '0.75rem', background: '#fff', border: `1px solid ${c.neutral[200]}` }}>
+                            <div key={i} style={{ padding: `${sp[3]} ${sp[4]}`, borderRadius: '0.75rem', background: '#fff', border: `1px solid ${c.neutral[200]}`, textAlign: 'center' }}>
                               <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], marginBottom: sp[1] }}>{s.label}</p>
                               <p style={{ fontSize: t.fontSize.base, fontWeight: t.fontWeight.bold, color: c.neutral[900] }}>{s.value}</p>
                             </div>
