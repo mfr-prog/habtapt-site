@@ -58,7 +58,7 @@ export const benefits = [
   {
     iconName: 'Construction' as const,
     title: 'Reabilitação total',
-    desc: 'Estrutura, instalações, acabamentos. Tudo novo. 10 anos de garantia pelo construtor.',
+    desc: 'Estrutura, instalações, acabamentos. 10 anos de garantia pelo construtor.',
   },
   {
     iconName: 'Key' as const,
