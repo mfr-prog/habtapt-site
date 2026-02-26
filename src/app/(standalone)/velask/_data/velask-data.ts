@@ -67,8 +67,8 @@ export const benefits = [
   },
   {
     iconName: 'ChefHat' as const,
-    title: 'Cozinha equipada',
-    desc: 'AC em todas as divisões + cozinha equipada.',
+    title: 'AC em todas as divisões + cozinha equipada',
+    desc: 'Electrodomésticos incluídos. Sem mais gastos.',
   },
 ];
 
