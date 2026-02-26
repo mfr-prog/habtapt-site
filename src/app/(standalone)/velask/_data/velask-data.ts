@@ -43,7 +43,7 @@ export const galleryItems = [
 
 export const counters = [
   { value: '3', suffix: '', label: 'Apenas 3 unidades' },
-  { value: '108 - 118', suffix: 'm²', label: '' },
+  { value: '108–118', suffix: 'm²', label: 'Área bruta total' },
   { value: '3', suffix: 'min', label: 'Do metro · Campanhã' },
 ];
 

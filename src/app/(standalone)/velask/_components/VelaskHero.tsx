@@ -77,16 +77,19 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.div>
           </div>
 
-          <motion.div {...anim(5)} className="grid grid-cols-3 gap-6" style={{ marginTop: sp[20], maxWidth: '40rem' }}>
-            {counters.map((ct, i) => (
-              <div key={i}>
-                <p style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: t.fontWeight.black, color: '#fff', lineHeight: 1 }}>
-                  {ct.value}
-                  {ct.suffix && <span style={{ fontSize: t.fontSize['2xl'], color: c.brand.secondaryLight, marginLeft: sp[1] }}>{ct.suffix}</span>}
-                </p>
-                <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.5)', marginTop: sp[2], lineHeight: t.lineHeight.snug }}>{ct.label}</p>
-              </div>
-            ))}
+          <motion.div {...anim(5)} className="grid grid-cols-3" style={{ marginTop: sp[20], maxWidth: '40rem', gap: sp[8] }}>
+            {counters.map((ct, i) => {
+              const isLong = ct.value.length > 3;
+              return (
+                <div key={i} style={{ borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.15)' : 'none', paddingLeft: i > 0 ? sp[8] : 0 }}>
+                  <p style={{ fontSize: isLong ? 'clamp(1.4rem, 3vw, 2.2rem)' : 'clamp(1.8rem, 4vw, 3rem)', fontWeight: t.fontWeight.black, color: '#fff', lineHeight: 1 }}>
+                    {ct.value}
+                    {ct.suffix && <span style={{ fontSize: isLong ? t.fontSize.lg : t.fontSize['2xl'], color: c.brand.secondaryLight, marginLeft: sp[1] }}>{ct.suffix}</span>}
+                  </p>
+                  {ct.label && <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.5)', marginTop: sp[2], lineHeight: t.lineHeight.snug }}>{ct.label}</p>}
+                </div>
+              );
+            })}
           </motion.div>
 
           <motion.div {...anim(6)} className="grid grid-cols-2 gap-4" style={{ marginTop: sp[12] }}>
