@@ -52,7 +52,7 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
         <div style={{ position: 'relative', zIndex: 10, paddingTop: sp[32], paddingBottom: sp[32] }}>
           <div style={{ maxWidth: '48rem' }}>
             <motion.h1 {...anim(0)} style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight, lineHeight: 1, color: '#fff', marginBottom: sp[4] }}>
-              T1 a T3<br />RESIDENCIAL<br />VELASK
+              <span style={{ color: c.brand.secondaryLight }}>VELASK</span> Residence
             </motion.h1>
 
             <motion.p {...anim(1)} style={{ fontSize: t.fontSize['2xl'], fontWeight: t.fontWeight.semibold, color: c.brand.secondaryLight, marginBottom: sp[6], letterSpacing: t.letterSpacing.wide }}>
