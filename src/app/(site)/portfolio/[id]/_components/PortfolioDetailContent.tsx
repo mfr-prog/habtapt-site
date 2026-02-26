@@ -18,6 +18,7 @@ import { supabaseFetch } from '@/utils/supabase/client';
 import { StatusBadge, StrategyBadge } from '@/components/primitives/Badge';
 import { ProjectDetailSkeleton } from '@/components/primitives/ProjectDetailSkeleton';
 import { ExternalLinksCard } from '@/components/primitives/ExternalLinksCard';
+import { InvestmentComparison } from '@/components/InvestmentComparison';
 
 const projectsData: Project[] = [
   {
@@ -382,6 +383,127 @@ export default function PortfolioDetailContent() {
         <Section background="muted">
           <Container>
             <ExternalLinksCard portalLink={project.portalLink} brochureLink={project.brochureLink} landingPage={project.landingPage} animated={true} delay={0.1} isMobile={isMobile} />
+          </Container>
+        </Section>
+      )}
+
+      {/* Investment Comparison — only for available projects */}
+      {project.status === 'available' && (
+        <Section background="white">
+          <Container>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              style={{
+                maxWidth: '42rem',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}
+            >
+              <InvestmentComparison investmentValue={project.financials?.total} />
+            </motion.div>
+          </Container>
+        </Section>
+      )}
+
+      {/* Neighborhood Section */}
+      {project.neighborhood && (
+        <Section background={project.status === 'available' ? 'muted' : 'white'}>
+          <Container>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 style={{ color: designSystem.colors.neutral[900], marginBottom: designSystem.spacing[4], fontSize: isMobile ? designSystem.typography.fontSize['2xl'] : undefined }}>
+                O Bairro
+              </h2>
+              <p style={{ color: designSystem.colors.neutral[700], fontSize: designSystem.typography.fontSize.lg, lineHeight: designSystem.typography.lineHeight.relaxed, maxWidth: '42rem' }}>
+                {project.neighborhood}
+              </p>
+              {project.nearbyAmenities && project.nearbyAmenities.length > 0 && (
+                <div className="flex flex-wrap" style={{ gap: designSystem.spacing[3], marginTop: designSystem.spacing[6] }}>
+                  {project.nearbyAmenities.map((amenity) => (
+                    <span
+                      key={amenity}
+                      style={{
+                        fontSize: designSystem.typography.fontSize.sm,
+                        color: designSystem.colors.brand.primary,
+                        background: designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.06),
+                        border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.12)}`,
+                        borderRadius: designSystem.borderRadius.full,
+                        paddingLeft: designSystem.spacing[4],
+                        paddingRight: designSystem.spacing[4],
+                        paddingTop: designSystem.spacing[2],
+                        paddingBottom: designSystem.spacing[2],
+                        fontWeight: designSystem.typography.fontWeight.medium,
+                      }}
+                    >
+                      {amenity}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </Container>
+        </Section>
+      )}
+
+      {/* Finishes Grid */}
+      {project.finishes && project.finishes.length > 0 && (
+        <Section background="muted">
+          <Container>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 style={{ color: designSystem.colors.neutral[900], marginBottom: designSystem.spacing[6], fontSize: isMobile ? designSystem.typography.fontSize['2xl'] : undefined }}>
+                Acabamentos
+              </h2>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+                  gap: designSystem.spacing[4],
+                }}
+              >
+                {project.finishes.map((finish, index) => (
+                  <motion.div
+                    key={finish}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="flex items-center"
+                    style={{
+                      gap: designSystem.spacing[3],
+                      padding: designSystem.spacing[4],
+                      background: designSystem.colors.neutral.white,
+                      borderRadius: designSystem.borderRadius.lg,
+                      boxShadow: designSystem.shadows.sm,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: designSystem.borderRadius.full,
+                        background: designSystem.colors.brand.secondary,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[700] }}>
+                      {finish}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </Container>
         </Section>
       )}

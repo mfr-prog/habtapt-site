@@ -42,6 +42,20 @@ export interface Project {
     roi?: string;
   };
   image: string;
+  // Investimento
+  estimatedRent?: string;
+  grossYield?: string;
+  netYield?: string;
+  appreciationEstimate?: string;
+  propertyType?: 'moradia' | 'investimento' | 'ambos';
+  // Moradia
+  neighborhood?: string;
+  finishes?: string[];
+  nearbyAmenities?: string[];
+  lifestyle?: string;
+  // Geral
+  typology?: string;
+  deliveryDate?: string;
 }
 
 interface UseProjectFetchOptions {
@@ -163,6 +177,18 @@ export const useProjectFetch = (
           profit: formatCurrency(profitNum),
           roi: roiValue,
         },
+        // Campos novos opcionais
+        estimatedRent: data.project.estimatedRent || undefined,
+        grossYield: data.project.grossYield || undefined,
+        netYield: data.project.netYield || undefined,
+        appreciationEstimate: data.project.appreciationEstimate || undefined,
+        propertyType: data.project.propertyType || undefined,
+        neighborhood: data.project.neighborhood || undefined,
+        finishes: data.project.finishes || undefined,
+        nearbyAmenities: data.project.nearbyAmenities || undefined,
+        lifestyle: data.project.lifestyle || undefined,
+        typology: data.project.typology || undefined,
+        deliveryDate: data.project.deliveryDate || undefined,
       };
 
       console.log(`[useProjectFetch] ✅ Project loaded from server`);

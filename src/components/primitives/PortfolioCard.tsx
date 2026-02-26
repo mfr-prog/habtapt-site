@@ -1,13 +1,14 @@
 /**
  * Portfolio Card - Componente otimizado e memoizado
- * Seguindo Guardião Universal de Front-End
+ * Suporta dual-mode: 'investir' (default) e 'morar'
  */
 
 import React, { memo } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, BedDouble, Bath, Maximize, ArrowRight, TrendingUp, ExternalLink } from '../icons';
+import { MapPin, BedDouble, Bath, Maximize, ArrowRight, TrendingUp, ExternalLink, Calendar } from '../icons';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { designSystem } from '../design-system';
+import type { ViewMode } from '@/utils/hooks/useViewMode';
 
 type ProjectStatus = 'in-progress' | 'available' | 'sold';
 type InvestmentStrategy = 'buy-hold' | 'fix-flip' | 'alojamento-local' | 'rent-to-rent' | 'desenvolvimento' | 'co-investimento';
@@ -27,6 +28,20 @@ interface Project {
   price: string;
   landingPage?: string | null;
   portalLink?: string | null;
+  // Investimento
+  estimatedRent?: string;
+  grossYield?: string;
+  netYield?: string;
+  appreciationEstimate?: string;
+  propertyType?: 'moradia' | 'investimento' | 'ambos';
+  // Moradia
+  neighborhood?: string;
+  finishes?: string[];
+  nearbyAmenities?: string[];
+  lifestyle?: string;
+  // Geral
+  typology?: string;
+  deliveryDate?: string;
 }
 
 interface PortfolioCardProps {
@@ -34,6 +49,7 @@ interface PortfolioCardProps {
   index: number;
   isMobile: boolean;
   onClick: (id: string) => void;
+  viewMode?: ViewMode;
 }
 
 const getStatusColor = (status: ProjectStatus) => {
@@ -99,9 +115,10 @@ const getStrategyConfig = (strategy: InvestmentStrategy) => {
   return configs[strategy] || configs['fix-flip'];
 };
 
-function PortfolioCardComponent({ project, index, isMobile, onClick }: PortfolioCardProps) {
+function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 'investir' }: PortfolioCardProps) {
   const statusColors = getStatusColor(project.status);
   const strategyConfig = getStrategyConfig(project.strategy);
+  const isMorar = viewMode === 'morar';
 
   const CardWrapper = isMobile ? 'div' : motion.div;
   const cardProps = isMobile
@@ -109,7 +126,7 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
     : {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.4, delay: Math.min(index * 0.05, 0.3) }, // Limite de delay
+        transition: { duration: 0.4, delay: Math.min(index * 0.05, 0.3) },
         whileHover: { y: -6 },
       };
 
@@ -127,7 +144,10 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
       }}
     >
       {/* Image */}
-      <div className="relative overflow-hidden" style={{ height: designSystem.spacing[64] }}>
+      <div
+        className="relative overflow-hidden"
+        style={{ height: isMorar ? designSystem.spacing[40] : designSystem.spacing[64] }}
+      >
         <ImageWithFallback
           src={project.image}
           alt={project.title}
@@ -168,32 +188,34 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
           </span>
         </div>
 
-        {/* ROI Badge */}
-        <div
-          className="absolute rounded-full backdrop-blur-md flex items-center"
-          style={{
-            top: designSystem.spacing[4],
-            right: designSystem.spacing[4],
-            paddingLeft: designSystem.spacing[3],
-            paddingRight: designSystem.spacing[3],
-            paddingTop: designSystem.spacing[2],
-            paddingBottom: designSystem.spacing[2],
-            gap: designSystem.spacing[1.5],
-            background: designSystem.colors.brand.secondary,
-            border: `2px solid ${designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.3)}`,
-          }}
-        >
-          <TrendingUp size={16} className="text-white" />
-          <span
+        {/* ROI Badge — only in investir mode */}
+        {!isMorar && (
+          <div
+            className="absolute rounded-full backdrop-blur-md flex items-center"
             style={{
-              fontSize: '0.9375rem',
-              fontWeight: designSystem.typography.fontWeight.bold,
-              color: designSystem.colors.neutral.white,
+              top: designSystem.spacing[4],
+              right: designSystem.spacing[4],
+              paddingLeft: designSystem.spacing[4],
+              paddingRight: designSystem.spacing[4],
+              paddingTop: designSystem.spacing[2],
+              paddingBottom: designSystem.spacing[2],
+              gap: designSystem.spacing[1.5],
+              background: designSystem.colors.brand.secondary,
+              border: `2px solid ${designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.3)}`,
             }}
           >
-            {project.roi}
-          </span>
-        </div>
+            <TrendingUp size={18} className="text-white" />
+            <span
+              style={{
+                fontSize: '1rem',
+                fontWeight: designSystem.typography.fontWeight.bold,
+                color: designSystem.colors.neutral.white,
+              }}
+            >
+              {project.roi}
+            </span>
+          </div>
+        )}
 
         {/* Gradient Overlay */}
         <div
@@ -218,7 +240,7 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
           </h3>
         </div>
 
-        <div className="flex items-center" style={{ gap: designSystem.spacing[2], marginBottom: designSystem.spacing[4] }}>
+        <div className="flex items-center" style={{ gap: designSystem.spacing[2], marginBottom: designSystem.spacing[3] }}>
           <MapPin size={16} style={{ color: designSystem.colors.neutral[500] }} />
           <span
             style={{
@@ -230,63 +252,224 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
           </span>
         </div>
 
-        {/* Strategy Badge */}
-        <div style={{ marginBottom: designSystem.spacing[4] }}>
-          <div
-            className="inline-flex items-center rounded-full"
-            style={{
-              paddingLeft: designSystem.spacing[4],
-              paddingRight: designSystem.spacing[4],
-              paddingTop: designSystem.spacing[2],
-              paddingBottom: designSystem.spacing[2],
-              background: strategyConfig.bg,
-              border: `2px solid ${strategyConfig.border}`,
-            }}
-          >
-            <span
+        {/* Mode-specific content */}
+        {isMorar ? (
+          <>
+            {/* Typology badge */}
+            {project.typology && (
+              <div style={{ marginBottom: designSystem.spacing[3] }}>
+                <div
+                  className="inline-flex items-center rounded-full"
+                  style={{
+                    paddingLeft: designSystem.spacing[4],
+                    paddingRight: designSystem.spacing[4],
+                    paddingTop: designSystem.spacing[2],
+                    paddingBottom: designSystem.spacing[2],
+                    background: designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.08),
+                    border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.15)}`,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: designSystem.typography.fontSize.sm,
+                      fontWeight: designSystem.typography.fontWeight.semibold,
+                      color: designSystem.colors.brand.primary,
+                    }}
+                  >
+                    {project.typology}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Neighborhood snippet */}
+            {project.neighborhood && (
+              <p
+                style={{
+                  fontSize: designSystem.typography.fontSize.sm,
+                  color: designSystem.colors.neutral[600],
+                  lineHeight: designSystem.typography.lineHeight.relaxed,
+                  marginBottom: designSystem.spacing[3],
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
+              >
+                {project.neighborhood}
+              </p>
+            )}
+
+            {/* Finishes pills */}
+            {project.finishes && project.finishes.length > 0 && (
+              <div
+                className="flex flex-wrap"
+                style={{
+                  gap: designSystem.spacing[2],
+                  marginBottom: designSystem.spacing[4],
+                }}
+              >
+                {project.finishes.slice(0, 3).map((finish) => (
+                  <span
+                    key={finish}
+                    style={{
+                      fontSize: designSystem.typography.fontSize.xs,
+                      color: designSystem.colors.brand.tertiary,
+                      background: designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.08),
+                      border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.15)}`,
+                      borderRadius: designSystem.borderRadius.full,
+                      paddingLeft: designSystem.spacing[3],
+                      paddingRight: designSystem.spacing[3],
+                      paddingTop: designSystem.spacing[1],
+                      paddingBottom: designSystem.spacing[1],
+                      fontWeight: designSystem.typography.fontWeight.medium,
+                    }}
+                  >
+                    {finish}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Delivery date */}
+            {project.deliveryDate && (
+              <div
+                className="flex items-center"
+                style={{
+                  gap: designSystem.spacing[2],
+                  marginBottom: designSystem.spacing[4],
+                  paddingBottom: designSystem.spacing[4],
+                  borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
+                }}
+              >
+                <Calendar size={14} style={{ color: designSystem.colors.brand.secondary }} />
+                <span
+                  style={{
+                    fontSize: designSystem.typography.fontSize.sm,
+                    color: designSystem.colors.brand.secondary,
+                    fontWeight: designSystem.typography.fontWeight.semibold,
+                  }}
+                >
+                  Entrega: {project.deliveryDate}
+                </span>
+              </div>
+            )}
+
+            {/* Features Grid — if no delivery date, add border */}
+            {!project.deliveryDate && (
+              <div
+                className="grid grid-cols-3"
+                style={{
+                  gap: designSystem.spacing[3],
+                  paddingBottom: designSystem.spacing[4],
+                  marginBottom: designSystem.spacing[4],
+                  borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
+                }}
+              >
+                <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
+                  <Maximize size={16} style={{ color: designSystem.colors.neutral[500] }} />
+                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
+                    {project.area}
+                  </span>
+                </div>
+                <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
+                  <BedDouble size={16} style={{ color: designSystem.colors.neutral[500] }} />
+                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
+                    {project.bedrooms}
+                  </span>
+                </div>
+                <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
+                  <Bath size={16} style={{ color: designSystem.colors.neutral[500] }} />
+                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
+                    {project.bathrooms}
+                  </span>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {/* Strategy Badge — investir mode */}
+            <div style={{ marginBottom: designSystem.spacing[4] }}>
+              <div
+                className="inline-flex items-center rounded-full"
+                style={{
+                  paddingLeft: designSystem.spacing[4],
+                  paddingRight: designSystem.spacing[4],
+                  paddingTop: designSystem.spacing[2],
+                  paddingBottom: designSystem.spacing[2],
+                  background: strategyConfig.bg,
+                  border: `2px solid ${strategyConfig.border}`,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: designSystem.typography.fontSize.sm,
+                    fontWeight: designSystem.typography.fontWeight.extrabold,
+                    color: strategyConfig.color,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                  }}
+                >
+                  {strategyConfig.label}
+                </span>
+              </div>
+            </div>
+
+            {/* Features Grid */}
+            <div
+              className="grid grid-cols-3"
               style={{
-                fontSize: designSystem.typography.fontSize.sm,
-                fontWeight: designSystem.typography.fontWeight.extrabold,
-                color: strategyConfig.color,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                gap: designSystem.spacing[3],
+                paddingBottom: designSystem.spacing[5],
+                marginBottom: designSystem.spacing[5],
+                borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
               }}
             >
-              {strategyConfig.label}
-            </span>
-          </div>
-        </div>
+              <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
+                <Maximize size={16} style={{ color: designSystem.colors.neutral[500] }} />
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
+                  {project.area}
+                </span>
+              </div>
+              <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
+                <BedDouble size={16} style={{ color: designSystem.colors.neutral[500] }} />
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
+                  {project.bedrooms}
+                </span>
+              </div>
+              <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
+                <Bath size={16} style={{ color: designSystem.colors.neutral[500] }} />
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
+                  {project.bathrooms}
+                </span>
+              </div>
+            </div>
 
-        {/* Features Grid */}
-        <div
-          className="grid grid-cols-3"
-          style={{
-            gap: designSystem.spacing[3],
-            paddingBottom: designSystem.spacing[5],
-            marginBottom: designSystem.spacing[5],
-            borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
-          }}
-        >
-          <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
-            <Maximize size={16} style={{ color: designSystem.colors.neutral[500] }} />
-            <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-              {project.area}
-            </span>
-          </div>
-          <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
-            <BedDouble size={16} style={{ color: designSystem.colors.neutral[500] }} />
-            <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-              {project.bedrooms}
-            </span>
-          </div>
-          <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
-            <Bath size={16} style={{ color: designSystem.colors.neutral[500] }} />
-            <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-              {project.bathrooms}
-            </span>
-          </div>
-        </div>
+            {/* Estimated rent + yield — investir extras */}
+            {(project.estimatedRent || project.grossYield) && (
+              <div
+                className="flex items-center justify-between"
+                style={{
+                  marginBottom: designSystem.spacing[4],
+                  fontSize: designSystem.typography.fontSize.sm,
+                }}
+              >
+                {project.estimatedRent && (
+                  <span style={{ color: designSystem.colors.neutral[600] }}>
+                    Renda est.: <strong style={{ color: designSystem.colors.brand.secondary }}>{project.estimatedRent}</strong>
+                  </span>
+                )}
+                {project.grossYield && (
+                  <span style={{ color: designSystem.colors.neutral[600] }}>
+                    Yield: <strong style={{ color: designSystem.colors.brand.secondary }}>{project.grossYield}</strong>
+                  </span>
+                )}
+              </div>
+            )}
+          </>
+        )}
 
         {/* Price and CTA */}
         <div className="flex items-center justify-between">
@@ -327,7 +510,7 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
           </motion.button>
         </div>
 
-        {/* Links externos — subtle, abaixo do preço */}
+        {/* Links externos — subtle, abaixo do preco */}
         {(project.landingPage || project.portalLink) && (
           <div
             className="flex items-center"
@@ -389,11 +572,11 @@ function PortfolioCardComponent({ project, index, isMobile, onClick }: Portfolio
 
 // Memoizar para evitar re-renders desnecessários
 export const PortfolioCard = memo(PortfolioCardComponent, (prevProps, nextProps) => {
-  // Re-renderizar apenas se o projeto ou index mudarem
   return (
     prevProps.project.id === nextProps.project.id &&
     prevProps.index === nextProps.index &&
-    prevProps.isMobile === nextProps.isMobile
+    prevProps.isMobile === nextProps.isMobile &&
+    prevProps.viewMode === nextProps.viewMode
   );
 });
 

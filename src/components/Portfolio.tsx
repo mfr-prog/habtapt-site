@@ -4,11 +4,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Container } from './Container';
 import { Section } from './Section';
-import { Building2 } from './icons';
+import { Building2, ArrowRight } from './icons';
 import { motion, AnimatePresence } from 'motion/react';
 import { useInView } from './useInView';
 import { designSystem } from './design-system';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabaseFetch } from '../utils/supabase/client';
 import { projectsCache, CACHE_KEYS } from '../utils/projectsCache';
 import { PortfolioCard } from './primitives/PortfolioCard';
@@ -35,9 +36,27 @@ interface Project {
   description: string;
   highlights?: string;
   landingPage?: string;
+  // Investimento
+  estimatedRent?: string;
+  grossYield?: string;
+  netYield?: string;
+  appreciationEstimate?: string;
+  propertyType?: 'moradia' | 'investimento' | 'ambos';
+  // Moradia
+  neighborhood?: string;
+  finishes?: string[];
+  nearbyAmenities?: string[];
+  lifestyle?: string;
+  // Geral
+  typology?: string;
+  deliveryDate?: string;
 }
 
-export function Portfolio() {
+interface PortfolioProps {
+  variant?: 'full' | 'homepage';
+}
+
+export function Portfolio({ variant = 'full' }: PortfolioProps) {
   const { ref, isInView } = useInView({ threshold: 0.1 });
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<ProjectStatus>('all');
@@ -65,6 +84,17 @@ export function Portfolio() {
       description: 'Três apartamentos a estrear nas Antas (Porto), com jardins privados, garagem e duplex com piso superior.',
       highlights: 'Jardins privados até 27,80 m²\nExterior total até 34,06 m²\nGaragem privativa (R/C)\nPiso superior 33,11 m² (Duplex)\nApenas 3 unidades\nLocalização premium nas Antas',
       landingPage: '/velask',
+      estimatedRent: '€1.200/mês',
+      grossYield: '5.2%',
+      netYield: '4.1%',
+      appreciationEstimate: '+15% em 3 anos',
+      propertyType: 'ambos',
+      neighborhood: 'Antas é um dos bairros mais valorizados do Porto, junto ao Estádio do Dragão e com excelentes acessos.',
+      finishes: ['Cozinha equipada', 'AC pré-instalado', 'Vidros duplos', 'Jardim privado', 'Garagem'],
+      nearbyAmenities: ['Metro 5 min', 'Estádio do Dragão 2 min', 'Shopping Alameda 8 min', 'Hospital S. João 10 min'],
+      lifestyle: 'Vida urbana com espaço exterior privado, ideal para famílias ou profissionais que valorizam conforto e localização premium.',
+      typology: 'T1 a T3 Duplex',
+      deliveryDate: 'Abril 2026',
     },
     {
       id: '1',
@@ -243,10 +273,12 @@ export function Portfolio() {
   ], []);
 
   // Filtrar projetos com useMemo
-  const filteredProjects = useMemo(
-    () => (activeFilter === 'all' ? projects : projects.filter((p) => p.status === activeFilter)),
-    [activeFilter, projects]
-  );
+  const filteredProjects = useMemo(() => {
+    if (variant === 'homepage') {
+      return projects.filter((p) => p.status === 'available').slice(0, 4);
+    }
+    return activeFilter === 'all' ? projects : projects.filter((p) => p.status === activeFilter);
+  }, [activeFilter, projects, variant]);
 
   // Handler memoizado - abre sempre a página de detalhes do projeto
   const handleProjectClick = useCallback(
@@ -297,7 +329,7 @@ export function Portfolio() {
                   letterSpacing: designSystem.typography.letterSpacing.wider,
                 }}
               >
-                Portfólio
+                {variant === 'homepage' ? 'Imóveis' : 'Portfólio'}
               </span>
             </motion.div>
 
@@ -308,7 +340,7 @@ export function Portfolio() {
                 marginBottom: designSystem.spacing.md,
               }}
             >
-              Projetos de Alto Retorno
+              {variant === 'homepage' ? 'Imóveis Disponíveis' : 'Projetos de Alto Retorno'}
             </h2>
             <p
               style={{
@@ -318,60 +350,64 @@ export function Portfolio() {
                 marginRight: 'auto',
               }}
             >
-              Conheça os nossos casos de sucesso em reabilitação urbana e investimento imobiliário de alto rendimento em Portugal
+              {variant === 'homepage'
+                ? 'Descubra os nossos imóveis reabilitados com acabamentos premium e localização privilegiada'
+                : 'Conheça os nossos casos de sucesso em reabilitação urbana e investimento imobiliário de alto rendimento em Portugal'}
             </p>
           </motion.div>
 
-          {/* Filters */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-wrap justify-center"
-            style={{
-              gap: designSystem.spacing[3],
-              marginBottom: designSystem.spacing[12],
-            }}
-          >
-            {filters.map((filter) => (
-              <motion.button
-                key={filter.value}
-                whileHover={isMobile ? {} : { scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveFilter(filter.value)}
-                className="rounded-full transition-all duration-300"
-                role="button"
-                aria-pressed={activeFilter === filter.value}
-                aria-label={`Filtrar por ${filter.label}`}
-                style={{
-                  paddingLeft: designSystem.spacing[6],
-                  paddingRight: designSystem.spacing[6],
-                  paddingTop: designSystem.spacing[3],
-                  paddingBottom: designSystem.spacing[3],
-                  background:
-                    activeFilter === filter.value
-                      ? designSystem.colors.gradients.secondary
-                      : designSystem.colors.neutral.white,
-                  color:
-                    activeFilter === filter.value
-                      ? designSystem.colors.brand.primary
-                      : designSystem.colors.brand.primary,
-                  border: `2px solid ${
-                    activeFilter === filter.value
-                      ? 'transparent'
-                      : designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.25)
-                  }`,
-                  fontWeight: designSystem.typography.fontWeight.bold,
-                  fontSize: '0.9375rem',
-                  boxShadow:
-                    activeFilter === filter.value ? designSystem.shadows.secondaryHover : designSystem.shadows.sm,
-                  cursor: 'pointer',
-                }}
-              >
-                {filter.label}
-              </motion.button>
-            ))}
-          </motion.div>
+          {/* Filters — only in full mode */}
+          {variant === 'full' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex flex-wrap justify-center"
+              style={{
+                gap: designSystem.spacing[3],
+                marginBottom: designSystem.spacing[12],
+              }}
+            >
+              {filters.map((filter) => (
+                <motion.button
+                  key={filter.value}
+                  whileHover={isMobile ? {} : { scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setActiveFilter(filter.value)}
+                  className="rounded-full transition-all duration-300"
+                  role="button"
+                  aria-pressed={activeFilter === filter.value}
+                  aria-label={`Filtrar por ${filter.label}`}
+                  style={{
+                    paddingLeft: designSystem.spacing[6],
+                    paddingRight: designSystem.spacing[6],
+                    paddingTop: designSystem.spacing[3],
+                    paddingBottom: designSystem.spacing[3],
+                    background:
+                      activeFilter === filter.value
+                        ? designSystem.colors.gradients.secondary
+                        : designSystem.colors.neutral.white,
+                    color:
+                      activeFilter === filter.value
+                        ? designSystem.colors.brand.primary
+                        : designSystem.colors.brand.primary,
+                    border: `2px solid ${
+                      activeFilter === filter.value
+                        ? 'transparent'
+                        : designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.25)
+                    }`,
+                    fontWeight: designSystem.typography.fontWeight.bold,
+                    fontSize: '0.9375rem',
+                    boxShadow:
+                      activeFilter === filter.value ? designSystem.shadows.secondaryHover : designSystem.shadows.sm,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {filter.label}
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
 
           {/* Projects Grid with Skeleton */}
           {isLoadingProjects ? (
@@ -414,6 +450,38 @@ export function Portfolio() {
               }}
             >
               <p>Nenhum projeto encontrado para este filtro.</p>
+            </motion.div>
+          )}
+
+          {/* "Ver todos" link — homepage variant */}
+          {variant === 'homepage' && !isLoadingProjects && filteredProjects.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-center"
+              style={{ marginTop: designSystem.spacing[10] }}
+            >
+              <Link
+                href="/imoveis"
+                className="inline-flex items-center rounded-full transition-all"
+                style={{
+                  gap: designSystem.spacing[2],
+                  paddingLeft: designSystem.spacing[8],
+                  paddingRight: designSystem.spacing[8],
+                  paddingTop: designSystem.spacing[4],
+                  paddingBottom: designSystem.spacing[4],
+                  background: designSystem.colors.gradients.secondary,
+                  color: designSystem.colors.brand.primary,
+                  fontWeight: designSystem.typography.fontWeight.semibold,
+                  fontSize: designSystem.typography.fontSize.base,
+                  boxShadow: designSystem.shadows.secondaryHover,
+                  textDecoration: 'none',
+                }}
+              >
+                Ver todos os imóveis
+                <ArrowRight size={18} />
+              </Link>
             </motion.div>
           )}
         </section>

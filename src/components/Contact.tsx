@@ -461,7 +461,8 @@ export function Contact() {
                   }}
                 >
                   <option value="" disabled>Selecione uma opção</option>
-                  <option value="investir">Investir em Projeto</option>
+                  <option value="morar">Quero Morar</option>
+                  <option value="investir">Quero Investir</option>
                   <option value="vender">Vender Propriedade</option>
                   <option value="parceria">Parceria Estratégica</option>
                   <option value="outro">Outro</option>

@@ -11,9 +11,9 @@ import { designSystem } from './design-system';
 
 const navItems = [
   { label: 'Início', href: '/' },
-  { label: 'Serviços', href: '/servicos' },
+  { label: 'Imóveis', href: '/imoveis' },
+  { label: 'VELASK', href: '/velask' },
   { label: 'Portfolio', href: '/portfolio' },
-  { label: 'Processo', href: '/processo' },
   { label: 'Insights', href: '/blog' },
   { label: 'Contacto', href: '/contacto' },
 ];
