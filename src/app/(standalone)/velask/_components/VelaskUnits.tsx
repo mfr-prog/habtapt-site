@@ -7,7 +7,7 @@ import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
   Construction, Key, ChefHat,
-  Home, Ruler, Download, ArrowRight, Eye,
+  Home, Download, ArrowRight, Eye,
 } from '@/components/icons';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { benefits, interiorFeatures, units, unitImages } from '../_data/velask-data';
@@ -159,9 +159,26 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
             </motion.div>
 
             <Tabs defaultValue="rc" className="flex flex-col gap-2">
-              <TabsList className="inline-flex items-center justify-center rounded-xl p-0 gap-2 flex-wrap" style={{ background: 'transparent', height: 'auto', marginBottom: sp[8] }}>
+              <TabsList className="inline-flex items-center justify-center p-0 gap-3 flex-wrap" style={{ background: 'transparent', height: 'auto', marginBottom: sp[8] }}>
                 {units.map((u) => (
-                  <TabsTrigger key={u.id} value={u.id} style={{ padding: `${sp[3]} ${sp[6]}`, borderRadius: ds.borderRadius.full, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold }}>
+                  <TabsTrigger
+                    key={u.id}
+                    value={u.id}
+                    className="data-[state=active]:!bg-[var(--tab-active-bg)] data-[state=active]:!text-white data-[state=active]:!border-[var(--tab-active-bg)] data-[state=active]:shadow-md"
+                    style={{
+                      // @ts-expect-error CSS custom property
+                      '--tab-active-bg': u.color,
+                      padding: `${sp[3]} ${sp[7]}`,
+                      borderRadius: ds.borderRadius.full,
+                      fontSize: t.fontSize.sm,
+                      fontWeight: t.fontWeight.semibold,
+                      border: `2px solid ${c.neutral[300]}`,
+                      background: '#fff',
+                      color: c.neutral[700],
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
                     {u.tab}
                   </TabsTrigger>
                 ))}
@@ -193,21 +210,18 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
                       </div>
 
                       <div className="flex flex-col justify-center" style={{ padding: isMobile ? sp[8] : sp[12] }}>
-                        <div className="flex items-center gap-3" style={{ marginBottom: sp[2] }}>
+                        <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: sp[2] }}>
                           <h3 style={{ fontSize: t.fontSize['2xl'], fontWeight: t.fontWeight.bold, color: c.neutral[900] }}>{unit.title}</h3>
                           <span style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: `${unit.color}15`, color: unit.color }}>{unit.area}</span>
                         </div>
 
                         <p style={{ ...bodyText, fontSize: t.fontSize.base, marginBottom: sp[6] }}>{unit.summary}</p>
 
-                        <div className="grid grid-cols-2 gap-3" style={{ marginBottom: sp[8] }}>
+                        <div className="grid grid-cols-2 gap-2" style={{ marginBottom: sp[8] }}>
                           {unit.specs.map((s, i) => (
-                            <div key={i} className="flex items-center gap-2 p-3 rounded-xl" style={{ background: '#fff', border: `1px solid ${c.neutral[200]}` }}>
-                              <Ruler style={{ width: 16, height: 16, flexShrink: 0, color: unit.color }} />
-                              <div>
-                                <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500] }}>{s.label}</p>
-                                <p style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[800] }}>{s.value}</p>
-                              </div>
+                            <div key={i} style={{ padding: `${sp[3]} ${sp[4]}`, borderRadius: '0.75rem', background: '#fff', border: `1px solid ${c.neutral[200]}` }}>
+                              <p style={{ fontSize: t.fontSize.xs, color: c.neutral[500], marginBottom: sp[1] }}>{s.label}</p>
+                              <p style={{ fontSize: t.fontSize.base, fontWeight: t.fontWeight.bold, color: c.neutral[900] }}>{s.value}</p>
                             </div>
                           ))}
                         </div>
