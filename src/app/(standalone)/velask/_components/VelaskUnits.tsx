@@ -84,11 +84,11 @@ export function VelaskInteriores({ isMobile }: InterioresProps) {
           </motion.div>
 
           <motion.h2 initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
-            Interiores contemporâneos, luz e funcionalidade
+            Interiores onde a luz é protagonista
           </motion.h2>
 
           <motion.p initial={{ opacity: 0, y: 30 }} animate={intInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ ...bodyText, maxWidth: '48rem', margin: `0 auto ${sp[12]}` }}>
-            Um conceito de interiores minimalista e quente, com tons claros, detalhes em madeira e linhas limpas. Cozinha integrada com bancada escura e zonas pensadas para viver e receber.
+            Espaços desenhados para captar a luz natural ao longo do dia, com tons claros, madeira de carvalho e linhas contemporâneas. Um conceito de interiores que transforma cada divisão num lugar onde apetece estar.
           </motion.p>
 
           <div className="grid gap-6" style={{ gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', maxWidth: '64rem', margin: '0 auto' }}>

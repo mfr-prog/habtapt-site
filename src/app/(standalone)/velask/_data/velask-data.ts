@@ -73,11 +73,12 @@ export const benefits = [
 ];
 
 export const interiorFeatures = [
-  { title: 'Cozinha', desc: 'Linguagem contemporânea, bancada escura e integração com a sala.' },
-  { title: 'Sala', desc: 'Possibilidade de separação visual com elementos envidraçados (conceito).' },
-  { title: 'Quartos', desc: 'Ambientes simples com boa arrumação.' },
-  { title: 'Casas de banho', desc: 'Revestimentos claros tipo pedra e móveis suspensos (conceito).' },
-  { title: 'Duplex', desc: 'Escada com integração estética e área extra no piso superior (conceito).' },
+  { title: 'Cozinha', desc: 'Integrada com a sala, bancada em pedra escura e armários em carvalho. Luminosa e funcional, pensada para o dia-a-dia.' },
+  { title: 'Sala', desc: 'Ampla e banhada por luz natural, com ripado em madeira a definir os ambientes. Um espaço fluido para viver e receber.' },
+  { title: 'Suíte', desc: 'Parede em ripado de carvalho, pendentes de design e luz filtrada pelas cortinas. O refúgio mais elegante da casa.' },
+  { title: 'Quartos', desc: 'Tranquilos e luminosos, com arrumação generosa e acabamentos cuidados em tons neutros e madeira.' },
+  { title: 'Casas de banho', desc: 'Mármore branco, móvel suspenso em madeira e espelho circular. Materiais nobres com luz suave e envolvente.' },
+  { title: 'Jardim privativo', desc: 'Relvado, deck em madeira e churrasqueira coberta com bancada. A extensão natural da casa ao ar livre.' },
 ];
 
 export const units = [
