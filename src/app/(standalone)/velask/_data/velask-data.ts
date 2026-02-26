@@ -163,6 +163,7 @@ export const locationAccordion = [
     pois: [
       { label: 'Metro Estádio do Dragão', lat: 41.1613, lng: -8.5874 },
       { label: 'Estação de Campanhã', lat: 41.1488, lng: -8.5853 },
+      { label: 'Aeroporto', lat: 41.2481, lng: -8.6814 },
     ],
   },
   {

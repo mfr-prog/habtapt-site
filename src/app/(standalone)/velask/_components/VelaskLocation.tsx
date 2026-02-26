@@ -57,6 +57,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
           direction: 'top',
           offset: [0, -16],
           className: 'velask-poi-tooltip',
+          permanent: true,
         });
     });
 
@@ -95,7 +96,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
       if (!document.getElementById('velask-poi-style')) {
         const style = document.createElement('style');
         style.id = 'velask-poi-style';
-        style.textContent = `.velask-poi-tooltip { font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }`;
+        style.textContent = `.velask-poi-tooltip { font-family: Inter, system-ui, sans-serif; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); white-space: nowrap; }`;
         document.head.appendChild(style);
       }
 
