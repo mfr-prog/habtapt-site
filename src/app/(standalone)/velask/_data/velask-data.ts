@@ -10,9 +10,9 @@ const makeImages = (folder: string, count: number) =>
     alt: `VELASK — ${folder.toUpperCase()} render ${i + 1}`,
   }));
 
-export const t1Images = makeImages('t1', 13);
-export const t2Images = makeImages('t2', 10);
-export const t3Images = makeImages('t3', 17);
+export const t1Images = makeImages('t1', 16);
+export const t2Images = makeImages('t2', 15);
+export const t3Images = makeImages('t3', 19);
 export const commonImages = makeImages('common', 9);
 
 /** All images combined for the full gallery lightbox */

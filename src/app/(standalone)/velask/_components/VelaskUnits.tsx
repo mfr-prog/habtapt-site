@@ -119,6 +119,70 @@ interface PlantasProps {
   onScrollToForm: () => void;
 }
 
+function UnitCarousel({ unitId, isMobile, onClickImage }: { unitId: string; isMobile: boolean; onClickImage: (idx: number) => void }) {
+  const images = unitImages[unitId] || [];
+  const [current, setCurrent] = React.useState(0);
+
+  React.useEffect(() => {
+    setCurrent(0);
+  }, [unitId]);
+
+  React.useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [images.length, unitId]);
+
+  if (!images.length) return null;
+
+  return (
+    <div
+      className="relative cursor-pointer"
+      style={{ height: isMobile ? 300 : 500, overflow: 'hidden' }}
+      onClick={() => onClickImage(current)}
+    >
+      {images.map((img, i) => (
+        <img
+          key={i}
+          src={img.src}
+          alt={img.alt}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: i === current ? 1 : 0,
+            transition: 'opacity 0.6s ease',
+          }}
+        />
+      ))}
+      {/* Dots */}
+      <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6, zIndex: 5 }}>
+        {images.slice(0, 8).map((_, i) => (
+          <button
+            key={i}
+            onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+            style={{
+              width: i === current ? 20 : 8,
+              height: 8,
+              borderRadius: 4,
+              background: i === current ? '#fff' : 'rgba(255,255,255,0.5)',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'all 0.3s',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
   const planInView = useInView({ threshold: 0.05 });
 
@@ -126,11 +190,11 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
   const [lightboxImages, setLightboxImages] = React.useState<{ src: string; alt: string }[]>([]);
   const [lightboxIndex, setLightboxIndex] = React.useState(0);
 
-  const openUnitGallery = (unitId: string) => {
+  const openUnitGallery = (unitId: string, startIndex = 0) => {
     const imgs = unitImages[unitId] || [];
     if (imgs.length) {
       setLightboxImages(imgs);
-      setLightboxIndex(0);
+      setLightboxIndex(startIndex);
       setLightboxOpen(true);
     }
   };
@@ -187,27 +251,8 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
               {units.map((unit) => (
                 <TabsContent key={unit.id} value={unit.id}>
                   <div className="rounded-3xl overflow-hidden" style={{ background: c.neutral[50], border: `1px solid ${c.neutral[200]}` }}>
-                    <div className="grid" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
-                      <div
-                        className="relative group cursor-pointer"
-                        style={{ minHeight: isMobile ? 200 : 400, overflow: 'hidden' }}
-                        onClick={() => openUnitGallery(unit.id)}
-                      >
-                        <img
-                          src={(unitImages[unit.id] || [])[0]?.src}
-                          alt={`${unit.title} — render 3D`}
-                          loading="lazy"
-                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                        <div
-                          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          style={{ background: 'rgba(26,62,92,0.35)' }}
-                        >
-                          <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(255,255,255,0.9)', color: c.brand.primary, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold }}>
-                            <Eye style={{ width: 16, height: 16 }} /> Ver galeria
-                          </div>
-                        </div>
-                      </div>
+                    <div className="grid" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: isMobile ? 'auto' : 560 }}>
+                      <UnitCarousel unitId={unit.id} isMobile={isMobile} onClickImage={(idx) => openUnitGallery(unit.id, idx)} />
 
                       <div className="flex flex-col justify-center" style={{ padding: isMobile ? sp[8] : sp[12] }}>
                         <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: sp[2] }}>
