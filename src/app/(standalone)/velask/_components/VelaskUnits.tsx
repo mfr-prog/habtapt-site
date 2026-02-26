@@ -216,12 +216,6 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
               Escolha o que se encaixa na sua vida.
             </motion.p>
 
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.3 }} style={{ marginBottom: sp[12] }}>
-              <motion.button onClick={onScrollToForm} style={{ ...ctaButtonPrimary, background: c.gradients.primary, color: '#fff', boxShadow: ds.shadows.primaryHover }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Download style={{ width: 18, height: 18 }} /> DOWNLOAD PLANTAS (PDF)
-              </motion.button>
-            </motion.div>
-
             <Tabs defaultValue="rc" className="flex flex-col gap-2">
               <TabsList className="inline-flex items-center justify-center p-0 gap-3 flex-wrap" style={{ background: 'transparent', height: 'auto', marginBottom: sp[8] }}>
                 {units.map((u) => (
@@ -286,6 +280,12 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
                 </TabsContent>
               ))}
             </Tabs>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={planInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.4 }} style={{ marginTop: sp[10], display: 'flex', justifyContent: 'center' }}>
+              <motion.a href="/velask-plantas.pdf" download style={{ ...ctaButtonPrimary, background: c.gradients.primary, color: '#fff', boxShadow: ds.shadows.primaryHover, textDecoration: 'none' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Download style={{ width: 18, height: 18 }} /> DOWNLOAD PLANTAS (PDF)
+              </motion.a>
+            </motion.div>
           </div>
         </Container>
       </Section>
