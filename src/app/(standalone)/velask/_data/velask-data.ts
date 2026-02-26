@@ -43,7 +43,7 @@ export const galleryItems = [
 
 export const counters = [
   { value: '3', suffix: '', label: 'Apenas 3 unidades' },
-  { value: '60', suffix: 'dias', label: 'Conclusão da obra' },
+  { value: '108 - 118', suffix: 'm²', label: '' },
   { value: '3', suffix: 'min', label: 'Do metro · Campanhã' },
 ];
 

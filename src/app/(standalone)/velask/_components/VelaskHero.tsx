@@ -51,15 +51,15 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
         <div style={{ position: 'relative', zIndex: 10, paddingTop: sp[32], paddingBottom: sp[32] }}>
           <div style={{ maxWidth: '48rem' }}>
             <motion.h1 {...anim(0)} style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight, lineHeight: 1, color: '#fff', marginBottom: sp[4] }}>
-              VELASK
+              T1 a T3<br />RESIDENCIAL<br />VELASK
             </motion.h1>
 
             <motion.p {...anim(1)} style={{ fontSize: t.fontSize['2xl'], fontWeight: t.fontWeight.semibold, color: c.brand.secondaryLight, marginBottom: sp[6], letterSpacing: t.letterSpacing.wide }}>
               Campanhã &middot; Porto
             </motion.p>
 
-            <motion.p {...anim(2)} style={{ fontSize: t.fontSize.xl, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.8)', marginBottom: sp[6] }}>
-              Reabilitação total 2026. Três apartamentos. Uma moradia transformada.
+            <motion.p {...anim(2)} style={{ fontSize: t.fontSize.xl, lineHeight: t.lineHeight.relaxed, color: 'rgba(255,255,255,0.8)', marginBottom: sp[6], letterSpacing: t.letterSpacing.wider, textTransform: 'uppercase' }}>
+              A estreiar em Abril de 2026
             </motion.p>
 
             <motion.div {...anim(3)} className="flex items-center gap-2" style={{ color: 'rgba(255,255,255,0.6)', marginBottom: sp[10] }}>
