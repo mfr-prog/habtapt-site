@@ -96,19 +96,19 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
               <div style={{ display: 'flex', flexDirection: 'column', gap: sp[4] }}>
                 {pricingRows.map((row, i) => (
                   <div key={i} className="rounded-3xl" style={{ ...cardBase, padding: sp[6] }}>
-                    <div className="flex items-center justify-between" style={{ marginBottom: sp[3] }}>
+                    <div className="flex items-center justify-between" style={{ marginBottom: sp[4] }}>
                       <div className="flex items-center gap-2">
-                        <span style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.primary }}>Unidade {row.unit}</span>
-                        <span style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.neutral[600] }}>{row.type}</span>
+                        <span style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.primary }}>{row.type}</span>
+                        <span style={{ fontSize: t.fontSize.sm, color: c.neutral[500] }}>Frac. {row.unit}</span>
                       </div>
                       <span style={{ fontSize: t.fontSize.xs, fontWeight: t.fontWeight.semibold, padding: `${sp[1]} ${sp[3]}`, borderRadius: ds.borderRadius.full, background: 'rgba(16,185,129,0.1)', color: c.semantic.success }}>{row.status}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2" style={{ fontSize: t.fontSize.sm }}>
-                      <div><span style={{ color: c.neutral[500] }}>Área bruta: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
-                      <div><span style={{ color: c.neutral[500] }}>Diferencial: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.diferencial}</span></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: sp[2], fontSize: t.fontSize.sm, marginBottom: sp[4] }}>
+                      <div className="flex justify-between"><span style={{ color: c.neutral[500] }}>Área bruta</span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
+                      <div className="flex justify-between"><span style={{ color: c.neutral[500] }}>Diferencial</span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.diferencial}</span></div>
                     </div>
-                    <div className="flex items-center justify-between" style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
-                      <p style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</p>
+                    <div className="flex items-center justify-between" style={{ paddingTop: sp[4], borderTop: `1px solid ${c.neutral[200]}` }}>
+                      <p style={{ fontSize: t.fontSize.xl, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</p>
                       <motion.a
                         href={getWhatsAppUrl(row.typologyKey)}
                         target="_blank"
@@ -116,13 +116,13 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: sp[1],
-                          padding: `${sp[2]} ${sp[4]}`,
+                          gap: sp[2],
+                          padding: `${sp[3]} ${sp[5]}`,
                           borderRadius: ds.borderRadius.full,
                           background: c.gradients.secondary,
                           color: c.brand.primary,
                           fontWeight: t.fontWeight.semibold,
-                          fontSize: t.fontSize.xs,
+                          fontSize: t.fontSize.sm,
                           textDecoration: 'none',
                         }}
                         whileTap={{ scale: 0.95 }}
