@@ -16,10 +16,14 @@ interface VelaskPricingProps {
 export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps) {
   const priceInView = useInView({ threshold: 0.1 });
 
-  const handleSaberMais = (typologyKey: string) => {
-    onSelectTypology(typologyKey);
-    document.getElementById('velask-form')?.scrollIntoView({ behavior: 'smooth' });
+  const waMessages: Record<string, string> = {
+    t1: 'Olá, tenho interesse na Fracção A (T1) do Velask Residence.',
+    t2: 'Olá, tenho interesse na Fracção B (T2) do Velask Residence.',
+    t3: 'Olá, tenho interesse na Fracção C (T3 Duplex) do Velask Residence.',
   };
+
+  const getWhatsAppUrl = (typologyKey: string) =>
+    `https://wa.me/351963290394?text=${encodeURIComponent(waMessages[typologyKey] || 'Olá, tenho interesse no Velask Residence.')}`;
 
   return (
     <Section background="muted">
@@ -58,8 +62,10 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                           </span>
                         </td>
                         <td style={{ padding: `${sp[5]} ${sp[6]}` }}>
-                          <motion.button
-                            onClick={() => handleSaberMais(row.typologyKey)}
+                          <motion.a
+                            href={getWhatsAppUrl(row.typologyKey)}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             style={{
                               display: 'inline-flex',
                               alignItems: 'center',
@@ -70,15 +76,14 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                               color: c.brand.primary,
                               fontWeight: t.fontWeight.semibold,
                               fontSize: t.fontSize.xs,
-                              border: 'none',
-                              cursor: 'pointer',
+                              textDecoration: 'none',
                               whiteSpace: 'nowrap',
                             }}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
                             Saber Mais <ArrowRight style={{ width: 14, height: 14 }} />
-                          </motion.button>
+                          </motion.a>
                         </td>
                       </tr>
                     ))}
@@ -104,8 +109,10 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                     </div>
                     <div className="flex items-center justify-between" style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
                       <p style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</p>
-                      <motion.button
-                        onClick={() => handleSaberMais(row.typologyKey)}
+                      <motion.a
+                        href={getWhatsAppUrl(row.typologyKey)}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -116,13 +123,12 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                           color: c.brand.primary,
                           fontWeight: t.fontWeight.semibold,
                           fontSize: t.fontSize.xs,
-                          border: 'none',
-                          cursor: 'pointer',
+                          textDecoration: 'none',
                         }}
                         whileTap={{ scale: 0.95 }}
                       >
                         Saber Mais <ArrowRight style={{ width: 14, height: 14 }} />
-                      </motion.button>
+                      </motion.a>
                     </div>
                   </div>
                 ))}
