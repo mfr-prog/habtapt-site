@@ -78,6 +78,10 @@ export {
   Construction,
   Key,
   ChefHat,
+  TreePine,
+  Sun,
+  Car,
+  Layers,
 
   // Misc
   Quote,

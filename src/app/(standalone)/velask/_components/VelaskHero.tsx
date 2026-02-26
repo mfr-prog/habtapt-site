@@ -4,7 +4,8 @@ import { Container } from '@/components/Container';
 import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
-  MapPin, Calendar, ChevronDown, ArrowRight,
+  MapPin, ChevronDown,
+  TreePine, Sun, Car, Layers,
 } from '@/components/icons';
 import { counters, highlights } from '../_data/velask-data';
 import { c, t, sp, ctaButtonPrimary, ctaButtonOutline, anim } from './velask-styles';
@@ -68,7 +69,7 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.div>
 
             <motion.div {...anim(4)} className="flex flex-wrap gap-4 items-center">
-              <motion.button onClick={() => scrollToSection('precos')} style={{ ...ctaButtonPrimary, padding: `${sp[4]} ${sp[8]}` }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+              <motion.button onClick={() => scrollToSection('precos')} style={{ ...ctaButtonPrimary, padding: `${sp[4]} ${sp[8]}`, flexDirection: 'column' as const, gap: sp[1] }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <span style={{ fontSize: t.fontSize.xs, fontWeight: t.fontWeight.medium, opacity: 0.8 }}>DESDE</span>
                 <span style={{ fontSize: t.fontSize.xl, fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight }}>399.000 &euro;</span>
               </motion.button>
@@ -95,12 +96,18 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
           </motion.div>
 
           <motion.div {...anim(6)} className="grid grid-cols-2 gap-4" style={{ marginTop: sp[12] }}>
-            {highlights.map((h, i) => (
-              <motion.div key={i} className="flex items-start gap-3 p-4 rounded-3xl" style={{ background: 'linear-gradient(135deg, rgba(26,62,92,0.35), rgba(15,39,56,0.45))', border: '2px solid rgba(255,255,255,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }} whileHover={isMobile ? {} : { y: -4, scale: 1.01 }}>
-                <span style={{ fontSize: t.fontSize.xl, flexShrink: 0, marginTop: 2 }}>{h.icon}</span>
-                <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.85)', lineHeight: t.lineHeight.snug }}>{h.text}</p>
-              </motion.div>
-            ))}
+            {highlights.map((h, i) => {
+              const icons = { TreePine, Sun, Car, Layers } as Record<string, React.ComponentType<{ style?: React.CSSProperties }>>;
+              const Icon = icons[h.iconName];
+              return (
+                <motion.div key={i} className="flex items-center gap-3" style={{ padding: `${sp[4]} ${sp[5]}`, borderRadius: '1.5rem', background: 'linear-gradient(135deg, rgba(26,62,92,0.35), rgba(15,39,56,0.45))', border: '1px solid rgba(255,255,255,0.12)' }} whileHover={isMobile ? {} : { y: -4, scale: 1.01 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(184,149,106,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Icon style={{ width: 18, height: 18, color: c.brand.secondaryLight }} />
+                  </div>
+                  <p style={{ fontSize: t.fontSize.sm, color: 'rgba(255,255,255,0.85)', lineHeight: t.lineHeight.snug }}>{h.text}</p>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </Container>

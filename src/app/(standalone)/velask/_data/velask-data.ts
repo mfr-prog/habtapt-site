@@ -48,10 +48,10 @@ export const counters = [
 ];
 
 export const highlights = [
-  { icon: '\uD83C\uDF3F', text: 'Jardins privados até 27,80 m\u00B2' },
-  { icon: '\u2600\uFE0F', text: 'Exterior total (pátio + jardim) até 34,06 m\u00B2' },
-  { icon: '\uD83D\uDE97', text: 'Garagem privativa (R/C)' },
-  { icon: '\uD83C\uDFE0', text: 'Duplex com piso superior de 33,11 m\u00B2' },
+  { iconName: 'TreePine' as const, text: 'Jardins privados até 27,80 m²' },
+  { iconName: 'Sun' as const, text: 'Exterior total (pátio + jardim) até 34,06 m²' },
+  { iconName: 'Car' as const, text: 'Garagem privativa (R/C)' },
+  { iconName: 'Layers' as const, text: 'Duplex com piso superior de 33,11 m²' },
 ];
 
 export const benefits = [
