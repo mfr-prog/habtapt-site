@@ -4,6 +4,7 @@ import { Home, LogOut } from 'lucide-react';
 import { colors, shadows, spacing, radius, typography } from '../../utils/styles';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { createClient } from '@/lib/supabase/client';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -12,11 +13,12 @@ interface AdminLayoutProps {
 export function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('habta_admin_auth');
-    sessionStorage.removeItem('habta_admin_user');
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
     toast.success('Sessão encerrada');
-    setTimeout(() => router.push('/login'), 600);
+    router.push('/login');
+    router.refresh();
   };
 
   return (

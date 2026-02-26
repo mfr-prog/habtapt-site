@@ -2,7 +2,7 @@
 
 import React, { useState, FormEvent } from 'react';
 import { motion } from 'motion/react';
-import { Shield, Lock, User, LogIn } from './icons';
+import { Shield, Lock, Mail, LogIn } from './icons';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
@@ -12,49 +12,54 @@ import { AnimatedButton } from './primitives/AnimatedButton';
 import { colors, spacing, radius } from '../utils/styles';
 import { animations } from '../utils/animations';
 import { designSystem } from './design-system';
+import { createClient } from '@/lib/supabase/client';
 
 export function Login() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({ username: '', password: '' });
+  const [errors, setErrors] = useState({ email: '', password: '' });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     // Reset errors
-    setErrors({ username: '', password: '' });
+    setErrors({ email: '', password: '' });
 
     // Validation
-    if (!username) {
-      setErrors((prev) => ({ ...prev, username: 'Usuário é obrigatório' }));
+    if (!email) {
+      setErrors((prev) => ({ ...prev, email: 'Email é obrigatório' }));
       return;
     }
 
     if (!password) {
-      setErrors((prev) => ({ ...prev, password: 'Senha é obrigatória' }));
+      setErrors((prev) => ({ ...prev, password: 'Password é obrigatória' }));
       return;
     }
 
     setIsLoading(true);
 
-    // Simular validação (em produção, você conectaria ao Supabase Auth)
-    setTimeout(() => {
-      // Credenciais de exemplo (em produção, usar Supabase Auth)
-      if (username === 'admin' && password === 'habta2024') {
-        // Salvar token de autenticação
-        sessionStorage.setItem('habta_admin_auth', 'true');
-        sessionStorage.setItem('habta_admin_user', username);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        toast.success('Login realizado com sucesso!');
-        setTimeout(() => router.push('/admin'), 500);
+      if (error) {
+        setErrors({ email: '', password: 'Email ou password inválidos' });
+        toast.error('Email ou password inválidos.');
       } else {
-        setErrors({ username: '', password: 'Credenciais inválidas' });
-        toast.error('Credenciais inválidas. Tente novamente.');
+        toast.success('Login realizado com sucesso!');
+        router.push('/admin');
+        router.refresh();
       }
+    } catch {
+      toast.error('Erro de conexão. Tente novamente.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -103,16 +108,16 @@ export function Login() {
         style={{ display: 'flex', flexDirection: 'column', gap: spacing[6] }}
       >
         <FormField
-          id="username"
-          label="Usuário"
-          type="text"
-          icon={User}
-          placeholder="Digite seu usuário"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          error={errors.username}
+          id="email"
+          label="Email"
+          type="email"
+          icon={Mail}
+          placeholder="Digite seu email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
           disabled={isLoading}
-          autoComplete="username"
+          autoComplete="email"
         />
 
         <FormField
@@ -141,38 +146,6 @@ export function Login() {
         </AnimatedButton>
       </form>
 
-      {/* Demo Credentials */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        style={{
-          marginTop: spacing[8],
-          padding: spacing[4],
-          background: designSystem.helpers.hexToRgba(colors.secondary, 0.08),
-          borderRadius: radius.lg,
-          border: `1px solid ${designSystem.helpers.hexToRgba(colors.secondary, 0.2)}`,
-        }}
-      >
-        <p
-          style={{
-            fontSize: '0.875rem',
-            color: colors.gray[600],
-            marginBottom: spacing[2],
-            fontWeight: 600,
-          }}
-        >
-          🔑 Credenciais de Demonstração
-        </p>
-        <div style={{ fontSize: '0.8125rem', color: colors.gray[500] }}>
-          <p style={{ marginBottom: '4px' }}>
-            <strong style={{ color: colors.gray[700] }}>Usuário:</strong> admin
-          </p>
-          <p>
-            <strong style={{ color: colors.gray[700] }}>Senha:</strong> habta2024
-          </p>
-        </div>
-      </motion.div>
     </AuthCard>
   );
 }

@@ -30,6 +30,7 @@ import {
 import { toast } from 'sonner';
 import { supabaseFetch } from '../utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import { AdminLayout } from './admin/AdminLayout';
 import { MetricCard } from './admin/MetricCard';
 import { ProjectsManager } from './admin/ProjectsManager';
@@ -124,13 +125,17 @@ export function AdminPanel() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [contactStatus, setContactStatus] = useState<{ [key: string]: 'pending' | 'attended' }>({});
 
-  // Auth check
+  // Auth check (backup do middleware)
   useEffect(() => {
-    const isAuthenticated = sessionStorage.getItem('habta_admin_auth') === 'true';
-    if (!isAuthenticated) {
-      toast.error('Acesso negado. Por favor, faça login.');
-      router.push('/login');
-    }
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('Acesso negado. Por favor, faça login.');
+        router.push('/login');
+      }
+    };
+    checkAuth();
   }, [router]);
 
   // Fetch data
