@@ -46,9 +46,9 @@ export default function VelaskPage() {
         <VelaskBairro isMobile={isMobile} />
       </div>
 
-      <VelaskInteriores isMobile={isMobile} />
-
       <VelaskPlantas isMobile={isMobile} onScrollToForm={scrollToForm} />
+
+      <VelaskInteriores isMobile={isMobile} />
 
       <div id="galeria">
         <VelaskGallery isMobile={isMobile} />
