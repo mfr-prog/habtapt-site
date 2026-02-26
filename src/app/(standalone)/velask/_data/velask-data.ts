@@ -163,7 +163,6 @@ export const locationAccordion = [
     pois: [
       { label: 'Metro Estádio do Dragão', lat: 41.1613, lng: -8.5874 },
       { label: 'Estação de Campanhã', lat: 41.1488, lng: -8.5853 },
-      { label: 'Aeroporto', lat: 41.2481, lng: -8.6814 },
     ],
   },
   {
@@ -217,9 +216,9 @@ export const locationCards = [
 ];
 
 export const pricingRows = [
-  { unit: 'A', floor: 'R/C', type: 'T1', area: '118,44', interior: '69,6', diferencial: 'Jardim + Garagem', price: '419.000', status: 'Disponível', typologyKey: 't1' },
-  { unit: 'B', floor: 'Piso 1', type: 'T2', area: '106,78', interior: '66,3', diferencial: 'Jardim + Anexo', price: '399.000', status: 'Disponível', typologyKey: 't2' },
-  { unit: 'C', floor: 'Piso 2 (Duplex)', type: 'T3', area: '108,67', interior: '66,3', diferencial: 'Duplex + Varanda', price: '449.000', status: 'Disponível', typologyKey: 't3' },
+  { unit: 'A', floor: 'R/C', type: 'T1', area: '118,44', diferencial: 'Jardim + Garagem', price: '399.000', status: 'Disponível', typologyKey: 't1' },
+  { unit: 'B', floor: 'Piso 1', type: 'T2', area: '106,78', diferencial: 'Jardim + Anexo', price: '419.000', status: 'Disponível', typologyKey: 't2' },
+  { unit: 'C', floor: 'Piso 2 (Duplex)', type: 'T3', area: '108,67', diferencial: 'Duplex + Varanda', price: '449.000', status: 'Disponível', typologyKey: 't3' },
 ];
 
 export const faqItems = [

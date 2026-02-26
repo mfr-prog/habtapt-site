@@ -39,7 +39,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                 <table style={{ width: '100%' }}>
                   <thead>
                     <tr style={{ background: c.brand.primary }}>
-                      {['Frac.', 'Tipo', 'Área bruta', 'Interior', 'Diferencial', 'Preço', 'Estado', ''].map(h => (
+                      {['Frac.', 'Tipo', 'Área bruta', 'Diferencial', 'Preço', 'Estado', ''].map(h => (
                         <th key={h} style={{ textAlign: 'left', fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: '#fff', padding: `${sp[4]} ${sp[5]}` }}>{h}</th>
                       ))}
                     </tr>
@@ -50,7 +50,6 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{row.unit}</td>
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.brand.primary }}>{row.type}</td>
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.area} m&sup2;</td>
-                        <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.interior} m&sup2;</td>
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, color: c.neutral[600] }}>{row.diferencial}</td>
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.base, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</td>
                         <td style={{ padding: `${sp[5]} ${sp[6]}` }}>
@@ -101,8 +100,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                     </div>
                     <div className="grid grid-cols-2 gap-2" style={{ fontSize: t.fontSize.sm }}>
                       <div><span style={{ color: c.neutral[500] }}>Área bruta: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.area} m&sup2;</span></div>
-                      <div><span style={{ color: c.neutral[500] }}>Interior: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.interior} m&sup2;</span></div>
-                      <div style={{ gridColumn: 'span 2' }}><span style={{ color: c.neutral[500] }}>Diferencial: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.diferencial}</span></div>
+                      <div><span style={{ color: c.neutral[500] }}>Diferencial: </span><span style={{ fontWeight: t.fontWeight.medium, color: c.neutral[800] }}>{row.diferencial}</span></div>
                     </div>
                     <div className="flex items-center justify-between" style={{ marginTop: sp[3], paddingTop: sp[3], borderTop: `1px solid ${c.neutral[200]}` }}>
                       <p style={{ fontSize: t.fontSize.lg, fontWeight: t.fontWeight.bold, color: c.brand.secondary }}>&euro;{row.price}</p>
