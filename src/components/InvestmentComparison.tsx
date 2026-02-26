@@ -12,20 +12,20 @@ interface InvestmentComparisonProps {
 
 const comparisons = [
   {
-    label: 'Depósitos a Prazo',
+    label: 'Depósitos a Prazo (anual)',
     rate: 3,
     color: designSystem.colors.neutral[400],
     bgColor: designSystem.helpers.hexToRgba(designSystem.colors.neutral[400], 0.15),
   },
   {
-    label: 'Bolsa / ETFs',
+    label: 'Bolsa / ETFs (anual)',
     rate: 7,
     color: designSystem.colors.brand.tertiary,
     bgColor: designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.15),
   },
   {
-    label: 'HABTA Imobiliário',
-    rate: 25,
+    label: 'HABTA Fix & Flip (por projeto)',
+    rate: 30,
     color: designSystem.colors.brand.secondary,
     bgColor: designSystem.helpers.hexToRgba(designSystem.colors.brand.secondary, 0.15),
     highlight: true,
@@ -63,7 +63,7 @@ export function InvestmentComparison({ investmentValue }: InvestmentComparisonPr
           marginBottom: designSystem.spacing[8],
         }}
       >
-        Projeção anual com base num investimento de €{baseInvestment.toLocaleString('pt-PT')}
+        Retorno estimado com base num investimento de €{baseInvestment.toLocaleString('pt-PT')}
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: designSystem.spacing[6] }}>

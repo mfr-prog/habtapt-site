@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container } from './Container';
-import { ArrowRight, ChevronDown } from './icons';
+import { ArrowRight } from './icons';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { designSystem } from './design-system';
 import { LogoPattern } from './LogoPatterns';
@@ -11,7 +11,7 @@ import Link from 'next/link';
 export function Hero() {
   const [isMobile, setIsMobile] = useState(false);
   const { scrollY } = useScroll();
-  const yParallax = useTransform(scrollY, [0, 600], [0, isMobile ? 0 : 120]);
+  const yParallax = useTransform(scrollY, [0, 600], [0, isMobile ? 0 : 80]);
 
   useEffect(() => {
     const mdBreakpoint = parseInt(designSystem.breakpoints.md);
@@ -21,24 +21,14 @@ export function Hero() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const scrollToNext = () => {
-    const nextSection = document.getElementById('portfolio');
-    nextSection?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const stats = [
-    { value: '10+', label: 'Projetos' },
-    { value: '30%', label: 'ROI médio' },
-    { value: '100%', label: 'Transparência' },
-  ];
-
   return (
     <section
       id="home"
       aria-labelledby="hero-title"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      className="relative flex items-center overflow-hidden"
       style={{
-        paddingTop: '4.5rem',
+        minHeight: '100vh',
+        paddingTop: '72px',
       }}
     >
       {/* Background Image with Gradient Overlay */}
@@ -50,13 +40,12 @@ export function Hero() {
           src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1920"
           alt=""
           className="w-full h-full object-cover"
-          style={{ minHeight: '120%' }}
+          style={{ minHeight: '110%' }}
         />
-        {/* Gradient overlays */}
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(180deg, rgba(26, 62, 92, 0.85) 0%, rgba(26, 62, 92, 0.6) 40%, rgba(26, 62, 92, 0.9) 100%)`,
+            background: 'linear-gradient(180deg, rgba(26, 62, 92, 0.82) 0%, rgba(26, 62, 92, 0.55) 40%, rgba(26, 62, 92, 0.88) 100%)',
           }}
         />
       </motion.div>
@@ -82,11 +71,11 @@ export function Hero() {
           <div
             className="mx-auto flex flex-col items-center"
             style={{
-              maxWidth: '72rem',
+              maxWidth: '56rem',
               paddingLeft: designSystem.spacing[4],
               paddingRight: designSystem.spacing[4],
-              paddingTop: designSystem.spacing[16],
-              paddingBottom: designSystem.spacing[12],
+              paddingTop: designSystem.spacing[8],
+              paddingBottom: designSystem.spacing[8],
             }}
           >
             {/* Project badge */}
@@ -115,7 +104,7 @@ export function Hero() {
                   textTransform: 'uppercase',
                 }}
               >
-                Novo Projeto
+                Disponivel Agora
               </span>
             </motion.div>
 
@@ -132,7 +121,6 @@ export function Hero() {
                 fontWeight: designSystem.typography.fontWeight.black,
                 letterSpacing: designSystem.typography.letterSpacing.tight,
                 color: designSystem.colors.neutral.white,
-                maxWidth: '900px',
                 marginBottom: designSystem.spacing[4],
               }}
             >
@@ -177,10 +165,10 @@ export function Hero() {
               className="flex flex-wrap justify-center items-center"
               style={{
                 gap: designSystem.spacing[4],
-                marginBottom: designSystem.spacing[4],
+                marginBottom: designSystem.spacing[10],
               }}
             >
-              {['T1 a T3 Duplex', '106–118 m²', 'Entrega Abril 2026'].map((spec, i) => (
+              {['T1 a T3 Duplex', '106-118 m²', 'Entrega Abril 2026'].map((spec, i) => (
                 <React.Fragment key={spec}>
                   {i > 0 && (
                     <div
@@ -206,48 +194,14 @@ export function Hero() {
               ))}
             </motion.div>
 
-            {/* Price */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="text-center"
-              style={{
-                marginBottom: designSystem.spacing[10],
-              }}
-            >
-              <span
-                style={{
-                  fontSize: designSystem.typography.fontSize.sm,
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  textTransform: 'uppercase',
-                  letterSpacing: designSystem.typography.letterSpacing.wider,
-                  display: 'block',
-                  marginBottom: designSystem.spacing[1],
-                }}
-              >
-                Desde
-              </span>
-              <span
-                style={{
-                  fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
-                  fontWeight: designSystem.typography.fontWeight.black,
-                  color: designSystem.colors.neutral.white,
-                }}
-              >
-                Sob consulta
-              </span>
-            </motion.div>
-
             {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.6 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
               className="flex flex-col sm:flex-row justify-center items-center w-full"
               style={{
                 gap: designSystem.spacing[4],
-                marginBottom: designSystem.spacing[16],
               }}
             >
               <Link href="/velask" style={{ textDecoration: 'none', width: isMobile ? '100%' : 'auto' }}>
@@ -283,15 +237,14 @@ export function Hero() {
                   whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center justify-center rounded-full backdrop-blur-md transition-all w-full sm:w-auto"
-                  aria-label="Ver todos os imóveis disponíveis"
+                  aria-label="Ver todos os imoveis disponiveis"
                   style={{
                     gap: designSystem.spacing[3],
                     paddingLeft: designSystem.spacing[10],
                     paddingRight: designSystem.spacing[10],
                     paddingTop: designSystem.spacing[5],
                     paddingBottom: designSystem.spacing[5],
-                    borderWidth: '2px',
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: designSystem.colors.neutral.white,
                     fontWeight: designSystem.typography.fontWeight.semibold,
@@ -301,95 +254,12 @@ export function Hero() {
                     display: 'inline-flex',
                   }}
                 >
-                  Todos os Imóveis
+                  Todos os Imoveis
                 </motion.span>
               </Link>
             </motion.div>
-
-            {/* Compact Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex flex-wrap justify-center"
-              style={{
-                gap: designSystem.spacing[8],
-              }}
-            >
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={isMobile ? { opacity: 1 } : { opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.8 + index * 0.1 }}
-                  className="text-center"
-                >
-                  <div
-                    style={{
-                      fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-                      fontWeight: designSystem.typography.fontWeight.black,
-                      color: designSystem.colors.neutral.white,
-                      lineHeight: 1,
-                      marginBottom: designSystem.spacing[1],
-                    }}
-                  >
-                    {stat.value}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: designSystem.typography.fontSize.sm,
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontWeight: designSystem.typography.fontWeight.medium,
-                    }}
-                  >
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
           </div>
         </Container>
-
-        {/* Scroll Indicator */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          onClick={scrollToNext}
-          whileHover={isMobile ? {} : { scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer group"
-          aria-label="Scroll to next section"
-          style={{
-            background: 'none',
-            border: 'none',
-            outline: 'none',
-            zIndex: 1,
-            pointerEvents: 'auto',
-          }}
-        >
-          <span
-            style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: designSystem.typography.fontSize.sm,
-              fontWeight: designSystem.typography.fontWeight.medium,
-              letterSpacing: designSystem.typography.letterSpacing.wide,
-              textTransform: 'uppercase',
-            }}
-          >
-            Explorar
-          </span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <ChevronDown
-              size={28}
-              style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-              className="group-hover:opacity-100 transition-opacity"
-            />
-          </motion.div>
-        </motion.button>
       </div>
     </section>
   );
