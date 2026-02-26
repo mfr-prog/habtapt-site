@@ -153,37 +153,56 @@ export const locationAccordion = [
   {
     icon: '\uD83D\uDE87',
     title: 'Transportes',
+    color: '#2563eb',
     items: [
       'Metro Estádio do Dragão (A, B, E, F) — 3 min a pé',
       'Campanhã (comboio intermodal) — 10 min a pé',
       'Aeroporto via metro linha E — 25 min',
       'Aeroporto de carro — 15 min',
     ],
+    pois: [
+      { label: 'Metro Estádio do Dragão', lat: 41.1613, lng: -8.5874 },
+      { label: 'Estação de Campanhã', lat: 41.1488, lng: -8.5853 },
+    ],
   },
   {
     icon: '\uD83D\uDED2',
     title: 'Comércio',
+    color: '#d97706',
     items: [
       'Alameda Shop & Spot (Continente, Fnac, Zara, cinema 7 salas NOS) — 5 min a pé',
       'Comércio de bairro (café, farmácia, padaria) — no bairro',
+    ],
+    pois: [
+      { label: 'Alameda Shop & Spot', lat: 41.1608, lng: -8.5839 },
     ],
   },
   {
     icon: '\uD83C\uDFE5',
     title: 'Saúde',
+    color: '#dc2626',
     items: [
       'Hospital CUF Porto — 10 min de carro',
       'Hospital São João — 15 min de carro',
       'Farmácias no bairro',
     ],
+    pois: [
+      { label: 'Hospital CUF Porto', lat: 41.1571, lng: -8.6268 },
+      { label: 'Hospital São João', lat: 41.1861, lng: -8.6019 },
+    ],
   },
   {
     icon: '\uD83C\uDFEB',
     title: 'Ensino',
+    color: '#059669',
     items: [
       'Escolas em Campanhã e Bonfim — bairro',
       'ISEP — 15 min',
       'Universidade do Porto — 20 min',
+    ],
+    pois: [
+      { label: 'ISEP', lat: 41.1789, lng: -8.6065 },
+      { label: 'Universidade do Porto', lat: 41.1534, lng: -8.6156 },
     ],
   },
 ];

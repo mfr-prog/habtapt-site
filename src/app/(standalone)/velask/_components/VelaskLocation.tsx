@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
 import { motion } from 'motion/react';
@@ -8,6 +8,9 @@ import { useInView } from '@/components/useInView';
 import { ChevronDown } from '@/components/icons';
 import { locationAccordion } from '../_data/velask-data';
 import { c, t, sp, sectionBadge, sectionTitle, bodyText } from './velask-styles';
+
+const VELASK_LAT = 41.1635;
+const VELASK_LNG = -8.5955;
 
 interface VelaskLocationProps {
   isMobile: boolean;
@@ -17,10 +20,59 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
   const locInView = useInView({ threshold: 0.1 });
   const [openIndex, setOpenIndex] = React.useState<number | null>(0);
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<unknown>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const poiLayerRef = useRef<any>(null);
+  const leafletRef = useRef<any>(null);
+
+  const updateMarkers = useCallback((categoryIndex: number | null) => {
+    const L = leafletRef.current;
+    const map = mapInstanceRef.current;
+    const poiLayer = poiLayerRef.current;
+    if (!L || !map || !poiLayer) return;
+
+    poiLayer.clearLayers();
+
+    if (categoryIndex === null) {
+      map.setView([VELASK_LAT, VELASK_LNG], 16, { animate: true });
+      return;
+    }
+
+    const cat = locationAccordion[categoryIndex];
+    if (!cat?.pois?.length) {
+      map.setView([VELASK_LAT, VELASK_LNG], 16, { animate: true });
+      return;
+    }
+
+    cat.pois.forEach((poi, i) => {
+      const poiIcon = L.divIcon({
+        className: '',
+        html: `<div style="width:28px;height:28px;background:${cat.color};border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${String(i + 1).padStart(2, '0')}</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+      });
+
+      L.marker([poi.lat, poi.lng], { icon: poiIcon })
+        .addTo(poiLayer)
+        .bindTooltip(poi.label, {
+          direction: 'top',
+          offset: [0, -16],
+          className: 'velask-poi-tooltip',
+        });
+    });
+
+    // Fit bounds to include Velask + all POIs
+    const allPoints: [number, number][] = [
+      [VELASK_LAT, VELASK_LNG],
+      ...cat.pois.map((p) => [p.lat, p.lng] as [number, number]),
+    ];
+    const bounds = L.latLngBounds(allPoints);
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15, animate: true });
+  }, []);
 
   const toggleAccordion = (i: number) => {
-    setOpenIndex(openIndex === i ? null : i);
+    const newIndex = openIndex === i ? null : i;
+    setOpenIndex(newIndex);
+    updateMarkers(newIndex);
   };
 
   useEffect(() => {
@@ -28,6 +80,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
 
     const loadLeaflet = async () => {
       const L = (await import('leaflet')).default;
+      leafletRef.current = L;
 
       // Load Leaflet CSS
       if (!document.getElementById('leaflet-css')) {
@@ -38,16 +91,25 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
         document.head.appendChild(link);
       }
 
+      // Custom tooltip style
+      if (!document.getElementById('velask-poi-style')) {
+        const style = document.createElement('style');
+        style.id = 'velask-poi-style';
+        style.textContent = `.velask-poi-tooltip { font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }`;
+        document.head.appendChild(style);
+      }
+
       const map = L.map(mapRef.current!, {
         scrollWheelZoom: false,
         zoomControl: true,
-      }).setView([41.1635, -8.5955], 16);
+      }).setView([VELASK_LAT, VELASK_LNG], 16);
 
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
         maxZoom: 19,
       }).addTo(map);
 
+      // Velask home marker
       const icon = L.divIcon({
         className: '',
         html: `<div style="width:32px;height:32px;background:#1A3E5C;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center">
@@ -57,14 +119,20 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
         iconAnchor: [16, 32],
       });
 
-      L.marker([41.1635, -8.5955], { icon }).addTo(map)
+      L.marker([VELASK_LAT, VELASK_LNG], { icon }).addTo(map)
         .bindPopup('<strong>VELASK</strong><br/>Rua Manuel Carqueja, 259<br/>Porto');
 
+      // POI layer group
+      const poiLayer = L.layerGroup().addTo(map);
+      poiLayerRef.current = poiLayer;
       mapInstanceRef.current = map;
+
+      // Show initial category markers (Transportes is open by default)
+      updateMarkers(0);
     };
 
     loadLeaflet();
-  }, []);
+  }, [updateMarkers]);
 
   return (
     <Section background="white">
@@ -136,13 +204,18 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
                   >
                     <span style={{ display: 'flex', alignItems: 'center', gap: sp[3] }}>
                       <span style={{ fontSize: t.fontSize.lg }}>{cat.icon}</span>
-                      <span style={{ fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{cat.title}</span>
+                      <span style={{
+                        fontSize: t.fontSize.sm,
+                        fontWeight: t.fontWeight.semibold,
+                        color: openIndex === i ? cat.color : c.neutral[900],
+                        transition: 'color 0.2s',
+                      }}>{cat.title}</span>
                     </span>
                     <ChevronDown style={{
                       width: 18,
                       height: 18,
-                      color: c.neutral[500],
-                      transition: 'transform 0.25s',
+                      color: openIndex === i ? cat.color : c.neutral[500],
+                      transition: 'transform 0.25s, color 0.2s',
                       transform: openIndex === i ? 'rotate(180deg)' : 'rotate(0deg)',
                     }} />
                   </button>
