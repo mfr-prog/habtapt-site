@@ -58,17 +58,17 @@ export const benefits = [
   {
     iconName: 'Construction' as const,
     title: 'Reabilitação total',
-    desc: 'Estrutura, instalações, acabamentos. Tudo novo.',
+    desc: 'Estrutura, instalações, acabamentos. Tudo novo. 10 anos de garantia pelo construtor.',
   },
   {
     iconName: 'Key' as const,
     title: 'Entrega em 60 dias',
-    desc: 'Conclusão em 60 dias. Disponível em breve.',
+    desc: 'A estreiar em Abril de 2026. Condições de compra facilitadas.',
   },
   {
     iconName: 'ChefHat' as const,
     title: 'Cozinha equipada',
-    desc: 'Electrodomésticos incluídos. Sem mais gastos.',
+    desc: 'AC em todas as divisões + cozinha equipada.',
   },
 ];
 
