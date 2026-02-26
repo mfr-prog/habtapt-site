@@ -122,6 +122,9 @@ interface PlantasProps {
 function UnitCarousel({ unitId, isMobile, onClickImage }: { unitId: string; isMobile: boolean; onClickImage: (idx: number) => void }) {
   const images = unitImages[unitId] || [];
   const [current, setCurrent] = React.useState(0);
+  const touchStartX = React.useRef(0);
+  const touchEndX = React.useRef(0);
+  const swiped = React.useRef(false);
 
   React.useEffect(() => {
     setCurrent(0);
@@ -135,13 +138,37 @@ function UnitCarousel({ unitId, isMobile, onClickImage }: { unitId: string; isMo
     return () => clearInterval(timer);
   }, [images.length, unitId]);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    swiped.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      swiped.current = true;
+      if (diff > 0) {
+        setCurrent((prev) => (prev + 1) % images.length);
+      } else {
+        setCurrent((prev) => (prev - 1 + images.length) % images.length);
+      }
+    }
+  };
+
   if (!images.length) return null;
 
   return (
     <div
       className="relative cursor-pointer"
       style={{ height: isMobile ? 300 : '100%', minHeight: isMobile ? 300 : 500, overflow: 'hidden' }}
-      onClick={() => onClickImage(current)}
+      onClick={() => { if (!swiped.current) onClickImage(current); }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {images.map((img, i) => (
         <img
