@@ -40,15 +40,14 @@ export function VelaskContactForm({ isMobile, selectedTypology = '' }: VelaskCon
         unsure: 'Todos / Ainda não sei',
       };
 
-      const response = await supabaseFetch('contacts', {
+      const response = await supabaseFetch('contact', {
         method: 'POST',
         body: JSON.stringify({
           name: formData.name,
-          email: '',
+          email: `velask-${Date.now()}@lead.habta.eu`,
           phone: formData.phone,
           interest: 'Velask Residence',
-          message: `Tipologia: ${typologyLabels[formData.typology] || formData.typology}`,
-          typology: formData.typology,
+          message: `Tipologia: ${typologyLabels[formData.typology] || formData.typology}. Telefone: ${formData.phone}`,
           source: 'velask-landing',
         }),
       });
