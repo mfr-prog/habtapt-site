@@ -8,9 +8,9 @@ import { designSystem } from './design-system';
 import { Shield, TrendingUp, Eye } from './icons';
 
 const stats = [
-  { value: '10+', label: 'Projetos concluidos', icon: Shield },
-  { value: '30%', label: 'ROI medio por projeto', icon: TrendingUp },
-  { value: '100%', label: 'Transparencia financeira', icon: Eye },
+  { value: '10+', label: 'Projetos entregues', icon: Shield },
+  { value: '1.500+', label: 'm² reabilitados', icon: TrendingUp },
+  { value: '100%', label: 'Acompanhamento dedicado', icon: Eye },
 ];
 
 export function CredibilityBar() {

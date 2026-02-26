@@ -31,15 +31,15 @@ export default function ServicosContent() {
       description: 'Identificamos e adquirimos imóveis com alto potencial de valorização através de análise criteriosa de mercado e negociação técnica especializada.',
       benefits: [
         'Seleção em zonas de alta valorização',
-        'Análise profunda de potencial de ROI',
-        'Negociação técnica que reduz custos até 15%',
+        'Análise aprofundada de potencial de mercado',
+        'Negociação técnica especializada',
         'Due diligence completa (jurídica e técnica)',
         'Avaliação de comparáveis de mercado',
       ],
       roi: {
-        label: 'Economia Média',
-        value: '10-15%',
-        description: 'na fase de aquisição através de negociação especializada'
+        label: 'Diferencial',
+        value: 'Negociação',
+        description: 'Aquisição abaixo do valor de mercado com análise técnica'
       },
       gradient: designSystem.colors.gradients.primary,
       color: designSystem.colors.brand.primary,
@@ -56,9 +56,9 @@ export default function ServicosContent() {
         'Certificação energética classe A/A+',
       ],
       roi: {
-        label: 'Valorização Média',
-        value: '25-40%',
-        description: 'em relação ao valor investido na reabilitação'
+        label: 'Diferencial',
+        value: 'Qualidade',
+        description: 'Acabamentos premium que valorizam o imóvel acima da média do mercado'
       },
       gradient: designSystem.colors.gradients.secondary,
       color: designSystem.colors.brand.secondary,
@@ -72,12 +72,12 @@ export default function ServicosContent() {
         'Home staging e fotografia de alto padrão',
         'Campanhas multicanal segmentadas',
         'Negociação especializada com compradores',
-        'Distribuição transparente de lucros',
+        'Distribuição transparente de resultados',
       ],
       roi: {
-        label: 'ROI Total Médio',
-        value: '+32%',
-        description: 'retorno sobre investimento em ciclo completo de 6-12 meses'
+        label: 'Diferencial',
+        value: 'Estratégia',
+        description: 'Precificação baseada em dados e venda otimizada para máximo retorno'
       },
       gradient: designSystem.colors.gradients.accent,
       color: designSystem.colors.brand.accent,

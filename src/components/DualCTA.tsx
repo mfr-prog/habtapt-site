@@ -201,7 +201,7 @@ export function DualCTA() {
                       marginBottom: designSystem.spacing[6],
                     }}
                   >
-                    Oportunidades de alto rendimento com análise financeira detalhada e ROI comprovado.
+                    Oportunidades imobiliárias com análise financeira detalhada e acompanhamento personalizado.
                   </p>
                   <div
                     className="inline-flex items-center"

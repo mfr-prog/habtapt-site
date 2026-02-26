@@ -154,7 +154,7 @@ export function Hero() {
                 marginBottom: designSystem.spacing[6],
               }}
             >
-              Antas, Porto
+              Campanhã, Porto
             </motion.p>
 
             {/* Specs */}

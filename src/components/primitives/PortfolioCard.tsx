@@ -188,8 +188,8 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
           </span>
         </div>
 
-        {/* ROI Badge — only in investir mode */}
-        {!isMorar && (
+        {/* ROI Badge — only for sold projects in investir mode */}
+        {!isMorar && project.status === 'sold' && (
           <div
             className="absolute rounded-full backdrop-blur-md flex items-center"
             style={{
@@ -447,8 +447,8 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
               </div>
             </div>
 
-            {/* Estimated rent + yield — investir extras */}
-            {(project.estimatedRent || project.grossYield) && (
+            {/* Estimated rent + yield — only for sold projects */}
+            {project.status === 'sold' && (project.estimatedRent || project.grossYield) && (
               <div
                 className="flex items-center justify-between"
                 style={{

@@ -162,7 +162,7 @@ export default function ImoveisContent() {
 
   const subtitle = mode === 'morar'
     ? 'Encontre a sua próxima casa'
-    : 'Oportunidades de alto rendimento';
+    : 'Oportunidades de investimento imobiliário';
 
   return (
     <>

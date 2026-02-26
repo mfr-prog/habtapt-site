@@ -180,15 +180,15 @@ export function Contact() {
   const faqs = [
     {
       question: 'Como funciona o processo de investimento?',
-      answer: 'O nosso processo é estruturado em 7 etapas: prospecção, avaliação técnica e jurídica, negociação, reforma com gestão controlada, marketing 360°, venda e distribuição de lucros. Cada fase é transparente e acompanhada em tempo real pelos investidores.',
+      answer: 'O nosso processo é estruturado em 7 etapas: prospecção, avaliação técnica e jurídica, negociação, reforma com gestão controlada, marketing 360°, venda e fecho do projeto. Cada fase é transparente e acompanhada de perto pelos nossos parceiros.',
     },
     {
       question: 'Qual o prazo médio de um projeto?',
       answer: 'O ciclo completo varia entre 3 a 12 meses, dependendo da complexidade da obra e das condições do mercado. Fornecemos cronograma detalhado desde o início e atualizações semanais do progresso.',
     },
     {
-      question: 'Qual o retorno esperado de investimento (ROI)?',
-      answer: 'Os nossos projetos visam ROI anual pelo menos de 20% e na maioria dos casos, acima de 30%, sempre calculado com base em análise de mercado rigorosa e due diligence completa. Cada oportunidade é apresentada com projeções financeiras validadas.',
+      question: 'Qual o retorno esperado de investimento?',
+      answer: 'Cada projeto é avaliado individualmente com base em análise de mercado rigorosa e due diligence completa. Apresentamos projeções financeiras detalhadas e transparentes para cada oportunidade, permitindo uma decisão informada. Os resultados variam conforme o projeto, localização e condições de mercado.',
     },
     {
       question: 'Preciso ter conhecimento técnico para investir?',
@@ -677,7 +677,7 @@ export function Contact() {
                   color: designSystem.colors.neutral.white,
                 }}
               >
-                Pronto para investir?
+                Pronto para dar o próximo passo?
               </h3>
               <p
                 className="mb-6"
@@ -687,7 +687,7 @@ export function Contact() {
                   lineHeight: designSystem.typography.lineHeight.relaxed,
                 }}
               >
-                A nossa equipa está pronta para ajudá-lo a encontrar a melhor oportunidade de investimento imobiliário.
+                A nossa equipa está pronta para ajudá-lo a encontrar o imóvel certo para si.
               </p>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">

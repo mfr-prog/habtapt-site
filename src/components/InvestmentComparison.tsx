@@ -54,7 +54,7 @@ export function InvestmentComparison({ investmentValue }: InvestmentComparisonPr
           fontWeight: designSystem.typography.fontWeight.bold,
         }}
       >
-        Comparação de Rendimento
+        Contexto de Mercado
       </h3>
       <p
         style={{
@@ -63,7 +63,7 @@ export function InvestmentComparison({ investmentValue }: InvestmentComparisonPr
           marginBottom: designSystem.spacing[8],
         }}
       >
-        Retorno estimado com base num investimento de €{baseInvestment.toLocaleString('pt-PT')}
+        Comparação ilustrativa com base num investimento de €{baseInvestment.toLocaleString('pt-PT')}
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: designSystem.spacing[6] }}>

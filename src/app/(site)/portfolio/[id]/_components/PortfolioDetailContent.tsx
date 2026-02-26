@@ -218,7 +218,9 @@ export default function PortfolioDetailContent() {
               }}
             >
               <MetricCard icon={<Ruler size={24} />} label="Área" value={project.area} />
-              <MetricCard icon={<TrendingUp size={24} />} label="ROI" value={project.roi} highlight />
+              {project.status === 'sold' && (
+                <MetricCard icon={<TrendingUp size={24} />} label="ROI" value={project.roi} highlight />
+              )}
               <MetricCard icon={<Clock size={24} />} label="Duração" value={project.duration} />
               <MetricCard icon={<Home size={24} />} label="Tipo" value={project.type} />
             </div>
@@ -367,10 +369,12 @@ export default function PortfolioDetailContent() {
               <h2 style={{ color: designSystem.colors.neutral[900], marginBottom: designSystem.spacing[4], textAlign: isMobile ? 'left' : 'center', fontSize: isMobile ? designSystem.typography.fontSize['2xl'] : undefined }}>
                 Dados Financeiros
               </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: designSystem.spacing[6] }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : project.status === 'sold' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', gap: designSystem.spacing[6] }}>
                 <FinancialMetricCard label="Investimento Total" value={project.financials.total} breakdown={[{ label: 'Aquisição', value: project.financials.acquisition }, { label: 'Renovação', value: project.financials.renovation }]} />
-                <FinancialMetricCard label="Valor de Venda" value={project.financials.sale} highlight />
-                <FinancialMetricCard label="Lucro Líquido" value={project.financials.profit} subtitle={`ROI: ${project.financials.roi}`} success />
+                <FinancialMetricCard label={project.status === 'sold' ? 'Valor de Venda' : 'Valor Estimado'} value={project.financials.sale} highlight />
+                {project.status === 'sold' && (
+                  <FinancialMetricCard label="Resultado" value={project.financials.profit} subtitle={`ROI: ${project.financials.roi}`} success />
+                )}
               </div>
               <ExternalLinksCard portalLink={project.portalLink} brochureLink={project.brochureLink} landingPage={project.landingPage} animated={true} delay={0.3} isMobile={isMobile} />
             </motion.div>
@@ -387,8 +391,8 @@ export default function PortfolioDetailContent() {
         </Section>
       )}
 
-      {/* Investment Comparison — only for available projects */}
-      {project.status === 'available' && (
+      {/* Investment Comparison — only for sold projects as historical data */}
+      {project.status === 'sold' && (
         <Section background="white">
           <Container>
             <motion.div
@@ -403,6 +407,16 @@ export default function PortfolioDetailContent() {
               }}
             >
               <InvestmentComparison investmentValue={project.financials?.total} />
+              <p
+                style={{
+                  fontSize: designSystem.typography.fontSize.xs,
+                  color: designSystem.colors.neutral[500],
+                  marginTop: designSystem.spacing[4],
+                  fontStyle: 'italic',
+                }}
+              >
+                Resultados passados não garantem retornos futuros. Valores baseados em condições específicas de cada projeto.
+              </p>
             </motion.div>
           </Container>
         </Section>
@@ -619,8 +633,8 @@ function RelatedProjects({ currentProjectId, currentStatus, isMobile }: { curren
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: designSystem.spacing[4], borderTop: `1px solid ${designSystem.colors.neutral[200]}` }}>
                     <div>
-                      <div style={{ fontSize: designSystem.typography.fontSize.xs, color: designSystem.colors.neutral[600], marginBottom: designSystem.spacing[1] }}>ROI</div>
-                      <div style={{ fontSize: designSystem.typography.fontSize.xl, fontWeight: designSystem.typography.fontWeight.bold, color: designSystem.colors.brand.secondary }}>{project.roi}</div>
+                      <div style={{ fontSize: designSystem.typography.fontSize.xs, color: designSystem.colors.neutral[600], marginBottom: designSystem.spacing[1] }}>{project.status === 'sold' ? 'ROI' : 'Estado'}</div>
+                      <div style={{ fontSize: designSystem.typography.fontSize.xl, fontWeight: designSystem.typography.fontWeight.bold, color: designSystem.colors.brand.secondary }}>{project.status === 'sold' ? project.roi : project.statusLabel}</div>
                     </div>
                     <motion.div whileHover={{ x: 4 }} style={{ color: designSystem.colors.brand.primary }}>
                       <ArrowRight size={24} />
