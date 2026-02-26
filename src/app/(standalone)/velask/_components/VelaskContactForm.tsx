@@ -33,11 +33,21 @@ export function VelaskContactForm({ isMobile, selectedTypology = '' }: VelaskCon
     setIsSubmitting(true);
 
     try {
+      const typologyLabels: Record<string, string> = {
+        t1: 'Fracção A — T1',
+        t2: 'Fracção B — T2',
+        t3: 'Fracção C — T3 Duplex',
+        unsure: 'Todos / Ainda não sei',
+      };
+
       const response = await supabaseFetch('contacts', {
         method: 'POST',
         body: JSON.stringify({
           name: formData.name,
+          email: '',
           phone: formData.phone,
+          interest: 'Velask Residence',
+          message: `Tipologia: ${typologyLabels[formData.typology] || formData.typology}`,
           typology: formData.typology,
           source: 'velask-landing',
         }),

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, ChevronLeft, ChevronRight } from '@/components/icons';
 
@@ -14,6 +14,9 @@ interface VelaskLightboxProps {
 }
 
 export function VelaskLightbox({ images, selectedIndex, open, onClose, onNext, onPrev }: VelaskLightboxProps) {
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'ArrowRight') onNext();
     else if (e.key === 'ArrowLeft') onPrev();
@@ -26,6 +29,22 @@ export function VelaskLightbox({ images, selectedIndex, open, onClose, onNext, o
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [open, handleKeyDown]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) onNext();
+      else onPrev();
+    }
+  };
 
   if (!images.length) return null;
 
@@ -54,6 +73,9 @@ export function VelaskLightbox({ images, selectedIndex, open, onClose, onNext, o
             outline: 'none',
           }}
           aria-describedby={undefined}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <Dialog.Title className="sr-only">Galeria de imagens</Dialog.Title>
 
