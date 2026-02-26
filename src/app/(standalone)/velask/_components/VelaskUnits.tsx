@@ -140,7 +140,7 @@ function UnitCarousel({ unitId, isMobile, onClickImage }: { unitId: string; isMo
   return (
     <div
       className="relative cursor-pointer"
-      style={{ height: isMobile ? 300 : 500, overflow: 'hidden' }}
+      style={{ height: isMobile ? 300 : '100%', minHeight: isMobile ? 300 : 500, overflow: 'hidden' }}
       onClick={() => onClickImage(current)}
     >
       {images.map((img, i) => (
@@ -251,7 +251,7 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
               {units.map((unit) => (
                 <TabsContent key={unit.id} value={unit.id}>
                   <div className="rounded-3xl overflow-hidden" style={{ background: c.neutral[50], border: `1px solid ${c.neutral[200]}` }}>
-                    <div className="grid" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: isMobile ? 'auto' : 560 }}>
+                    <div className="grid" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: isMobile ? 'auto' : 560, alignItems: 'stretch' }}>
                       <UnitCarousel unitId={unit.id} isMobile={isMobile} onClickImage={(idx) => openUnitGallery(unit.id, idx)} />
 
                       <div className="flex flex-col justify-center" style={{ padding: isMobile ? sp[8] : sp[12] }}>
