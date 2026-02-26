@@ -271,9 +271,9 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
                           ))}
                         </div>
 
-                        <motion.button onClick={onScrollToForm} style={{ display: 'inline-flex', alignItems: 'center', gap: sp[2], padding: `${sp[3]} ${sp[6]}`, borderRadius: ds.borderRadius.full, background: unit.color, color: '#fff', fontWeight: t.fontWeight.semibold, fontSize: t.fontSize.sm, border: 'none', cursor: 'pointer', boxShadow: `0 4px 14px ${unit.color}40`, width: 'fit-content' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                        <motion.a href={`https://wa.me/351963290394?text=${encodeURIComponent({ rc: 'Olá, tenho interesse na Fracção A (T1) do Velask Residence.', p1: 'Olá, tenho interesse na Fracção B (T2) do Velask Residence.', p2: 'Olá, tenho interesse na Fracção C (T3 Duplex) do Velask Residence.' }[unit.id] || '')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: sp[2], padding: `${sp[3]} ${sp[6]}`, borderRadius: ds.borderRadius.full, background: unit.color, color: '#fff', fontWeight: t.fontWeight.semibold, fontSize: t.fontSize.sm, textDecoration: 'none', boxShadow: `0 4px 14px ${unit.color}40`, width: 'fit-content' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                           {unit.cta} <ArrowRight style={{ width: 16, height: 16 }} />
-                        </motion.button>
+                        </motion.a>
                       </div>
                     </div>
                   </div>
