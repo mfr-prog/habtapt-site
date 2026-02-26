@@ -28,15 +28,15 @@ export const unitImages: Record<string, { src: string; alt: string }[]> = {
 // --- Gallery items (curated selection with captions) ---
 
 export const galleryItems = [
-  { src: '/images/velask/t2/1.jpeg', alt: 'Cozinha integrada com bancada e zona de refeições', caption: 'Cozinha integrada' },
-  { src: '/images/velask/t1/1.jpeg', alt: 'Sala com linhas limpas e soluções de arrumação', caption: 'Sala' },
-  { src: '/images/velask/t3/1.jpeg', alt: 'Quarto com linguagem contemporânea e luz natural', caption: 'Quarto' },
-  { src: '/images/velask/t3/2.jpeg', alt: 'Zona social com escada e arrumação integrada', caption: 'Zona social duplex' },
-  { src: '/images/velask/t3/3.jpeg', alt: 'Piso superior duplex: espaço extra com múltiplos usos', caption: 'Piso superior duplex' },
+  { src: '/images/velask/t2/1.jpeg', alt: 'Interior com luz natural abundante', caption: 'Luz natural' },
+  { src: '/images/velask/t1/1.jpeg', alt: 'Espaços para arrumações integradas', caption: 'Espaços para arrumações' },
+  { src: '/images/velask/t2/9.jpeg', alt: 'Quarto com linguagem contemporânea e luz natural', caption: 'Quarto' },
+  { src: '/images/velask/t3/2.jpeg', alt: 'Cozinha open-space com bancada e zona de refeições', caption: 'Cozinha open-space' },
+  { src: '/images/velask/t3/3.jpeg', alt: 'Sala com acabamentos contemporâneos', caption: 'Sala' },
   { src: '/images/velask/common/1.jpeg', alt: 'Casa de banho: revestimentos claros e móvel suspenso', caption: 'Casa de banho' },
   { src: '/images/velask/common/9.jpeg', alt: 'Exterior: jardim com zona de lazer e apoio', caption: 'Exterior' },
-  { src: '/images/velask/t2/3.jpeg', alt: 'Sala de estar com acabamentos contemporâneos', caption: 'Sala T2' },
-  { src: '/images/velask/t1/3.jpeg', alt: 'Interior luminoso com áreas abertas', caption: 'Interior T1' },
+  { src: '/images/velask/t1/12.jpeg', alt: 'Garagem privativa com espaço amplo', caption: 'Garagem' },
+  { src: '/images/velask/t1/3.jpeg', alt: 'Cozinha equipada com electrodomésticos incluídos', caption: 'Cozinha equipada' },
 ];
 
 // --- Counters ---
