@@ -68,11 +68,13 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
             </motion.div>
 
             <motion.div {...anim(4)} className="flex flex-wrap gap-4 items-center">
-              <motion.button onClick={() => scrollToSection('precos')} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                DESDE 399.000,00 Euros
+              <motion.button onClick={() => scrollToSection('precos')} style={{ ...ctaButtonPrimary, padding: `${sp[4]} ${sp[8]}` }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <span style={{ fontSize: t.fontSize.xs, fontWeight: t.fontWeight.medium, opacity: 0.8 }}>DESDE</span>
+                <span style={{ fontSize: t.fontSize.xl, fontWeight: t.fontWeight.black, letterSpacing: t.letterSpacing.tight }}>399.000 &euro;</span>
               </motion.button>
-              <motion.a href="tel:+351963290394" style={{ ...ctaButtonOutline, textDecoration: 'none' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                RESERVE JÁ +351 963 290 394
+              <motion.a href="tel:+351963290394" style={{ ...ctaButtonOutline, padding: `${sp[4]} ${sp[8]}`, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.25)', background: 'rgba(255,255,255,0.06)', flexDirection: 'column' as const, gap: sp[1] }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <span style={{ fontSize: t.fontSize.xs, fontWeight: t.fontWeight.medium, opacity: 0.7, letterSpacing: t.letterSpacing.wider }}>RESERVE JÁ</span>
+                <span style={{ fontSize: t.fontSize.base, fontWeight: t.fontWeight.bold }}>+351 963 290 394</span>
               </motion.a>
             </motion.div>
           </div>
