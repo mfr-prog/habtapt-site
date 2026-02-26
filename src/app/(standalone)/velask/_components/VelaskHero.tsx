@@ -69,11 +69,11 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
 
             <motion.div {...anim(4)} className="flex flex-wrap gap-4 items-center">
               <motion.button onClick={() => scrollToSection('precos')} style={ctaButtonPrimary} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <ArrowRight style={{ width: 20, height: 20 }} /> Ver Apartamentos
+                DESDE 399.000,00 Euros
               </motion.button>
-              <motion.button onClick={() => scrollToSection('contacto')} style={ctaButtonOutline} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Calendar style={{ width: 20, height: 20 }} /> Marcar Visita
-              </motion.button>
+              <motion.a href="tel:+351963290394" style={{ ...ctaButtonOutline, textDecoration: 'none' }} whileHover={isMobile ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                RESERVE JÁ +351 963 290 394
+              </motion.a>
             </motion.div>
           </div>
 
