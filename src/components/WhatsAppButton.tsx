@@ -124,7 +124,7 @@ export function WhatsAppButton() {
               onHoverStart={() => setIsExpanded(true)}
               onHoverEnd={() => setIsExpanded(false)}
               onClick={handleClick}
-              className="relative group flex items-center justify-center rounded-full transition-all duration-300"
+              className="relative group flex items-center justify-center rounded-full transition-[transform,box-shadow] duration-300"
               style={{
                 width: designSystem.spacing[16],
                 height: designSystem.spacing[16],

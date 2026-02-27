@@ -302,14 +302,12 @@
 /* Hover effects for cards (replacing motion whileHover) */
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  will-change: transform;
 }
 .hover-lift:hover {
   transform: translateY(-4px) scale(1.02);
 }
 .hover-scale {
   transition: transform 0.2s ease;
-  will-change: transform;
 }
 .hover-scale:hover {
   transform: scale(1.15) translateY(-3px);

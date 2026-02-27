@@ -180,7 +180,7 @@ export function Process() {
                       }`}
                     >
                       <div
-                        className="bg-white rounded-3xl p-8 border transition-all duration-500 group hover:shadow-2xl"
+                        className="bg-white rounded-3xl p-8 border transition-[transform,box-shadow] duration-500 group hover:shadow-2xl"
                         style={{
                           borderColor: designSystem.helpers.hexToRgba(step.color, 0.2),
                           boxShadow: `0 4px 20px ${designSystem.helpers.hexToRgba(step.color, 0.08)}`,
@@ -250,7 +250,7 @@ export function Process() {
                       }`}
                     >
                       <div
-                        className="bg-white rounded-3xl p-8 border transition-all duration-500 group hover:shadow-2xl"
+                        className="bg-white rounded-3xl p-8 border transition-[transform,box-shadow] duration-500 group hover:shadow-2xl"
                         style={{
                           borderColor: designSystem.helpers.hexToRgba(step.color, 0.2),
                           boxShadow: `0 4px 20px ${designSystem.helpers.hexToRgba(step.color, 0.08)}`,
