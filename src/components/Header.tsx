@@ -48,7 +48,7 @@ export function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 transition-all duration-500 anim-slide-down"
+      className="fixed top-0 left-0 right-0 transition-[background-color,backdrop-filter,box-shadow] duration-500 anim-slide-down"
       style={{
         zIndex: designSystem.zIndex.fixed,
         background: showSolid

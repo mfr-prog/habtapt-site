@@ -17,7 +17,7 @@ function setParam(url: string, key: string, value: string): string {
 export function unsplashUrl(
   src: string,
   width: number,
-  { format = 'avif', quality = 55 }: { format?: string; quality?: number } = {},
+  { format = 'avif', quality = 40 }: { format?: string; quality?: number } = {},
 ): string {
   let url = src;
   url = setParam(url, 'fm', format);

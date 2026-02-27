@@ -14,19 +14,31 @@ export function CookieConsent() {
     try {
       const consent = localStorage.getItem(COOKIE_KEY);
       if (!consent) {
-        // Defer until after LCP is measured — use requestIdleCallback + timeout
-        // This prevents the cookie banner from becoming the LCP element
+        // Wait for LCP to be measured before showing the banner.
+        // Use PerformanceObserver to detect LCP, with a 5s fallback.
+        let shown = false;
         const show = () => {
-          const timer = setTimeout(() => setVisible(true), 100);
-          return () => clearTimeout(timer);
+          if (shown) return;
+          shown = true;
+          // Extra 500ms buffer after LCP to ensure measurement is finalized
+          setTimeout(() => setVisible(true), 500);
         };
-        if ('requestIdleCallback' in window) {
-          const id = requestIdleCallback(show, { timeout: 3500 });
-          return () => cancelIdleCallback(id);
-        } else {
-          const timer = setTimeout(() => setVisible(true), 3500);
-          return () => clearTimeout(timer);
+
+        const fallback = setTimeout(show, 5000);
+
+        if ('PerformanceObserver' in window) {
+          try {
+            const obs = new PerformanceObserver(() => {
+              obs.disconnect();
+              show();
+            });
+            obs.observe({ type: 'largest-contentful-paint', buffered: true });
+          } catch {
+            // LCP observer not supported, fallback handles it
+          }
         }
+
+        return () => clearTimeout(fallback);
       }
     } catch {
       // localStorage unavailable
