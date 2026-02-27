@@ -1,26 +1,11 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Container } from './Container';
 import { ArrowRight } from './icons';
-import { motion, useScroll, useTransform } from 'motion/react';
 import { designSystem } from './design-system';
 import { LogoPattern } from './LogoPatterns';
 import Link from 'next/link';
 
 export function Hero() {
-  const [isMobile, setIsMobile] = useState(false);
-  const { scrollY } = useScroll();
-  const yParallax = useTransform(scrollY, [0, 600], [0, isMobile ? 0 : 80]);
-
-  useEffect(() => {
-    const mdBreakpoint = parseInt(designSystem.breakpoints.md);
-    const checkMobile = () => setIsMobile(window.innerWidth < mdBreakpoint);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   return (
     <section
       id="home"
@@ -31,11 +16,8 @@ export function Hero() {
         paddingTop: '72px',
       }}
     >
-      {/* Background Image with Gradient Overlay */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ y: yParallax }}
-      >
+      {/* Background Image — static, no JS needed */}
+      <div className="absolute inset-0">
         <img
           src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=50&w=1024"
           srcSet={[
@@ -60,14 +42,11 @@ export function Hero() {
             background: 'linear-gradient(180deg, rgba(26, 62, 92, 0.82) 0%, rgba(26, 62, 92, 0.55) 40%, rgba(26, 62, 92, 0.88) 100%)',
           }}
         />
-      </motion.div>
+      </div>
 
       {/* Logo Pattern overlay */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5 }}
-        className="absolute inset-0"
+      <div
+        className="absolute inset-0 anim-fade-in"
         style={{ zIndex: 1 }}
       >
         <LogoPattern
@@ -75,7 +54,7 @@ export function Hero() {
           opacity={0.06}
           color={designSystem.colors.neutral.white}
         />
-      </motion.div>
+      </div>
 
       {/* Content */}
       <div className="relative z-10 w-full">
@@ -91,11 +70,8 @@ export function Hero() {
             }}
           >
             {/* Project badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center rounded-full"
+            <div
+              className="inline-flex items-center rounded-full anim-fade-in-up anim-delay-1"
               style={{
                 paddingLeft: designSystem.spacing[5],
                 paddingRight: designSystem.spacing[5],
@@ -118,15 +94,12 @@ export function Hero() {
               >
                 Disponivel Agora
               </span>
-            </motion.div>
+            </div>
 
             {/* Title */}
-            <motion.h1
+            <h1
               id="hero-title"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-center w-full"
+              className="text-center w-full anim-fade-in-up anim-delay-2"
               style={{
                 fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
                 lineHeight: 1.1,
@@ -136,10 +109,8 @@ export function Hero() {
                 marginBottom: designSystem.spacing[4],
               }}
             >
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 0.4 }}
+              <span
+                className="anim-fade-in anim-delay-4"
                 style={{
                   background: designSystem.colors.gradients.accentReverse,
                   WebkitBackgroundClip: 'text',
@@ -149,16 +120,13 @@ export function Hero() {
                 }}
               >
                 VELASK
-              </motion.span>
+              </span>
               {' '}Residence
-            </motion.h1>
+            </h1>
 
             {/* Location */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-center"
+            <p
+              className="text-center anim-fade-in-up anim-delay-3"
               style={{
                 fontSize: designSystem.typography.fontSize.xl,
                 color: 'rgba(255, 255, 255, 0.85)',
@@ -167,14 +135,11 @@ export function Hero() {
               }}
             >
               Campanhã, Porto
-            </motion.p>
+            </p>
 
             {/* Specs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-wrap justify-center items-center"
+            <div
+              className="flex flex-wrap justify-center items-center anim-fade-in-up anim-delay-4"
               style={{
                 gap: designSystem.spacing[4],
                 marginBottom: designSystem.spacing[10],
@@ -204,24 +169,18 @@ export function Hero() {
                   </span>
                 </React.Fragment>
               ))}
-            </motion.div>
+            </div>
 
             {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.5 }}
-              className="flex flex-col sm:flex-row justify-center items-center w-full"
+            <div
+              className="flex flex-col sm:flex-row justify-center items-center w-full anim-fade-in-up anim-delay-5"
               style={{
                 gap: designSystem.spacing[4],
               }}
             >
-              <Link href="/velask" style={{ textDecoration: 'none', width: isMobile ? '100%' : 'auto' }}>
-                <motion.span
-                  whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="group inline-flex items-center justify-center rounded-full transition-all w-full sm:w-auto"
-                  aria-label="Ver unidades do VELASK Residence"
+              <Link href="/velask" style={{ textDecoration: 'none', width: 'auto' }} className="w-full sm:w-auto">
+                <span
+                  className="group inline-flex items-center justify-center rounded-full transition-all w-full sm:w-auto hover-lift"
                   style={{
                     gap: designSystem.spacing[3],
                     paddingLeft: designSystem.spacing[10],
@@ -241,15 +200,12 @@ export function Hero() {
                 >
                   Ver Unidades
                   <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </motion.span>
+                </span>
               </Link>
 
-              <Link href="/imoveis" style={{ textDecoration: 'none', width: isMobile ? '100%' : 'auto' }}>
-                <motion.span
-                  whileHover={isMobile ? {} : { scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center justify-center rounded-full backdrop-blur-md transition-all w-full sm:w-auto"
-                  aria-label="Ver todos os imoveis disponiveis"
+              <Link href="/imoveis" style={{ textDecoration: 'none', width: 'auto' }} className="w-full sm:w-auto">
+                <span
+                  className="inline-flex items-center justify-center rounded-full backdrop-blur-md transition-all w-full sm:w-auto hover-lift"
                   style={{
                     gap: designSystem.spacing[3],
                     paddingLeft: designSystem.spacing[10],
@@ -267,9 +223,9 @@ export function Hero() {
                   }}
                 >
                   Todos os Imoveis
-                </motion.span>
+                </span>
               </Link>
-            </motion.div>
+            </div>
           </div>
         </Container>
       </div>

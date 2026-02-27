@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, MessageCircle } from './icons';
 import { Container } from './Container';
 import { Logo } from './Logo';
-import { motion, AnimatePresence } from 'motion/react';
 import { designSystem } from './design-system';
 
 const navItems = [
@@ -26,47 +25,21 @@ export function Header() {
   const isHome = pathname === '/';
 
   useEffect(() => {
-    const checkScroll = () => {
-      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-      setIsScrolled(scrollY > 20);
-    };
-
-    requestAnimationFrame(checkScroll);
-    const timer = setTimeout(checkScroll, 100);
-    return () => clearTimeout(timer);
-  }, [pathname]);
-
-  useEffect(() => {
     let ticking = false;
-
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-          setIsScrolled(scrollY > 20);
+          setIsScrolled(window.scrollY > 20);
           ticking = false;
         });
         ticking = true;
       }
     };
-
     handleScroll();
-
-    const scrollEvents = ['scroll', 'touchmove', 'wheel'];
-    scrollEvents.forEach(event => {
-      window.addEventListener(event, handleScroll, { passive: true });
-    });
-    document.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      scrollEvents.forEach(event => {
-        window.removeEventListener(event, handleScroll);
-      });
-      document.removeEventListener('scroll', handleScroll);
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
@@ -74,11 +47,8 @@ export function Header() {
   const showSolid = isScrolled || !isHome;
 
   return (
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed top-0 left-0 right-0 transition-all duration-500"
+    <header
+      className="fixed top-0 left-0 right-0 transition-all duration-500 anim-slide-down"
       style={{
         zIndex: designSystem.zIndex.fixed,
         background: showSolid
@@ -101,20 +71,10 @@ export function Header() {
             href="/"
             className="flex items-center gap-3"
             aria-label="Ir para pagina inicial"
-            style={{
-              textDecoration: 'none',
-            }}
+            style={{ textDecoration: 'none' }}
           >
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center gap-3"
-            >
-              <Logo
-                variant={showSolid ? 'black' : 'white'}
-                size={40}
-              />
+            <div className="flex items-center gap-3 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
+              <Logo variant={showSolid ? 'black' : 'white'} size={40} />
               <span
                 className="hidden sm:inline"
                 style={{
@@ -127,12 +87,12 @@ export function Header() {
               >
                 HABTA
               </span>
-            </motion.div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1" aria-label="Navegacao principal">
-            {navItems.map((item, index) => {
+            {navItems.map((item) => {
               const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
               return (
                 <Link
@@ -142,13 +102,8 @@ export function Header() {
                   aria-current={isActive ? 'page' : undefined}
                   style={{ textDecoration: 'none' }}
                 >
-                  <motion.span
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="relative group block"
+                  <span
+                    className="relative group block transition-all duration-200 hover:-translate-y-0.5"
                     style={{
                       padding: `${designSystem.spacing[3]} ${designSystem.spacing[4]}`,
                       color: isActive
@@ -158,39 +113,30 @@ export function Header() {
                             : designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.9)),
                       fontSize: designSystem.typography.fontSize['15'],
                       fontWeight: isActive ? designSystem.typography.fontWeight.semibold : designSystem.typography.fontWeight.medium,
-                      transition: designSystem.animations.transition.base,
                       cursor: 'pointer',
                     }}
                   >
                     {item.label}
-                    <motion.span
-                      className="absolute bottom-0 left-0 right-0"
+                    <span
+                      className="absolute bottom-0 left-0 right-0 transition-transform duration-300 origin-left group-hover:scale-x-100"
                       style={{
                         height: '2px',
                         background: showSolid
                           ? designSystem.colors.gradients.primary
                           : designSystem.colors.brand.secondaryLight,
                         borderRadius: designSystem.borderRadius.full,
+                        transform: isActive ? 'scaleX(1)' : 'scaleX(0)',
                       }}
-                      initial={{ scaleX: isActive ? 1 : 0 }}
-                      animate={{ scaleX: isActive ? 1 : 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
                     />
-                  </motion.span>
+                  </span>
                 </Link>
               );
             })}
-            <motion.a
+            <a
               href="https://wa.me/351963290394?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20investimentos%20imobili%C3%A1rios%20com%20a%20HABTA."
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center justify-center"
+              className="inline-flex items-center justify-center transition-transform duration-200 hover:scale-105 active:scale-95"
               title="Conversar via WhatsApp"
               style={{
                 marginLeft: designSystem.spacing[4],
@@ -210,10 +156,6 @@ export function Header() {
                   : '0 4px 16px rgba(255, 255, 255, 0.3)',
                 fontSize: designSystem.typography.fontSize['15'],
                 fontWeight: designSystem.typography.fontWeight.bold,
-                transition: designSystem.animations.transition.base,
-                cursor: 'pointer',
-                border: 'none',
-                outline: 'none',
                 lineHeight: '1',
                 gap: designSystem.spacing[2],
                 textDecoration: 'none',
@@ -221,14 +163,13 @@ export function Header() {
             >
               <MessageCircle size={18} />
               WhatsApp
-            </motion.a>
+            </a>
           </nav>
 
           {/* Mobile Menu Button */}
-          <motion.button
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            whileTap={{ scale: 0.9 }}
-            className="lg:hidden"
+            className="lg:hidden active:scale-90 transition-transform"
             aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
@@ -239,167 +180,81 @@ export function Header() {
                 ? designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)
                 : designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.15),
               border: 'none',
-              outline: 'none',
               cursor: 'pointer',
-              transition: designSystem.animations.transition.base,
             }}
           >
-            <AnimatePresence mode="wait">
-              {isMobileMenuOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X
-                    size={24}
-                    style={{
-                      color: showSolid
-                        ? designSystem.colors.brand.primary
-                        : designSystem.colors.neutral.white,
-                    }}
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Menu
-                    size={24}
-                    style={{
-                      color: showSolid
-                        ? designSystem.colors.brand.primary
-                        : designSystem.colors.neutral.white,
-                    }}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.button>
+            {isMobileMenuOpen ? (
+              <X size={24} style={{ color: showSolid ? designSystem.colors.brand.primary : designSystem.colors.neutral.white }} />
+            ) : (
+              <Menu size={24} style={{ color: showSolid ? designSystem.colors.brand.primary : designSystem.colors.neutral.white }} />
+            )}
+          </button>
         </div>
       </Container>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:hidden"
-            id="mobile-menu"
-            style={{
-              background: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.95),
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              borderTop: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
-              boxShadow: designSystem.shadows.xl,
-              maxHeight: 'calc(100vh - 72px)',
-              overflow: 'hidden',
-              position: 'relative',
-            }}
-          >
-            <Container>
-              <nav
-                className="flex flex-col gap-1"
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden anim-fade-in"
+          id="mobile-menu"
+          style={{
+            background: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.95),
+            backdropFilter: 'blur(16px)',
+            borderTop: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
+            boxShadow: designSystem.shadows.xl,
+            maxHeight: 'calc(100vh - 72px)',
+            overflow: 'hidden',
+          }}
+        >
+          <Container>
+            <nav className="flex flex-col gap-1" style={{ paddingTop: designSystem.spacing[4], paddingBottom: designSystem.spacing[4] }}>
+              {navItems.map((item) => {
+                const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                return (
+                  <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
+                    <span
+                      className="block active:scale-[0.98] transition-transform"
+                      style={{
+                        padding: `${designSystem.spacing[3]} ${designSystem.spacing[4]}`,
+                        color: isActive ? designSystem.colors.brand.primary : designSystem.colors.neutral[700],
+                        fontSize: designSystem.typography.fontSize.base,
+                        fontWeight: isActive ? designSystem.typography.fontWeight.semibold : designSystem.typography.fontWeight.medium,
+                        borderRadius: designSystem.borderRadius.md,
+                        background: isActive ? designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.12) : 'transparent',
+                        borderLeft: isActive ? `3px solid ${designSystem.colors.brand.primary}` : '3px solid transparent',
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+              <div style={{ marginTop: designSystem.spacing[3], marginBottom: designSystem.spacing[3], height: '1px', background: `linear-gradient(to right, transparent, ${designSystem.colors.neutral[200]}, transparent)` }} />
+              <a
+                href="https://wa.me/351963290394?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20investimentos%20imobili%C3%A1rios%20com%20a%20HABTA."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center"
                 style={{
-                  paddingTop: designSystem.spacing[4],
-                  paddingBottom: designSystem.spacing[4],
-                  maxHeight: 'calc(100vh - 120px)',
-                  overflowY: 'auto',
-                  overflowX: 'hidden',
+                  padding: `${designSystem.spacing[4]} ${designSystem.spacing[6]}`,
+                  borderRadius: designSystem.borderRadius.full,
+                  background: designSystem.colors.gradients.primary,
+                  color: designSystem.colors.neutral.white,
+                  fontSize: designSystem.typography.fontSize.base,
+                  fontWeight: designSystem.typography.fontWeight.semibold,
+                  boxShadow: designSystem.shadows.md,
+                  width: '100%',
+                  gap: designSystem.spacing[2],
+                  textDecoration: 'none',
                 }}
               >
-                {navItems.map((item, index) => {
-                  const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      style={{ textDecoration: 'none' }}
-                    >
-                      <motion.span
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3, delay: index * 0.05 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="block"
-                        style={{
-                          padding: `${designSystem.spacing[3]} ${designSystem.spacing[4]}`,
-                          color: isActive ? designSystem.colors.brand.primary : designSystem.colors.neutral[700],
-                          fontSize: designSystem.typography.fontSize.base,
-                          fontWeight: isActive ? designSystem.typography.fontWeight.semibold : designSystem.typography.fontWeight.medium,
-                          borderRadius: designSystem.borderRadius.md,
-                          transition: designSystem.animations.transition.base,
-                          cursor: 'pointer',
-                          background: isActive
-                            ? designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.12)
-                            : 'transparent',
-                          width: '100%',
-                          textAlign: 'left',
-                          borderLeft: isActive
-                            ? `3px solid ${designSystem.colors.brand.primary}`
-                            : '3px solid transparent',
-                        }}
-                      >
-                        {item.label}
-                      </motion.span>
-                    </Link>
-                  );
-                })}
-                {/* Divider */}
-                <div
-                  style={{
-                    marginTop: designSystem.spacing[3],
-                    marginBottom: designSystem.spacing[3],
-                    height: '1px',
-                    background: `linear-gradient(to right, transparent, ${designSystem.colors.neutral[200]}, transparent)`,
-                  }}
-                />
-
-                <motion.a
-                  href="https://wa.me/351963290394?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20investimentos%20imobili%C3%A1rios%20com%20a%20HABTA."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.3, delay: navItems.length * 0.05 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center justify-center"
-                  title="Conversar via WhatsApp"
-                  style={{
-                    padding: `${designSystem.spacing[4]} ${designSystem.spacing[6]}`,
-                    borderRadius: designSystem.borderRadius.full,
-                    background: designSystem.colors.gradients.primary,
-                    color: designSystem.colors.neutral.white,
-                    fontSize: designSystem.typography.fontSize.base,
-                    fontWeight: designSystem.typography.fontWeight.semibold,
-                    transition: designSystem.animations.transition.base,
-                    cursor: 'pointer',
-                    boxShadow: designSystem.shadows.md,
-                    border: 'none',
-                    width: '100%',
-                    gap: designSystem.spacing[2],
-                    textDecoration: 'none',
-                  }}
-                >
-                  <MessageCircle size={20} />
-                  <span>WhatsApp</span>
-                </motion.a>
-              </nav>
-            </Container>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+                <MessageCircle size={20} />
+                <span>WhatsApp</span>
+              </a>
+            </nav>
+          </Container>
+        </div>
+      )}
+    </header>
   );
 }
