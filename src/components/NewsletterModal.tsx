@@ -70,7 +70,6 @@ export function NewsletterModal({ isOpen, onClose }: NewsletterModalProps) {
         return;
       }
 
-      console.log('Newsletter subscription successful (modal):', data);
       setIsSuccess(true);
       toast.success(data.message || 'Subscrição confirmada! Verifique seu email.');
       

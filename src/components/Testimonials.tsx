@@ -75,7 +75,6 @@ export function Testimonials() {
             setTestimonials(data.testimonials);
           }
         } else {
-          console.warn('[Testimonials] ⚠️ Erro ao carregar depoimentos, usando fallback');
           setTestimonials(fallbackTestimonials);
         }
       } catch (error) {

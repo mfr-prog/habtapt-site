@@ -106,7 +106,6 @@ export function Contact() {
         return;
       }
 
-      console.log('Contact form submitted successfully:', data);
       toast.success(data.message || 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
       
       setFormData({

@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     url: 'https://habta.eu/velask',
     images: [
       {
-        url: 'https://habta.eu/images/velask/t2/1.jpeg',
+        url: 'https://habta.eu/images/velask/t2/1.webp',
         width: 1200,
         height: 630,
         alt: 'Velask — Apartamentos reabilitados em Campanhã, Porto',
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Velask — Apartamentos T1 T2 T3 em Campanhã, Porto',
     description: '3 apartamentos totalmente reabilitados. Desde 399.000€. Entrega em 60 dias.',
-    images: ['https://habta.eu/images/velask/t2/1.jpeg'],
+    images: ['https://habta.eu/images/velask/t2/1.webp'],
   },
   alternates: {
     canonical: 'https://habta.eu/velask',
@@ -58,7 +58,7 @@ const realEstateListingJsonLd = {
   description:
     'Três apartamentos a estrear com jardins privados e duplex em Campanhã, Porto. Reabilitação total 2026. T1 com garagem, T2 com jardim e anexo, T3 Duplex.',
   url: 'https://habta.eu/velask',
-  image: 'https://habta.eu/images/velask/t2/1.jpeg',
+  image: 'https://habta.eu/images/velask/t2/1.webp',
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Rua Manuel Carqueja, 259',

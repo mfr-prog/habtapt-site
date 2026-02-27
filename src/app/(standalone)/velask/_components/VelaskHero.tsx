@@ -33,9 +33,13 @@ export function VelaskHero({ isMobile, onScrollToForm }: VelaskHeroProps) {
       }}
     >
       <img
-        src="/images/velask/t2/1.jpeg"
+        src="/images/velask/t2/1.webp"
         alt=""
         aria-hidden="true"
+        width={1600}
+        height={893}
+        fetchPriority="high"
+        decoding="async"
         style={{
           position: 'absolute',
           inset: 0,

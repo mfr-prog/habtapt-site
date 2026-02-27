@@ -102,7 +102,6 @@ export function Insights() {
         const response = await supabaseFetch('insights');
 
         if (!response.ok) {
-          console.warn('[Insights] Server response not OK:', response.status);
           throw new Error(`Server returned ${response.status}`);
         }
 

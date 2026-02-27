@@ -96,6 +96,9 @@ export function VelaskGallery({ isMobile }: VelaskGalleryProps) {
                       src={item.src}
                       alt={item.alt}
                       loading="lazy"
+                      width={1600}
+                      height={893}
+                      decoding="async"
                       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                     <div
