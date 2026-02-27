@@ -14,31 +14,10 @@ export function CookieConsent() {
     try {
       const consent = localStorage.getItem(COOKIE_KEY);
       if (!consent) {
-        // Wait for LCP to be measured before showing the banner.
-        // Use PerformanceObserver to detect LCP, with a 5s fallback.
-        let shown = false;
-        const show = () => {
-          if (shown) return;
-          shown = true;
-          // Extra 500ms buffer after LCP to ensure measurement is finalized
-          setTimeout(() => setVisible(true), 500);
-        };
-
-        const fallback = setTimeout(show, 5000);
-
-        if ('PerformanceObserver' in window) {
-          try {
-            const obs = new PerformanceObserver(() => {
-              obs.disconnect();
-              show();
-            });
-            obs.observe({ type: 'largest-contentful-paint', buffered: true });
-          } catch {
-            // LCP observer not supported, fallback handles it
-          }
-        }
-
-        return () => clearTimeout(fallback);
+        // Show cookie banner after 4s to ensure LCP is already measured.
+        // Using a simple timeout avoids interfering with Lighthouse's LCP observer.
+        const timer = setTimeout(() => setVisible(true), 4000);
+        return () => clearTimeout(timer);
       }
     } catch {
       // localStorage unavailable
