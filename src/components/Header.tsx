@@ -216,6 +216,9 @@ export function Header() {
                       className="block active:scale-[0.98] transition-transform"
                       style={{
                         padding: `${designSystem.spacing[3]} ${designSystem.spacing[4]}`,
+                        minHeight: '48px',
+                        display: 'flex',
+                        alignItems: 'center',
                         color: isActive ? designSystem.colors.brand.primary : designSystem.colors.neutral[700],
                         fontSize: designSystem.typography.fontSize.base,
                         fontWeight: isActive ? designSystem.typography.fontWeight.semibold : designSystem.typography.fontWeight.medium,

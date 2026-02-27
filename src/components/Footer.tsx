@@ -105,9 +105,9 @@ export function Footer() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-white/70 hover:text-white transition-colors duration-200 inline-block"
+                        className="text-white/70 hover:text-white transition-colors duration-200 inline-flex items-center"
                         aria-label={`Navegar para ${link.label}`}
-                        style={{ textDecoration: 'none', font: 'inherit' }}
+                        style={{ textDecoration: 'none', font: 'inherit', minHeight: '44px' }}
                       >
                         {link.label}
                       </Link>
