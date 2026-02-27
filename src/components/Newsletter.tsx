@@ -45,7 +45,6 @@ export function Newsletter({ variant = 'card', theme = 'light' }: NewsletterProp
         return;
       }
 
-      console.log('Newsletter subscription successful:', data);
       setIsSuccess(true);
       toast.success(data.message || 'Subscrição confirmada! Verifique seu email.');
       

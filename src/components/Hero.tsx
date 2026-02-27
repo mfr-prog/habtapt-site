@@ -37,8 +37,13 @@ export function Hero() {
         style={{ y: yParallax }}
       >
         <img
-          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1920"
+          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=webp&ixlib=rb-4.1.0&q=80&w=1920"
           alt=""
+          aria-hidden="true"
+          width={1920}
+          height={1280}
+          fetchPriority="high"
+          decoding="async"
           className="w-full h-full object-cover"
           style={{ minHeight: '110%' }}
         />

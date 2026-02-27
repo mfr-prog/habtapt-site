@@ -134,6 +134,9 @@ export function VelaskLightbox({ images, selectedIndex, open, onClose, onNext, o
           <img
             src={current?.src}
             alt={current?.alt}
+            width={1600}
+            height={893}
+            decoding="async"
             style={{
               maxWidth: '90vw',
               maxHeight: '85vh',

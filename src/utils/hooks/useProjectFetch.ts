@@ -88,12 +88,9 @@ export const useProjectFetch = (
       return;
     }
 
-    console.log(`[useProjectFetch] Starting fetch for project ID: ${projectId}`);
-
     // Verificar cache primeiro
     const cached = projectsCache.get<Project>(CACHE_KEYS.PROJECT_BY_ID(projectId));
     if (cached) {
-      console.log(`[useProjectFetch] ⚡ Using cached project: ${projectId}`);
       setProject(cached);
       setIsLoading(false);
       return;
@@ -111,8 +108,6 @@ export const useProjectFetch = (
       }
 
       const data = await response.json();
-      console.log(`[useProjectFetch] Server data received:`, data);
-
       if (!data.project) {
         throw new Error('Projeto não encontrado no servidor');
       }
@@ -191,12 +186,6 @@ export const useProjectFetch = (
         deliveryDate: data.project.deliveryDate || undefined,
       };
 
-      console.log(`[useProjectFetch] ✅ Project loaded from server`);
-      console.log(`[useProjectFetch] 📊 Financials:`, adaptedProject.financials);
-      console.log(`[useProjectFetch] 📝 Description:`, adaptedProject.description);
-      console.log(`[useProjectFetch] ⏰ Timeline:`, adaptedProject.timeline);
-      console.log(`[useProjectFetch] 🔗 Links:`, { portalLink: adaptedProject.portalLink, brochureLink: adaptedProject.brochureLink });
-      
       // Salvar no cache
       projectsCache.set(CACHE_KEYS.PROJECT_BY_ID(projectId), adaptedProject);
       
@@ -211,9 +200,6 @@ export const useProjectFetch = (
       if (options.mockData) {
         const mockProject = options.mockData.find(p => p.id === projectId);
         if (mockProject) {
-          console.log(
-            `[useProjectFetch] ⚠️ Using mock data as fallback for project ${projectId}`
-          );
           setProject(mockProject);
           setError(null); // Não mostrar erro se conseguiu fallback
         } else {
@@ -265,8 +251,6 @@ export const useProjectsList = (
   const [error, setError] = useState<string | null>(null);
 
   const fetchProjects = async () => {
-    console.log(`[useProjectsList] Starting fetch`);
-
     try {
       setIsLoading(true);
       setError(null);
@@ -278,15 +262,10 @@ export const useProjectsList = (
       }
 
       const data = await response.json();
-      console.log(
-        `[useProjectsList] Server data received: ${data.projects?.length || 0} projects`
-      );
-
       if (!data.projects || !Array.isArray(data.projects)) {
         throw new Error('Formato de resposta inválido');
       }
 
-      console.log(`[useProjectsList] ✅ ${data.projects.length} projects loaded`);
       setProjects(data.projects);
       setError(null);
     } catch (err) {
@@ -296,9 +275,6 @@ export const useProjectsList = (
 
       // Tentar usar mock data como fallback
       if (options.mockData) {
-        console.log(
-          `[useProjectsList] ⚠️ Using mock data as fallback (${options.mockData.length} projects)`
-        );
         setProjects(options.mockData);
         setError(null); // Não mostrar erro se conseguiu fallback
       } else {

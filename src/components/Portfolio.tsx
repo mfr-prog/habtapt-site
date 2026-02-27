@@ -238,7 +238,6 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
             // Validar status
             data.projects.forEach((p: any) => {
               if (!['analysis', 'in-progress', 'available', 'sold'].includes(p.status)) {
-                console.warn(`[Portfolio] ⚠️ Invalid status "${p.status}" in project: ${p.title} (ID: ${p.id})`);
               }
             });
             
@@ -250,7 +249,6 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
             setProjects(fallbackProjects);
           }
         } else {
-          console.warn('[Portfolio] ⚠️ Failed to fetch projects, using fallback data');
           setProjects(fallbackProjects);
         }
       } catch (error) {

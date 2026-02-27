@@ -176,6 +176,9 @@ function UnitCarousel({ unitId, isMobile, onClickImage }: { unitId: string; isMo
           src={img.src}
           alt={img.alt}
           loading={i === 0 ? 'eager' : 'lazy'}
+          width={1600}
+          height={893}
+          decoding="async"
           style={{
             position: 'absolute',
             inset: 0,

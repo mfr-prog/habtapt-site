@@ -6,7 +6,7 @@ const c = designSystem.colors;
 
 const makeImages = (folder: string, count: number) =>
   Array.from({ length: count }, (_, i) => ({
-    src: `/images/velask/${folder}/${i + 1}.jpeg`,
+    src: `/images/velask/${folder}/${i + 1}.webp`,
     alt: `VELASK — ${folder.toUpperCase()} render ${i + 1}`,
   }));
 
@@ -28,15 +28,15 @@ export const unitImages: Record<string, { src: string; alt: string }[]> = {
 // --- Gallery items (curated selection with captions) ---
 
 export const galleryItems = [
-  { src: '/images/velask/t2/1.jpeg', alt: 'Interior com luz natural abundante', caption: 'Luz natural' },
-  { src: '/images/velask/t1/1.jpeg', alt: 'Espaços para arrumações integradas', caption: 'Espaços para arrumações' },
-  { src: '/images/velask/t2/9.jpeg', alt: 'Quarto com linguagem contemporânea e luz natural', caption: 'Quarto' },
-  { src: '/images/velask/t3/2.jpeg', alt: 'Cozinha open-space com bancada e zona de refeições', caption: 'Cozinha open-space' },
-  { src: '/images/velask/t3/3.jpeg', alt: 'Sala com acabamentos contemporâneos', caption: 'Sala' },
-  { src: '/images/velask/common/1.jpeg', alt: 'Casa de banho: revestimentos claros e móvel suspenso', caption: 'Casa de banho' },
-  { src: '/images/velask/common/9.jpeg', alt: 'Exterior: jardim com zona de lazer e apoio', caption: 'Exterior' },
-  { src: '/images/velask/t1/12.jpeg', alt: 'Garagem privativa com espaço amplo', caption: 'Garagem' },
-  { src: '/images/velask/t1/3.jpeg', alt: 'Cozinha equipada com electrodomésticos incluídos', caption: 'Cozinha equipada' },
+  { src: '/images/velask/t2/1.webp', alt: 'Interior com luz natural abundante', caption: 'Luz natural' },
+  { src: '/images/velask/t1/1.webp', alt: 'Espaços para arrumações integradas', caption: 'Espaços para arrumações' },
+  { src: '/images/velask/t2/9.webp', alt: 'Quarto com linguagem contemporânea e luz natural', caption: 'Quarto' },
+  { src: '/images/velask/t3/2.webp', alt: 'Cozinha open-space com bancada e zona de refeições', caption: 'Cozinha open-space' },
+  { src: '/images/velask/t3/3.webp', alt: 'Sala com acabamentos contemporâneos', caption: 'Sala' },
+  { src: '/images/velask/common/1.webp', alt: 'Casa de banho: revestimentos claros e móvel suspenso', caption: 'Casa de banho' },
+  { src: '/images/velask/common/9.webp', alt: 'Exterior: jardim com zona de lazer e apoio', caption: 'Exterior' },
+  { src: '/images/velask/t1/12.webp', alt: 'Garagem privativa com espaço amplo', caption: 'Garagem' },
+  { src: '/images/velask/t1/3.webp', alt: 'Cozinha equipada com electrodomésticos incluídos', caption: 'Cozinha equipada' },
 ];
 
 // --- Counters ---

@@ -27,9 +27,12 @@ export function VelaskBairro({ isMobile }: VelaskBairroProps) {
               style={{ position: 'relative', minHeight: isMobile ? 300 : 500, borderRadius: '0.75rem', overflow: 'hidden' }}
             >
               <img
-                src="/images/velask/common/campanha.jpg"
+                src="/images/velask/common/campanha.webp"
                 alt="Estação de Campanhã, Porto"
                 loading="lazy"
+                width={1200}
+                height={600}
+                decoding="async"
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </motion.div>

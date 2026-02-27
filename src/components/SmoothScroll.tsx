@@ -18,7 +18,7 @@ export function useSmoothScroll() {
           if (element) {
             const headerOffset = 80;
             const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            const offsetPosition = elementPosition + window.scrollY - headerOffset;
 
             window.scrollTo({
               top: offsetPosition,
@@ -37,7 +37,7 @@ export function useSmoothScroll() {
 export function useParallax() {
   useEffect(() => {
     const handleScroll = () => {
-      const scrolled = window.pageYOffset;
+      const scrolled = window.scrollY;
       const parallaxElements = document.querySelectorAll('[data-parallax]');
       
       parallaxElements.forEach((element) => {
