@@ -189,6 +189,12 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="preconnect" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />
         <link rel="dns-prefetch" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />
+        <link
+          rel="preload"
+          as="image"
+          type="image/avif"
+          href="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=50&w=768"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationJsonLd, websiteJsonLd]) }}

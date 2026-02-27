@@ -1,10 +1,22 @@
+import dynamic from "next/dynamic";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { BackToTop } from "@/components/BackToTop";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { CookieConsent } from "@/components/CookieConsent";
-import { Toaster } from "@/components/ui/sonner";
+
+const ScrollProgress = dynamic(
+  () => import("@/components/ScrollProgress").then((m) => ({ default: m.ScrollProgress }))
+);
+const WhatsAppButton = dynamic(
+  () => import("@/components/WhatsAppButton").then((m) => ({ default: m.WhatsAppButton }))
+);
+const BackToTop = dynamic(
+  () => import("@/components/BackToTop").then((m) => ({ default: m.BackToTop }))
+);
+const CookieConsent = dynamic(
+  () => import("@/components/CookieConsent").then((m) => ({ default: m.CookieConsent }))
+);
+const Toaster = dynamic(
+  () => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster }))
+);
 
 export default function SiteLayout({
   children,
