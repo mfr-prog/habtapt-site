@@ -88,7 +88,7 @@ export function Footer() {
                     key={social.label}
                     href={social.href}
                     aria-label={social.label}
-                    className="bg-white/10 backdrop-blur-sm p-2.5 rounded-lg transition-all duration-300 hover:scale-110 hover:-translate-y-0.5"
+                    className="bg-white/10 backdrop-blur-sm p-2.5 rounded-lg transition-transform duration-300 hover:scale-110 hover:-translate-y-0.5"
                   >
                     <social.icon size={20} />
                   </a>

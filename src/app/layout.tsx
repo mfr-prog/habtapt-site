@@ -193,7 +193,7 @@ export default function RootLayout({
           rel="preload"
           as="image"
           type="image/avif"
-          href="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=50&w=768"
+          href="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=30&w=768"
         />
         <script
           type="application/ld+json"

@@ -173,7 +173,7 @@ export function Services() {
             <CardWrapper
               key={service.title}
               {...cardProps}
-              className="group relative bg-white transition-all duration-500"
+              className="group relative bg-white transition-[transform,box-shadow] duration-500"
               role="article"
               aria-labelledby={`service-title-${index}`}
               style={{
