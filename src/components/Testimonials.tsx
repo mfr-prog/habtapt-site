@@ -192,7 +192,7 @@ export function Testimonials() {
             <CardWrapper
               key={testimonial.name}
               {...cardProps}
-              className="relative bg-white rounded-3xl p-8 border transition-all duration-500"
+              className="relative bg-white rounded-3xl p-8 border transition-[transform,box-shadow] duration-500"
               role="article"
               aria-label={`Depoimento de ${testimonial.name}, ${testimonial.role}`}
               style={{

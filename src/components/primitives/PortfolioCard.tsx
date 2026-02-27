@@ -121,7 +121,7 @@ function PortfolioCardComponent({ project, index, isMobile, viewMode = 'investir
 
   return (
     <div
-      className="group relative bg-white overflow-hidden transition-all duration-500 hover:-translate-y-1.5"
+      className="group relative bg-white overflow-hidden transition-[transform,box-shadow] duration-500 hover:-translate-y-1.5"
       role="article"
       aria-labelledby={`project-title-${project.id}`}
       style={{

@@ -180,7 +180,7 @@ export function Hero() {
             >
               <Link href="/velask" style={{ textDecoration: 'none', width: 'auto' }} className="w-full sm:w-auto">
                 <span
-                  className="group inline-flex items-center justify-center rounded-full transition-all w-full sm:w-auto hover-lift"
+                  className="group inline-flex items-center justify-center rounded-full w-full sm:w-auto hover-lift"
                   style={{
                     gap: designSystem.spacing[3],
                     paddingLeft: designSystem.spacing[10],
@@ -205,7 +205,7 @@ export function Hero() {
 
               <Link href="/imoveis" style={{ textDecoration: 'none', width: 'auto' }} className="w-full sm:w-auto">
                 <span
-                  className="inline-flex items-center justify-center rounded-full backdrop-blur-md transition-all w-full sm:w-auto hover-lift"
+                  className="inline-flex items-center justify-center rounded-full backdrop-blur-md w-full sm:w-auto hover-lift"
                   style={{
                     gap: designSystem.spacing[3],
                     paddingLeft: designSystem.spacing[10],
