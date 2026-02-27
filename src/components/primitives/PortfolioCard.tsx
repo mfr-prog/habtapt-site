@@ -1,10 +1,11 @@
 /**
  * Portfolio Card - Componente otimizado e memoizado
  * Suporta dual-mode: 'investir' (default) e 'morar'
+ * Uses overlay <Link> pattern for SEO + keyboard accessibility
  */
 
 import React, { memo } from 'react';
-import { motion } from 'motion/react';
+import Link from 'next/link';
 import { MapPin, BedDouble, Bath, Maximize, ArrowRight, TrendingUp, ExternalLink, Calendar } from '../icons';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { designSystem } from '../design-system';
@@ -29,18 +30,15 @@ interface Project {
   price: string;
   landingPage?: string | null;
   portalLink?: string | null;
-  // Investimento
   estimatedRent?: string;
   grossYield?: string;
   netYield?: string;
   appreciationEstimate?: string;
   propertyType?: 'moradia' | 'investimento' | 'ambos';
-  // Moradia
   neighborhood?: string;
   finishes?: string[];
   nearbyAmenities?: string[];
   lifestyle?: string;
-  // Geral
   typology?: string;
   deliveryDate?: string;
 }
@@ -49,7 +47,7 @@ interface PortfolioCardProps {
   project: Project;
   index: number;
   isMobile: boolean;
-  onClick: (id: string) => void;
+  onClick?: (id: string) => void;
   viewMode?: ViewMode;
 }
 
@@ -116,34 +114,32 @@ const getStrategyConfig = (strategy: InvestmentStrategy) => {
   return configs[strategy] || configs['fix-flip'];
 };
 
-function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 'investir' }: PortfolioCardProps) {
+function PortfolioCardComponent({ project, index, isMobile, viewMode = 'investir' }: PortfolioCardProps) {
   const statusColors = getStatusColor(project.status);
   const strategyConfig = getStrategyConfig(project.strategy);
   const isMorar = viewMode === 'morar';
 
-  const CardWrapper = isMobile ? 'div' : motion.div;
-  const cardProps = isMobile
-    ? {}
-    : {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.4, delay: Math.min(index * 0.05, 0.3) },
-        whileHover: { y: -6 },
-      };
-
   return (
-    <CardWrapper
-      {...cardProps}
-      className="group bg-white overflow-hidden transition-all duration-500 cursor-pointer"
+    <div
+      className="group relative bg-white overflow-hidden transition-all duration-500 hover:-translate-y-1.5"
       role="article"
       aria-labelledby={`project-title-${project.id}`}
-      onClick={() => onClick(project.id)}
       style={{
         borderRadius: designSystem.borderRadius['3xl'],
         border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
         boxShadow: designSystem.shadows.md,
       }}
     >
+      {/* Overlay link — covers entire card, crawlable by search engines, keyboard-accessible */}
+      <Link
+        href={`/portfolio/${project.id}`}
+        className="absolute inset-0 z-[1]"
+        aria-label={`Ver detalhes de ${project.title}`}
+        tabIndex={0}
+      >
+        <span className="sr-only">Ver detalhes de {project.title}</span>
+      </Link>
+
       {/* Image */}
       <div
         className="relative overflow-hidden"
@@ -156,10 +152,7 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
           alt={project.title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           loading="lazy"
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
+          style={{ width: '100%', height: '100%' }}
         />
 
         {/* Status Badge */}
@@ -191,7 +184,7 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
           </span>
         </div>
 
-        {/* ROI Badge — only for sold projects in investir mode */}
+        {/* ROI Badge */}
         {!isMorar && project.status === 'sold' && (
           <div
             className="absolute rounded-full backdrop-blur-md flex items-center"
@@ -208,57 +201,35 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
             }}
           >
             <TrendingUp size={18} className="text-white" />
-            <span
-              style={{
-                fontSize: '1rem',
-                fontWeight: designSystem.typography.fontWeight.bold,
-                color: designSystem.colors.neutral.white,
-              }}
-            >
+            <span style={{ fontSize: '1rem', fontWeight: designSystem.typography.fontWeight.bold, color: designSystem.colors.neutral.white }}>
               {project.roi}
             </span>
           </div>
         )}
 
-        {/* Gradient Overlay */}
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            background: designSystem.colors.gradients.overlay,
-          }}
+          style={{ background: designSystem.colors.gradients.overlay }}
         />
       </div>
 
       {/* Content */}
       <div style={{ padding: designSystem.spacing[6] }}>
         <div className="flex items-start justify-between" style={{ marginBottom: designSystem.spacing[3] }}>
-          <h3
-            id={`project-title-${project.id}`}
-            className="flex-1"
-            style={{
-              color: designSystem.colors.neutral[900],
-            }}
-          >
+          <h3 id={`project-title-${project.id}`} className="flex-1" style={{ color: designSystem.colors.neutral[900] }}>
             {project.title}
           </h3>
         </div>
 
         <div className="flex items-center" style={{ gap: designSystem.spacing[2], marginBottom: designSystem.spacing[3] }}>
           <MapPin size={16} style={{ color: designSystem.colors.neutral[500] }} />
-          <span
-            style={{
-              fontSize: designSystem.typography.fontSize.sm,
-              color: designSystem.colors.neutral[600],
-            }}
-          >
+          <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
             {project.location}
           </span>
         </div>
 
-        {/* Mode-specific content */}
         {isMorar ? (
           <>
-            {/* Typology badge */}
             {project.typology && (
               <div style={{ marginBottom: designSystem.spacing[3] }}>
                 <div
@@ -272,193 +243,76 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
                     border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.15)}`,
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: designSystem.typography.fontSize.sm,
-                      fontWeight: designSystem.typography.fontWeight.semibold,
-                      color: designSystem.colors.brand.primary,
-                    }}
-                  >
+                  <span style={{ fontSize: designSystem.typography.fontSize.sm, fontWeight: designSystem.typography.fontWeight.semibold, color: designSystem.colors.brand.primary }}>
                     {project.typology}
                   </span>
                 </div>
               </div>
             )}
-
-            {/* Neighborhood snippet */}
             {project.neighborhood && (
-              <p
-                style={{
-                  fontSize: designSystem.typography.fontSize.sm,
-                  color: designSystem.colors.neutral[600],
-                  lineHeight: designSystem.typography.lineHeight.relaxed,
-                  marginBottom: designSystem.spacing[3],
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
+              <p style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600], lineHeight: designSystem.typography.lineHeight.relaxed, marginBottom: designSystem.spacing[3], display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {project.neighborhood}
               </p>
             )}
-
-            {/* Finishes pills */}
             {project.finishes && project.finishes.length > 0 && (
-              <div
-                className="flex flex-wrap"
-                style={{
-                  gap: designSystem.spacing[2],
-                  marginBottom: designSystem.spacing[4],
-                }}
-              >
+              <div className="flex flex-wrap" style={{ gap: designSystem.spacing[2], marginBottom: designSystem.spacing[4] }}>
                 {project.finishes.slice(0, 3).map((finish) => (
-                  <span
-                    key={finish}
-                    style={{
-                      fontSize: designSystem.typography.fontSize.xs,
-                      color: designSystem.colors.brand.tertiary,
-                      background: designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.08),
-                      border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.15)}`,
-                      borderRadius: designSystem.borderRadius.full,
-                      paddingLeft: designSystem.spacing[3],
-                      paddingRight: designSystem.spacing[3],
-                      paddingTop: designSystem.spacing[1],
-                      paddingBottom: designSystem.spacing[1],
-                      fontWeight: designSystem.typography.fontWeight.medium,
-                    }}
-                  >
+                  <span key={finish} style={{ fontSize: designSystem.typography.fontSize.xs, color: designSystem.colors.brand.tertiary, background: designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.08), border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.15)}`, borderRadius: designSystem.borderRadius.full, paddingLeft: designSystem.spacing[3], paddingRight: designSystem.spacing[3], paddingTop: designSystem.spacing[1], paddingBottom: designSystem.spacing[1], fontWeight: designSystem.typography.fontWeight.medium }}>
                     {finish}
                   </span>
                 ))}
               </div>
             )}
-
-            {/* Delivery date */}
             {project.deliveryDate && (
-              <div
-                className="flex items-center"
-                style={{
-                  gap: designSystem.spacing[2],
-                  marginBottom: designSystem.spacing[4],
-                  paddingBottom: designSystem.spacing[4],
-                  borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
-                }}
-              >
+              <div className="flex items-center" style={{ gap: designSystem.spacing[2], marginBottom: designSystem.spacing[4], paddingBottom: designSystem.spacing[4], borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}` }}>
                 <Calendar size={14} style={{ color: designSystem.colors.brand.secondary }} />
-                <span
-                  style={{
-                    fontSize: designSystem.typography.fontSize.sm,
-                    color: designSystem.colors.brand.secondary,
-                    fontWeight: designSystem.typography.fontWeight.semibold,
-                  }}
-                >
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.brand.secondary, fontWeight: designSystem.typography.fontWeight.semibold }}>
                   Entrega: {project.deliveryDate}
                 </span>
               </div>
             )}
-
-            {/* Features Grid — if no delivery date, add border */}
             {!project.deliveryDate && (
-              <div
-                className="grid grid-cols-3"
-                style={{
-                  gap: designSystem.spacing[3],
-                  paddingBottom: designSystem.spacing[4],
-                  marginBottom: designSystem.spacing[4],
-                  borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
-                }}
-              >
+              <div className="grid grid-cols-3" style={{ gap: designSystem.spacing[3], paddingBottom: designSystem.spacing[4], marginBottom: designSystem.spacing[4], borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}` }}>
                 <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
                   <Maximize size={16} style={{ color: designSystem.colors.neutral[500] }} />
-                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-                    {project.area}
-                  </span>
+                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>{project.area}</span>
                 </div>
                 <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
                   <BedDouble size={16} style={{ color: designSystem.colors.neutral[500] }} />
-                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-                    {project.bedrooms}
-                  </span>
+                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>{project.bedrooms}</span>
                 </div>
                 <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
                   <Bath size={16} style={{ color: designSystem.colors.neutral[500] }} />
-                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-                    {project.bathrooms}
-                  </span>
+                  <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>{project.bathrooms}</span>
                 </div>
               </div>
             )}
           </>
         ) : (
           <>
-            {/* Strategy Badge — investir mode */}
             <div style={{ marginBottom: designSystem.spacing[4] }}>
-              <div
-                className="inline-flex items-center rounded-full"
-                style={{
-                  paddingLeft: designSystem.spacing[4],
-                  paddingRight: designSystem.spacing[4],
-                  paddingTop: designSystem.spacing[2],
-                  paddingBottom: designSystem.spacing[2],
-                  background: strategyConfig.bg,
-                  border: `2px solid ${strategyConfig.border}`,
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: designSystem.typography.fontSize.sm,
-                    fontWeight: designSystem.typography.fontWeight.extrabold,
-                    color: strategyConfig.color,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    textShadow: '0 1px 2px rgba(0,0,0,0.2)',
-                  }}
-                >
+              <div className="inline-flex items-center rounded-full" style={{ paddingLeft: designSystem.spacing[4], paddingRight: designSystem.spacing[4], paddingTop: designSystem.spacing[2], paddingBottom: designSystem.spacing[2], background: strategyConfig.bg, border: `2px solid ${strategyConfig.border}` }}>
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, fontWeight: designSystem.typography.fontWeight.extrabold, color: strategyConfig.color, textTransform: 'uppercase', letterSpacing: '0.05em', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>
                   {strategyConfig.label}
                 </span>
               </div>
             </div>
-
-            {/* Features Grid */}
-            <div
-              className="grid grid-cols-3"
-              style={{
-                gap: designSystem.spacing[3],
-                paddingBottom: designSystem.spacing[5],
-                marginBottom: designSystem.spacing[5],
-                borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
-              }}
-            >
+            <div className="grid grid-cols-3" style={{ gap: designSystem.spacing[3], paddingBottom: designSystem.spacing[5], marginBottom: designSystem.spacing[5], borderBottom: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}` }}>
               <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
                 <Maximize size={16} style={{ color: designSystem.colors.neutral[500] }} />
-                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-                  {project.area}
-                </span>
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>{project.area}</span>
               </div>
               <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
                 <BedDouble size={16} style={{ color: designSystem.colors.neutral[500] }} />
-                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-                  {project.bedrooms}
-                </span>
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>{project.bedrooms}</span>
               </div>
               <div className="flex items-center" style={{ gap: designSystem.spacing[2] }}>
                 <Bath size={16} style={{ color: designSystem.colors.neutral[500] }} />
-                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>
-                  {project.bathrooms}
-                </span>
+                <span style={{ fontSize: designSystem.typography.fontSize.sm, color: designSystem.colors.neutral[600] }}>{project.bathrooms}</span>
               </div>
             </div>
-
-            {/* Estimated rent + yield — only for sold projects */}
             {project.status === 'sold' && (project.estimatedRent || project.grossYield) && (
-              <div
-                className="flex items-center justify-between"
-                style={{
-                  marginBottom: designSystem.spacing[4],
-                  fontSize: designSystem.typography.fontSize.sm,
-                }}
-              >
+              <div className="flex items-center justify-between" style={{ marginBottom: designSystem.spacing[4], fontSize: designSystem.typography.fontSize.sm }}>
                 {project.estimatedRent && (
                   <span style={{ color: designSystem.colors.neutral[600] }}>
                     Renda est.: <strong style={{ color: designSystem.colors.brand.secondary }}>{project.estimatedRent}</strong>
@@ -474,49 +328,38 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
           </>
         )}
 
-        {/* Price and CTA */}
+        {/* Price and CTA arrow */}
         <div className="flex items-center justify-between">
           <div>
-            <span style={{ fontSize: designSystem.typography.fontSize.xs, color: designSystem.colors.neutral[500] }}>
-              Valor
-            </span>
-            <div
-              style={{
-                fontSize: designSystem.typography.fontSize.xl,
-                fontWeight: designSystem.typography.fontWeight.extrabold,
-                color: designSystem.colors.brand.secondary,
-              }}
-            >
+            <span style={{ fontSize: designSystem.typography.fontSize.xs, color: designSystem.colors.neutral[500] }}>Valor</span>
+            <div style={{ fontSize: designSystem.typography.fontSize.xl, fontWeight: designSystem.typography.fontWeight.extrabold, color: designSystem.colors.brand.secondary }}>
               {project.price}
             </div>
           </div>
-
-          <motion.button
-            whileHover={isMobile ? {} : { scale: 1.1, rotate: -5 }}
-            whileTap={{ scale: 0.9 }}
-            className="rounded-full transition-all duration-300"
-            aria-label={`Ver detalhes de ${project.title}`}
+          <span
+            className="rounded-full"
+            aria-hidden="true"
             style={{
               width: '48px',
               height: '48px',
+              minWidth: '48px',
+              minHeight: '48px',
               background: designSystem.colors.gradients.secondary,
               color: designSystem.colors.neutral.white,
-              border: 'none',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               boxShadow: designSystem.shadows.secondaryHover,
-              cursor: 'pointer',
             }}
           >
             <ArrowRight size={20} />
-          </motion.button>
+          </span>
         </div>
 
-        {/* Links externos — subtle, abaixo do preco */}
+        {/* External links — above card overlay link */}
         {(project.landingPage || project.portalLink) && (
           <div
-            className="flex items-center"
+            className="relative z-[2] flex items-center"
             style={{
               gap: designSystem.spacing[4],
               marginTop: designSystem.spacing[3],
@@ -527,8 +370,7 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
             {project.landingPage && (
               <a
                 href={project.landingPage}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center transition-opacity duration-200"
+                className="inline-flex items-center transition-opacity duration-200 hover:opacity-100"
                 style={{
                   gap: designSystem.spacing[1.5],
                   fontSize: designSystem.typography.fontSize.xs,
@@ -536,9 +378,9 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
                   color: designSystem.colors.brand.primary,
                   textDecoration: 'none',
                   opacity: 0.7,
+                  minHeight: '44px',
+                  alignItems: 'center',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.7'; }}
               >
                 <ExternalLink size={13} />
                 Página Exclusiva
@@ -547,10 +389,9 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
             {project.portalLink && (
               <a
                 href={project.portalLink}
-                onClick={(e) => e.stopPropagation()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center transition-opacity duration-200"
+                className="inline-flex items-center transition-opacity duration-200 hover:opacity-100"
                 style={{
                   gap: designSystem.spacing[1.5],
                   fontSize: designSystem.typography.fontSize.xs,
@@ -558,9 +399,9 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
                   color: designSystem.colors.brand.primary,
                   textDecoration: 'none',
                   opacity: 0.7,
+                  minHeight: '44px',
+                  alignItems: 'center',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.7'; }}
               >
                 <ExternalLink size={13} />
                 Ver no Portal
@@ -569,11 +410,10 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
           </div>
         )}
       </div>
-    </CardWrapper>
+    </div>
   );
 }
 
-// Memoizar para evitar re-renders desnecessários
 export const PortfolioCard = memo(PortfolioCardComponent, (prevProps, nextProps) => {
   return (
     prevProps.project.id === nextProps.project.id &&

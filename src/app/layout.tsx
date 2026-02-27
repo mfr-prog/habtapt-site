@@ -10,7 +10,7 @@ const inter = localFont({
     },
   ],
   variable: "--font-inter",
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {

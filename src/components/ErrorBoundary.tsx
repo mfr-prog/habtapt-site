@@ -155,6 +155,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             >
               <Button
                 onClick={() => window.location.reload()}
+                aria-label="Recarregar a página atual"
                 style={{
                   background: designSystem.colors.gradients.primary,
                 }}
@@ -162,7 +163,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 Recarregar Página
               </Button>
               <Button
-                onClick={() => (window.location.hash = 'home')}
+                onClick={() => (window.location.href = '/')}
+                aria-label="Voltar para a página inicial"
                 variant="outline"
               >
                 Voltar para Home

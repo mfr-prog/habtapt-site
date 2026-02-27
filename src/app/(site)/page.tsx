@@ -1,9 +1,16 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { Hero } from '@/components/Hero';
-import { Portfolio } from '@/components/Portfolio';
 import { CredibilityBar } from '@/components/CredibilityBar';
 import { DualCTA } from '@/components/DualCTA';
-import { Contact } from '@/components/Contact';
+
+// Below-fold components: code-split so motion/react JS loads after initial paint
+const Portfolio = dynamic(
+  () => import('@/components/Portfolio').then((m) => ({ default: m.Portfolio }))
+);
+const Contact = dynamic(
+  () => import('@/components/Contact').then((m) => ({ default: m.Contact }))
+);
 
 export const metadata: Metadata = {
   title: 'HABTA — Imóveis Reabilitados Premium em Portugal | Investimento Imobiliário',
