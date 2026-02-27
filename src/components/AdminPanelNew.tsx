@@ -26,6 +26,7 @@ import {
   Trash2,
   UserPlus,
   TrendingDown,
+  BarChart3,
 } from './icons';
 import { toast } from 'sonner';
 import { supabaseFetch } from '../utils/supabase/client';
@@ -42,6 +43,7 @@ import { colors, spacing, shadows, radius, typography } from '../utils/styles';
 import { animations } from '../utils/animations';
 import { designSystem } from './design-system';
 import { LeadsPipeline } from './admin/LeadsPipeline';
+import { ControloManager } from './admin/ControloManager';
 
 interface Contact {
   id: string;
@@ -109,7 +111,7 @@ interface Insight {
 
 export function AdminPanel() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'contacts' | 'leads' | 'subscribers' | 'projects' | 'insights' | 'testimonials'>('contacts');
+  const [activeTab, setActiveTab] = useState<'contacts' | 'leads' | 'subscribers' | 'projects' | 'insights' | 'testimonials' | 'controlo'>('contacts');
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -482,6 +484,7 @@ export function AdminPanel() {
             { id: 'projects' as const, label: 'Projetos', icon: Building2, count: projects.length },
             { id: 'insights' as const, label: 'Insights', icon: BookOpen, count: insights.length },
             { id: 'testimonials' as const, label: 'Depoimentos', icon: MessageSquare, count: testimonialsCount },
+            { id: 'controlo' as const, label: 'Controlo', icon: BarChart3, count: 0 },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -531,7 +534,7 @@ export function AdminPanel() {
         </div>
 
         {/* Compact Toolbar - Only for contacts and subscribers */}
-        {activeTab !== 'projects' && activeTab !== 'insights' && activeTab !== 'testimonials' && activeTab !== 'leads' && (
+        {activeTab !== 'projects' && activeTab !== 'insights' && activeTab !== 'testimonials' && activeTab !== 'leads' && activeTab !== 'controlo' && (
           <div
             style={{
               padding: `${spacing[3]} ${spacing[4]}`,
@@ -751,7 +754,7 @@ export function AdminPanel() {
           id={`tabpanel-${activeTab}`}
           role="tabpanel"
           aria-labelledby={`tab-${activeTab}`}
-          style={{ padding: (activeTab === 'projects' || activeTab === 'insights' || activeTab === 'testimonials') ? spacing[6] : spacing[4] }}
+          style={{ padding: (activeTab === 'projects' || activeTab === 'insights' || activeTab === 'testimonials' || activeTab === 'controlo') ? spacing[6] : spacing[4] }}
         >
           {isLoading ? (
             <SkeletonTable rows={5} />
@@ -771,8 +774,10 @@ export function AdminPanel() {
                 <ProjectsManager projects={projects} onRefresh={fetchProjects} isLoading={isLoading} />
               ) : activeTab === 'insights' ? (
                 <InsightsManager insights={insights} onRefresh={fetchInsights} isLoading={isLoading} />
-              ) : (
+              ) : activeTab === 'testimonials' ? (
                 <TestimonialsManager onRefresh={fetchTestimonialsCount} />
+              ) : (
+                <ControloManager />
               )}
             </AnimatePresence>
           )}
