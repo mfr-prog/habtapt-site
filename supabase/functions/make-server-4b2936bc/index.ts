@@ -1830,4 +1830,348 @@ app.post("/make-server-4b2936bc/upload/testimonials", async (c) => {
   }
 });
 
+// ============================================
+// CONTROLO (Multi-Project Dashboard) CRUD ENDPOINTS
+// ============================================
+
+// --- Controlo Projects ---
+app.get("/make-server-4b2936bc/controlo/projects", async (c) => {
+  try {
+    const items = await kv.getByPrefix("controlo:project:");
+    const sorted = items.sort((a: any, b: any) => (a.label || '').localeCompare(b.label || ''));
+    return c.json({ success: true, projects: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving controlo projects: ${error}`);
+    return c.json({ error: "Erro ao buscar projetos de controlo" }, 500);
+  }
+});
+
+app.post("/make-server-4b2936bc/controlo/projects", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { id, label } = body;
+    if (!id || !label) return c.json({ error: "id e label são obrigatórios" }, 400);
+    const key = `controlo:project:${id}`;
+    const existing = await kv.get(key);
+    if (existing) return c.json({ error: "Já existe um projeto com este ID" }, 409);
+    const data = { id, label, timestamp: Date.now() };
+    await kv.set(key, data);
+    return c.json({ success: true, project: data });
+  } catch (error) {
+    console.log(`Error creating controlo project: ${error}`);
+    return c.json({ error: "Erro ao criar projeto de controlo" }, 500);
+  }
+});
+
+app.put("/make-server-4b2936bc/controlo/projects/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const key = `controlo:project:${id}`;
+    const existing = await kv.get(key);
+    if (!existing) return c.json({ error: "Projeto não encontrado" }, 404);
+    const body = await c.req.json();
+    const updated = { ...(existing as any), ...body, id, timestamp: Date.now() };
+    await kv.set(key, updated);
+    return c.json({ success: true, project: updated });
+  } catch (error) {
+    console.log(`Error updating controlo project: ${error}`);
+    return c.json({ error: "Erro ao atualizar projeto de controlo" }, 500);
+  }
+});
+
+app.delete("/make-server-4b2936bc/controlo/projects/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const key = `controlo:project:${id}`;
+    await kv.del(key);
+    return c.json({ success: true, message: "Projeto de controlo eliminado" });
+  } catch (error) {
+    console.log(`Error deleting controlo project: ${error}`);
+    return c.json({ error: "Erro ao eliminar projeto de controlo" }, 500);
+  }
+});
+
+// --- Units ---
+app.get("/make-server-4b2936bc/controlo/units", async (c) => {
+  try {
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const items = await kv.getByPrefix(`controlo:unit:${projectId}:`);
+    const sorted = items.sort((a: any, b: any) => (a.code || '').localeCompare(b.code || ''));
+    return c.json({ success: true, units: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving controlo units: ${error}`);
+    return c.json({ error: "Erro ao buscar unidades" }, 500);
+  }
+});
+
+app.post("/make-server-4b2936bc/controlo/units", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { projectId } = body;
+    if (!projectId || !body.code) return c.json({ error: "projectId e code são obrigatórios" }, 400);
+    const timestamp = Date.now();
+    const id = `${timestamp}`;
+    const key = `controlo:unit:${projectId}:${id}`;
+    const data = { ...body, id, timestamp };
+    await kv.set(key, data);
+    return c.json({ success: true, unit: data });
+  } catch (error) {
+    console.log(`Error creating controlo unit: ${error}`);
+    return c.json({ error: "Erro ao criar unidade" }, 500);
+  }
+});
+
+app.put("/make-server-4b2936bc/controlo/units/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:unit:${projectId}:${id}`;
+    const existing = await kv.get(key);
+    if (!existing) return c.json({ error: "Unidade não encontrada" }, 404);
+    const body = await c.req.json();
+    const updated = { ...(existing as any), ...body, id, projectId, timestamp: Date.now() };
+    await kv.set(key, updated);
+    return c.json({ success: true, unit: updated });
+  } catch (error) {
+    console.log(`Error updating controlo unit: ${error}`);
+    return c.json({ error: "Erro ao atualizar unidade" }, 500);
+  }
+});
+
+app.delete("/make-server-4b2936bc/controlo/units/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:unit:${projectId}:${id}`;
+    await kv.del(key);
+    return c.json({ success: true, message: "Unidade eliminada" });
+  } catch (error) {
+    console.log(`Error deleting controlo unit: ${error}`);
+    return c.json({ error: "Erro ao eliminar unidade" }, 500);
+  }
+});
+
+// --- Targets ---
+app.get("/make-server-4b2936bc/controlo/targets", async (c) => {
+  try {
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:targets:${projectId}`;
+    const targets = await kv.get(key);
+    return c.json({ success: true, targets: targets || null });
+  } catch (error) {
+    console.log(`Error retrieving controlo targets: ${error}`);
+    return c.json({ error: "Erro ao buscar metas" }, 500);
+  }
+});
+
+app.put("/make-server-4b2936bc/controlo/targets", async (c) => {
+  try {
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const body = await c.req.json();
+    const key = `controlo:targets:${projectId}`;
+    const data = { ...body, id: key, projectId, timestamp: Date.now() };
+    await kv.set(key, data);
+    return c.json({ success: true, targets: data });
+  } catch (error) {
+    console.log(`Error updating controlo targets: ${error}`);
+    return c.json({ error: "Erro ao atualizar metas" }, 500);
+  }
+});
+
+// --- Review Dates ---
+app.get("/make-server-4b2936bc/controlo/reviews", async (c) => {
+  try {
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const items = await kv.getByPrefix(`controlo:review:${projectId}:`);
+    const sorted = items.sort((a: any, b: any) => (a.date || '').localeCompare(b.date || ''));
+    return c.json({ success: true, reviews: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving controlo reviews: ${error}`);
+    return c.json({ error: "Erro ao buscar datas de revisão" }, 500);
+  }
+});
+
+app.post("/make-server-4b2936bc/controlo/reviews", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { projectId } = body;
+    if (!projectId || !body.date) return c.json({ error: "projectId e date são obrigatórios" }, 400);
+    const timestamp = Date.now();
+    const id = `${timestamp}`;
+    const key = `controlo:review:${projectId}:${id}`;
+    const data = { ...body, id, timestamp };
+    await kv.set(key, data);
+    return c.json({ success: true, review: data });
+  } catch (error) {
+    console.log(`Error creating controlo review: ${error}`);
+    return c.json({ error: "Erro ao criar data de revisão" }, 500);
+  }
+});
+
+app.put("/make-server-4b2936bc/controlo/reviews/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:review:${projectId}:${id}`;
+    const existing = await kv.get(key);
+    if (!existing) return c.json({ error: "Data de revisão não encontrada" }, 404);
+    const body = await c.req.json();
+    const updated = { ...(existing as any), ...body, id, projectId, timestamp: Date.now() };
+    await kv.set(key, updated);
+    return c.json({ success: true, review: updated });
+  } catch (error) {
+    console.log(`Error updating controlo review: ${error}`);
+    return c.json({ error: "Erro ao atualizar data de revisão" }, 500);
+  }
+});
+
+app.delete("/make-server-4b2936bc/controlo/reviews/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:review:${projectId}:${id}`;
+    await kv.del(key);
+    return c.json({ success: true, message: "Data de revisão eliminada" });
+  } catch (error) {
+    console.log(`Error deleting controlo review: ${error}`);
+    return c.json({ error: "Erro ao eliminar data de revisão" }, 500);
+  }
+});
+
+// --- Weekly Logs ---
+app.get("/make-server-4b2936bc/controlo/weeklylogs", async (c) => {
+  try {
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const items = await kv.getByPrefix(`controlo:wlog:${projectId}:`);
+    const sorted = items.sort((a: any, b: any) => (b.weekStart || '').localeCompare(a.weekStart || ''));
+    return c.json({ success: true, weeklylogs: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving controlo weeklylogs: ${error}`);
+    return c.json({ error: "Erro ao buscar registos semanais" }, 500);
+  }
+});
+
+app.post("/make-server-4b2936bc/controlo/weeklylogs", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { projectId } = body;
+    if (!projectId || !body.unitId || !body.weekStart) return c.json({ error: "projectId, unitId e weekStart são obrigatórios" }, 400);
+    const timestamp = Date.now();
+    const id = `${timestamp}`;
+    const key = `controlo:wlog:${projectId}:${id}`;
+    const data = { ...body, id, timestamp };
+    await kv.set(key, data);
+    return c.json({ success: true, weeklylog: data });
+  } catch (error) {
+    console.log(`Error creating controlo weeklylog: ${error}`);
+    return c.json({ error: "Erro ao criar registo semanal" }, 500);
+  }
+});
+
+app.put("/make-server-4b2936bc/controlo/weeklylogs/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:wlog:${projectId}:${id}`;
+    const existing = await kv.get(key);
+    if (!existing) return c.json({ error: "Registo semanal não encontrado" }, 404);
+    const body = await c.req.json();
+    const updated = { ...(existing as any), ...body, id, projectId, timestamp: Date.now() };
+    await kv.set(key, updated);
+    return c.json({ success: true, weeklylog: updated });
+  } catch (error) {
+    console.log(`Error updating controlo weeklylog: ${error}`);
+    return c.json({ error: "Erro ao atualizar registo semanal" }, 500);
+  }
+});
+
+app.delete("/make-server-4b2936bc/controlo/weeklylogs/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:wlog:${projectId}:${id}`;
+    await kv.del(key);
+    return c.json({ success: true, message: "Registo semanal eliminado" });
+  } catch (error) {
+    console.log(`Error deleting controlo weeklylog: ${error}`);
+    return c.json({ error: "Erro ao eliminar registo semanal" }, 500);
+  }
+});
+
+// --- Competitors ---
+app.get("/make-server-4b2936bc/controlo/competitors", async (c) => {
+  try {
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const items = await kv.getByPrefix(`controlo:comp:${projectId}:`);
+    const sorted = items.sort((a: any, b: any) => (b.date || '').localeCompare(a.date || ''));
+    return c.json({ success: true, competitors: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving controlo competitors: ${error}`);
+    return c.json({ error: "Erro ao buscar concorrentes" }, 500);
+  }
+});
+
+app.post("/make-server-4b2936bc/controlo/competitors", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { projectId } = body;
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const timestamp = Date.now();
+    const id = `${timestamp}`;
+    const key = `controlo:comp:${projectId}:${id}`;
+    const pricePerM2 = body.area > 0 ? Math.round(body.price / body.area) : 0;
+    const data = { ...body, id, pricePerM2, timestamp };
+    await kv.set(key, data);
+    return c.json({ success: true, competitor: data });
+  } catch (error) {
+    console.log(`Error creating controlo competitor: ${error}`);
+    return c.json({ error: "Erro ao criar concorrente" }, 500);
+  }
+});
+
+app.put("/make-server-4b2936bc/controlo/competitors/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:comp:${projectId}:${id}`;
+    const existing = await kv.get(key);
+    if (!existing) return c.json({ error: "Concorrente não encontrado" }, 404);
+    const body = await c.req.json();
+    const pricePerM2 = body.area > 0 ? Math.round(body.price / body.area) : 0;
+    const updated = { ...(existing as any), ...body, id, projectId, pricePerM2, timestamp: Date.now() };
+    await kv.set(key, updated);
+    return c.json({ success: true, competitor: updated });
+  } catch (error) {
+    console.log(`Error updating controlo competitor: ${error}`);
+    return c.json({ error: "Erro ao atualizar concorrente" }, 500);
+  }
+});
+
+app.delete("/make-server-4b2936bc/controlo/competitors/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+    const key = `controlo:comp:${projectId}:${id}`;
+    await kv.del(key);
+    return c.json({ success: true, message: "Concorrente eliminado" });
+  } catch (error) {
+    console.log(`Error deleting controlo competitor: ${error}`);
+    return c.json({ error: "Erro ao eliminar concorrente" }, 500);
+  }
+});
+
 Deno.serve(app.fetch);

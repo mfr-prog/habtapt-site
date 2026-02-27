@@ -1834,6 +1834,63 @@ app.post("/make-server-4b2936bc/upload/testimonials", async (c) => {
 // CONTROLO (Multi-Project Dashboard) CRUD ENDPOINTS
 // ============================================
 
+// --- Controlo Projects ---
+app.get("/make-server-4b2936bc/controlo/projects", async (c) => {
+  try {
+    const items = await kv.getByPrefix("controlo:project:");
+    const sorted = items.sort((a: any, b: any) => (a.label || '').localeCompare(b.label || ''));
+    return c.json({ success: true, projects: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving controlo projects: ${error}`);
+    return c.json({ error: "Erro ao buscar projetos de controlo" }, 500);
+  }
+});
+
+app.post("/make-server-4b2936bc/controlo/projects", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { id, label } = body;
+    if (!id || !label) return c.json({ error: "id e label são obrigatórios" }, 400);
+    const key = `controlo:project:${id}`;
+    const existing = await kv.get(key);
+    if (existing) return c.json({ error: "Já existe um projeto com este ID" }, 409);
+    const data = { id, label, timestamp: Date.now() };
+    await kv.set(key, data);
+    return c.json({ success: true, project: data });
+  } catch (error) {
+    console.log(`Error creating controlo project: ${error}`);
+    return c.json({ error: "Erro ao criar projeto de controlo" }, 500);
+  }
+});
+
+app.put("/make-server-4b2936bc/controlo/projects/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const key = `controlo:project:${id}`;
+    const existing = await kv.get(key);
+    if (!existing) return c.json({ error: "Projeto não encontrado" }, 404);
+    const body = await c.req.json();
+    const updated = { ...(existing as any), ...body, id, timestamp: Date.now() };
+    await kv.set(key, updated);
+    return c.json({ success: true, project: updated });
+  } catch (error) {
+    console.log(`Error updating controlo project: ${error}`);
+    return c.json({ error: "Erro ao atualizar projeto de controlo" }, 500);
+  }
+});
+
+app.delete("/make-server-4b2936bc/controlo/projects/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const key = `controlo:project:${id}`;
+    await kv.del(key);
+    return c.json({ success: true, message: "Projeto de controlo eliminado" });
+  } catch (error) {
+    console.log(`Error deleting controlo project: ${error}`);
+    return c.json({ error: "Erro ao eliminar projeto de controlo" }, 500);
+  }
+});
+
 // --- Units ---
 app.get("/make-server-4b2936bc/controlo/units", async (c) => {
   try {
