@@ -14,9 +14,19 @@ export function CookieConsent() {
     try {
       const consent = localStorage.getItem(COOKIE_KEY);
       if (!consent) {
-        // Small delay so it doesn't flash on load
-        const timer = setTimeout(() => setVisible(true), 1500);
-        return () => clearTimeout(timer);
+        // Defer until after LCP is measured — use requestIdleCallback + timeout
+        // This prevents the cookie banner from becoming the LCP element
+        const show = () => {
+          const timer = setTimeout(() => setVisible(true), 100);
+          return () => clearTimeout(timer);
+        };
+        if ('requestIdleCallback' in window) {
+          const id = requestIdleCallback(show, { timeout: 3500 });
+          return () => cancelIdleCallback(id);
+        } else {
+          const timer = setTimeout(() => setVisible(true), 3500);
+          return () => clearTimeout(timer);
+        }
       }
     } catch {
       // localStorage unavailable

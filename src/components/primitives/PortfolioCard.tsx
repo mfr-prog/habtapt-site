@@ -150,8 +150,8 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
         style={{ height: isMorar ? designSystem.spacing[40] : designSystem.spacing[64] }}
       >
         <ImageWithFallback
-          src={isUnsplashUrl(project.image) ? unsplashUrl(project.image, 640) : project.image}
-          srcSet={unsplashSrcSet(project.image, [400, 640, 800])}
+          src={isUnsplashUrl(project.image) ? unsplashUrl(project.image, 480) : project.image}
+          srcSet={unsplashSrcSet(project.image, [320, 480, 640])}
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           alt={project.title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
