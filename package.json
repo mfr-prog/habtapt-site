@@ -62,12 +62,6 @@
     "tailwindcss": "^4.1.18",
     "vaul": "^1.1.2"
   },
-  "browserslist": [
-    "chrome >= 87",
-    "firefox >= 78",
-    "safari >= 14",
-    "edge >= 88"
-  ],
   "devDependencies": {
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20.10.0",

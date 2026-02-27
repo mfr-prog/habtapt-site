@@ -14,8 +14,9 @@ export function CookieConsent() {
     try {
       const consent = localStorage.getItem(COOKIE_KEY);
       if (!consent) {
-        // Show cookie banner after 4s to ensure LCP is already measured.
-        // Using a simple timeout avoids interfering with Lighthouse's LCP observer.
+        // Show cookie banner after 4s — well after LCP is measured (~2.5s).
+        // A simple timeout is the safest approach that avoids interfering
+        // with Lighthouse's LCP tracing.
         const timer = setTimeout(() => setVisible(true), 4000);
         return () => clearTimeout(timer);
       }

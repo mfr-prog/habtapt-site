@@ -48,7 +48,7 @@ export function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 transition-[background-color,backdrop-filter,box-shadow] duration-500 anim-slide-down"
+      className="fixed top-0 left-0 right-0 transition-[background-color,backdrop-filter,box-shadow,border-color] duration-500 anim-slide-down"
       style={{
         zIndex: designSystem.zIndex.fixed,
         background: showSolid
@@ -103,7 +103,7 @@ export function Header() {
                   style={{ textDecoration: 'none' }}
                 >
                   <span
-                    className="relative group block transition-all duration-200 hover:-translate-y-0.5"
+                    className="relative group block transition-transform duration-200 hover:-translate-y-0.5"
                     style={{
                       padding: `${designSystem.spacing[3]} ${designSystem.spacing[4]}`,
                       color: isActive

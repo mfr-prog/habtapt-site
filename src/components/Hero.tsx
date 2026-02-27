@@ -19,12 +19,12 @@ export function Hero() {
       {/* Background Image — static, no JS needed */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=30&w=768"
+          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=50&w=1024"
           srcSet={[
-            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=30&w=480 480w',
-            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=30&w=768 768w',
-            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=30&w=1280 1280w',
-            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=30&w=1600 1600w',
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=45&w=480 480w',
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=50&w=768 768w',
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=55&w=1280 1280w',
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=60&w=1600 1600w',
           ].join(', ')}
           sizes="100vw"
           alt=""
@@ -180,7 +180,7 @@ export function Hero() {
             >
               <Link href="/velask" style={{ textDecoration: 'none', width: 'auto' }} className="w-full sm:w-auto">
                 <span
-                  className="group inline-flex items-center justify-center rounded-full transition-all w-full sm:w-auto hover-lift"
+                  className="group inline-flex items-center justify-center rounded-full w-full sm:w-auto hover-lift"
                   style={{
                     gap: designSystem.spacing[3],
                     paddingLeft: designSystem.spacing[10],
@@ -205,7 +205,7 @@ export function Hero() {
 
               <Link href="/imoveis" style={{ textDecoration: 'none', width: 'auto' }} className="w-full sm:w-auto">
                 <span
-                  className="inline-flex items-center justify-center rounded-full backdrop-blur-md transition-all w-full sm:w-auto hover-lift"
+                  className="inline-flex items-center justify-center rounded-full backdrop-blur-md w-full sm:w-auto hover-lift"
                   style={{
                     gap: designSystem.spacing[3],
                     paddingLeft: designSystem.spacing[10],
