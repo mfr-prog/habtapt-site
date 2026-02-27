@@ -3,9 +3,10 @@ import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
 
 export const metadata: Metadata = {
-  title: 'Politica de Cookies',
-  description: 'Politica de cookies da HABTA - informacao sobre os cookies utilizados no site habta.eu.',
+  title: 'Política de Cookies',
+  description: 'Política de cookies da HABTA — informação sobre os cookies utilizados no site habta.eu e como pode geri-los.',
   alternates: { canonical: 'https://habta.eu/cookies' },
+  robots: { index: true, follow: true },
 };
 
 export default function CookiesPage() {

@@ -3,9 +3,10 @@ import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
 
 export const metadata: Metadata = {
-  title: 'Politica de Privacidade',
-  description: 'Politica de privacidade da HABTA - como recolhemos, utilizamos e protegemos os seus dados pessoais.',
+  title: 'Política de Privacidade',
+  description: 'Política de privacidade da HABTA — como recolhemos, utilizamos e protegemos os seus dados pessoais em conformidade com o RGPD.',
   alternates: { canonical: 'https://habta.eu/privacidade' },
+  robots: { index: true, follow: true },
 };
 
 export default function PrivacidadePage() {

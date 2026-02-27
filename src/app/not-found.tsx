@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: 'Página Não Encontrada — 404',
+  description: 'A página que procura não existe ou foi movida. Volte à página inicial da HABTA.',
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (
@@ -18,14 +25,14 @@ export default function NotFound() {
         className="text-2xl font-bold mb-2"
         style={{ color: "#ffffff" }}
       >
-        Pagina nao encontrada
+        Página não encontrada
       </h2>
       <p
         className="mb-8 text-center max-w-md"
         style={{ color: "rgba(255,255,255,0.7)" }}
       >
-        A pagina que procura nao existe ou foi movida. Verifique o endereco ou
-        volte a pagina inicial.
+        A página que procura não existe ou foi movida. Verifique o endereço ou
+        volte à página inicial.
       </p>
       <Link
         href="/"
@@ -36,7 +43,7 @@ export default function NotFound() {
           boxShadow: "0 10px 40px rgba(184,149,106,0.3)",
         }}
       >
-        Voltar ao inicio
+        Voltar ao início
       </Link>
     </div>
   );

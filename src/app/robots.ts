@@ -8,7 +8,12 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/admin', '/login', '/api/'],
       },
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+      },
     ],
     sitemap: 'https://habta.eu/sitemap.xml',
+    host: 'https://habta.eu',
   };
 }
