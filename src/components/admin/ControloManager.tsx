@@ -585,9 +585,9 @@ export function ControloManager() {
           )}
           {subTab === 'kpi' && (
             <KPIDashboard
+              projectId={projectId}
               units={units}
               targets={targets}
-              weeklyLogs={weeklyLogs}
             />
           )}
           {subTab === 'competitors' && (

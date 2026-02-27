@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { BackToTop } from "@/components/BackToTop";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { CookieConsent } from "@/components/CookieConsent";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function SiteLayout({
@@ -18,6 +19,7 @@ export default function SiteLayout({
       <Footer />
       <WhatsAppButton />
       <BackToTop />
+      <CookieConsent />
       <Toaster
         position="top-right"
         duration={4000}

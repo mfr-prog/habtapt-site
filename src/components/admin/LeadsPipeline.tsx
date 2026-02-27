@@ -24,6 +24,20 @@ interface Contact {
   typology?: string;
   notes?: string;
   classifications?: string[]; // Comprador, Vendedor, Inquilino, Arrendatário
+  // Projecto de controlo
+  projectId?: string;
+  unitId?: string;
+  proposalValue?: number;
+}
+
+interface ControloProjectOption {
+  id: string;
+  label: string;
+}
+
+interface ControloUnitOption {
+  id: string;
+  code: string;
 }
 
 type PipelineStageId =
@@ -63,13 +77,51 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
     typology: string;
     notes: string;
     classifications: string[];
+    projectId: string;
+    unitId: string;
+    proposalValue: string;
   }>({
     desiredLocations: '',
     maxBudget: '',
     typology: '',
     notes: '',
     classifications: [],
+    projectId: '',
+    unitId: '',
+    proposalValue: '',
   });
+  const [controloProjects, setControloProjects] = useState<ControloProjectOption[]>([]);
+  const [controloUnits, setControloUnits] = useState<ControloUnitOption[]>([]);
+
+  // Fetch controlo projects on mount
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const res = await supabaseFetch('controlo/projects', {}, 1, true);
+        const data = await res.json();
+        if (res.ok && data.projects) {
+          setControloProjects(data.projects);
+        }
+      } catch {}
+    })();
+  }, []);
+
+  // Fetch units when projectId changes
+  React.useEffect(() => {
+    if (!form.projectId) {
+      setControloUnits([]);
+      return;
+    }
+    (async () => {
+      try {
+        const res = await supabaseFetch(`controlo/units?projectId=${form.projectId}`, {}, 1, true);
+        const data = await res.json();
+        if (res.ok && data.units) {
+          setControloUnits(data.units);
+        }
+      } catch {}
+    })();
+  }, [form.projectId]);
   const [localPrefs, setLocalPrefs] = useState<Record<string, Partial<Contact>>>(() => {
     try {
       const raw = localStorage.getItem('habta_lead_prefs');
@@ -236,6 +288,9 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                   typology: c.typology || '',
                   notes: c.notes || '',
                   classifications: c.classifications || [],
+                  projectId: c.projectId || '',
+                  unitId: c.unitId || '',
+                  proposalValue: c.proposalValue ? String(c.proposalValue) : '',
                 });
                 setIsEditing(true);
               }}
@@ -649,6 +704,107 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                 </div>
               </div>
               
+              {/* Projecto de controlo */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing[3] }}>
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.medium,
+                      color: colors.gray[700],
+                      marginBottom: spacing[1],
+                    }}
+                  >
+                    Projeto (Controlo)
+                  </label>
+                  <select
+                    value={form.projectId}
+                    onChange={(e) => setForm({ ...form, projectId: e.target.value, unitId: '' })}
+                    style={{
+                      width: '100%',
+                      padding: spacing[3],
+                      border: `1px solid ${colors.gray[300]}`,
+                      borderRadius: radius.md,
+                      fontSize: typography.fontSize.base,
+                      outline: 'none',
+                      background: colors.white,
+                    }}
+                  >
+                    <option value="">— Nenhum —</option>
+                    {controloProjects.map((p) => (
+                      <option key={p.id} value={p.id}>{p.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.medium,
+                      color: colors.gray[700],
+                      marginBottom: spacing[1],
+                    }}
+                  >
+                    Unidade
+                  </label>
+                  <select
+                    value={form.unitId}
+                    onChange={(e) => setForm({ ...form, unitId: e.target.value })}
+                    disabled={!form.projectId || controloUnits.length === 0}
+                    style={{
+                      width: '100%',
+                      padding: spacing[3],
+                      border: `1px solid ${colors.gray[300]}`,
+                      borderRadius: radius.md,
+                      fontSize: typography.fontSize.base,
+                      outline: 'none',
+                      background: !form.projectId ? colors.gray[100] : colors.white,
+                      cursor: !form.projectId ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    <option value="">— Geral —</option>
+                    {controloUnits.map((u) => (
+                      <option key={u.id} value={u.id}>{u.code}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Valor da proposta — visível quando estágio >= proposta */}
+              {editingContact && ['proposta', 'negociacao', 'ganho'].includes(
+                localStages[editingContact.id] || editingContact.pipelineStage || 'novo'
+              ) && (
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.medium,
+                      color: colors.gray[700],
+                      marginBottom: spacing[1],
+                    }}
+                  >
+                    Valor da proposta (€)
+                  </label>
+                  <input
+                    type="number"
+                    value={form.proposalValue}
+                    onChange={(e) => setForm({ ...form, proposalValue: e.target.value })}
+                    placeholder="Ex: 350000"
+                    style={{
+                      width: '100%',
+                      padding: spacing[3],
+                      border: `1px solid ${colors.gray[300]}`,
+                      borderRadius: radius.md,
+                      fontSize: typography.fontSize.base,
+                      outline: 'none',
+                    }}
+                  />
+                </div>
+              )}
+
               <div>
                 <label
                   style={{
@@ -709,6 +865,9 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                         typology: form.typology.trim(),
                         notes: form.notes.trim(),
                         classifications: form.classifications,
+                        projectId: form.projectId,
+                        unitId: form.unitId,
+                        proposalValue: form.proposalValue ? Number(form.proposalValue) : 0,
                       };
                       const response = await supabaseFetch(`contacts/${encodeURIComponent(normalizeContactId(editingContact.id))}`, {
                         method: 'PUT',
@@ -742,6 +901,9 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                           typology: form.typology.trim(),
                           notes: form.notes.trim(),
                           classifications: form.classifications,
+                          projectId: form.projectId,
+                          unitId: form.unitId,
+                          proposalValue: form.proposalValue ? Number(form.proposalValue) : 0,
                         };
                         const next = { ...localPrefs, [editingContact!.id]: payloadLocal };
                         setLocalPrefs(next);

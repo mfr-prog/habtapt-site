@@ -23,7 +23,8 @@ const links = {
     { label: 'Painel Admin', href: '/login' },
   ],
   legal: [
-    { label: 'Política de Privacidade', href: '/privacidade' },
+    { label: 'Politica de Privacidade', href: '/privacidade' },
+    { label: 'Politica de Cookies', href: '/cookies' },
   ],
 };
 

@@ -1,16 +1,44 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { Target, TrendingUp, TrendingDown, Users, Eye } from '../../icons';
+import React, { useState, useEffect } from 'react';
+import { Target, TrendingUp, Users, Eye, BarChart3 } from '../../icons';
 import { colors, spacing, radius, typography } from '../../../utils/styles';
 import { designSystem } from '../../design-system';
 import { MetricCard } from '../MetricCard';
-import type { ControloUnit, ControloTargets, ControloWeeklyLog, ControloKPI, KPIStatus } from '../ControloManager';
+import { supabaseFetch } from '../../../utils/supabase/client';
+import type { ControloUnit, ControloTargets, KPIStatus } from '../ControloManager';
 
 interface KPIDashboardProps {
+  projectId: string;
   units: ControloUnit[];
   targets: ControloTargets | null;
-  weeklyLogs: ControloWeeklyLog[];
+}
+
+interface AutoKPIs {
+  totalLeads14d: number;
+  qualifiedLeads14d: number;
+  visits14d: number;
+  proposals30d: number;
+  bestOffer: number;
+  leadsByStage: Record<string, number>;
+  leadToVisitRate: number;
+  visitToProposalRate: number;
+  status: string;
+  totalContacts: number;
+  perUnit: {
+    unitId: string;
+    unitCode: string;
+    askPrice: number;
+    totalLeads14d: number;
+    qualifiedLeads14d: number;
+    visits14d: number;
+    proposals30d: number;
+    bestOffer: number;
+    gapVsAsk: number;
+    leadToVisitRate: number;
+    visitToProposalRate: number;
+    status: string;
+  }[];
 }
 
 const thStyle: React.CSSProperties = {
@@ -25,102 +53,107 @@ const tdStyle: React.CSSProperties = {
   color: colors.gray[800], borderBottom: `1px solid ${colors.gray[100]}`,
 };
 
-function computeKPIs(
-  units: ControloUnit[],
-  targets: ControloTargets | null,
-  logs: ControloWeeklyLog[]
-): ControloKPI[] {
-  const now = new Date();
-  const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-  return units.map((unit) => {
-    const unitLogs = logs.filter((l) => l.unitId === unit.id);
-
-    // Last 14 days
-    const logs14d = unitLogs.filter((l) => new Date(l.weekStart) >= fourteenDaysAgo);
-    const qualifiedLeads14d = logs14d.reduce((sum, l) => sum + (l.qualifiedLeads || 0), 0);
-    const visits14d = logs14d.reduce((sum, l) => sum + (l.visitsDone || 0), 0);
-    const totalLeads14d = logs14d.reduce((sum, l) => sum + (l.totalLeads || 0), 0);
-
-    // Last 30 days
-    const logs30d = unitLogs.filter((l) => new Date(l.weekStart) >= thirtyDaysAgo);
-    const proposals30d = logs30d.reduce((sum, l) => sum + (l.proposalsCount || 0), 0);
-
-    // Conversions
-    const leadToVisitRate = totalLeads14d > 0 ? (visits14d / totalLeads14d) * 100 : 0;
-    const visitToProposalRate = visits14d > 0 ? (proposals30d / visits14d) * 100 : 0;
-
-    // Best offer
-    const bestOffer = unitLogs.length > 0
-      ? Math.max(...unitLogs.map((l) => l.bestProposal || 0))
-      : 0;
-
-    // Gap vs ASK
-    const gapVsAsk = unit.askPrice > 0 && bestOffer > 0
-      ? ((bestOffer - unit.askPrice) / unit.askPrice) * 100
-      : 0;
-
-    // Status based on targets
-    let status: KPIStatus = 'SEM_DADOS';
-    if (unitLogs.length > 0 && targets) {
-      let metCount = 0;
-      if (qualifiedLeads14d >= (targets.qualifiedLeads14d || 0)) metCount++;
-      if (visits14d >= (targets.visits14d || 0)) metCount++;
-      if (proposals30d >= (targets.proposals30d || 0)) metCount++;
-
-      if (metCount === 3) status = 'MANTER';
-      else if (metCount >= 1) status = 'VIGIAR';
-      else status = 'REDUZIR';
-    } else if (unitLogs.length > 0 && !targets) {
-      status = 'VIGIAR';
-    }
-
-    return {
-      unitId: unit.id,
-      unitCode: unit.code,
-      askPrice: unit.askPrice,
-      qualifiedLeads14d,
-      visits14d,
-      proposals30d,
-      leadToVisitRate: Math.round(leadToVisitRate * 10) / 10,
-      visitToProposalRate: Math.round(visitToProposalRate * 10) / 10,
-      bestOffer,
-      gapVsAsk: Math.round(gapVsAsk * 10) / 10,
-      status,
-    };
-  });
-}
-
-const statusConfig: Record<KPIStatus, { label: string; color: string; bg: string }> = {
+const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
   MANTER: { label: 'MANTER', color: colors.success, bg: designSystem.helpers.hexToRgba(colors.success, 0.1) },
   VIGIAR: { label: 'VIGIAR', color: colors.warning, bg: designSystem.helpers.hexToRgba(colors.warning, 0.1) },
   REDUZIR: { label: 'REDUZIR', color: colors.error, bg: designSystem.helpers.hexToRgba(colors.error, 0.1) },
   SEM_DADOS: { label: 'SEM DADOS', color: colors.gray[500], bg: colors.gray[100] },
 };
 
-export function KPIDashboard({ units, targets, weeklyLogs }: KPIDashboardProps) {
-  const kpis = useMemo(() => computeKPIs(units, targets, weeklyLogs), [units, targets, weeklyLogs]);
+const STAGE_LABELS: Record<string, string> = {
+  novo: 'Novo Lead',
+  contato: 'Contato Inicial',
+  qualificado: 'Qualificado',
+  visita: 'Visita Agendada',
+  proposta: 'Proposta Enviada',
+  negociacao: 'Negociação',
+  ganho: 'Fechado • Ganho',
+  perdido: 'Fechado • Perdido',
+};
+
+const STAGE_COLORS: Record<string, string> = {
+  novo: colors.gray[400],
+  contato: colors.primary,
+  qualificado: colors.secondary,
+  visita: colors.warning,
+  proposta: colors.info,
+  negociacao: colors.warning,
+  ganho: colors.success,
+  perdido: colors.error,
+};
+
+export function KPIDashboard({ projectId, units, targets }: KPIDashboardProps) {
+  const [kpis, setKpis] = useState<AutoKPIs | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!projectId) return;
+    setIsLoading(true);
+    (async () => {
+      try {
+        const res = await supabaseFetch(`controlo/auto-kpis?projectId=${projectId}`, {}, 1, true);
+        const data = await res.json();
+        if (res.ok && data.kpis) {
+          setKpis(data.kpis);
+        }
+      } catch {
+        console.error('Erro ao carregar auto-kpis');
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [projectId]);
 
   const formatCurrency = (v: number) =>
     v > 0 ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v) : '—';
 
-  // Summary metrics
-  const totalLeads = kpis.reduce((s, k) => s + k.qualifiedLeads14d, 0);
-  const totalVisits = kpis.reduce((s, k) => s + k.visits14d, 0);
-  const totalProposals = kpis.reduce((s, k) => s + k.proposals30d, 0);
-  const bestOverallOffer = kpis.length > 0 ? Math.max(...kpis.map((k) => k.bestOffer)) : 0;
-
-  if (units.length === 0) {
+  if (isLoading) {
     return (
       <p style={{ color: colors.gray[500], fontSize: typography.fontSize.sm, padding: spacing[4] }}>
-        Adicione unidades no Setup para ver os KPIs.
+        A carregar KPIs do pipeline...
       </p>
     );
   }
 
+  if (!kpis || kpis.totalContacts === 0) {
+    return (
+      <div style={{ padding: spacing[4], textAlign: 'center' }}>
+        <p style={{ color: colors.gray[500], fontSize: typography.fontSize.sm, marginBottom: spacing[2] }}>
+          Nenhum lead associado a este projeto.
+        </p>
+        <p style={{ color: colors.gray[400], fontSize: typography.fontSize.xs }}>
+          Associe leads a este projeto no tab Leads (editar lead → seleccionar Projeto).
+        </p>
+      </div>
+    );
+  }
+
+  const sc = statusConfig[kpis.status] || statusConfig.SEM_DADOS;
+
+  // Funnel data (ordered stages, excluding perdido)
+  const funnelStages = ['novo', 'contato', 'qualificado', 'visita', 'proposta', 'negociacao', 'ganho'];
+  const maxStageCount = Math.max(1, ...funnelStages.map((s) => kpis.leadsByStage[s] || 0));
+
   return (
     <div>
+      {/* Global status badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: spacing[3], marginBottom: spacing[4] }}>
+        <span style={{
+          display: 'inline-block',
+          padding: `${spacing[1]} ${spacing[3]}`,
+          borderRadius: radius.md,
+          fontSize: typography.fontSize.sm,
+          fontWeight: typography.fontWeight.bold,
+          background: sc.bg,
+          color: sc.color,
+        }}>
+          {sc.label}
+        </span>
+        <span style={{ fontSize: typography.fontSize.sm, color: colors.gray[500] }}>
+          {kpis.totalContacts} leads no pipeline
+        </span>
+      </div>
+
       {/* Summary cards */}
       <div style={{
         display: 'grid',
@@ -128,10 +161,45 @@ export function KPIDashboard({ units, targets, weeklyLogs }: KPIDashboardProps) 
         gap: spacing[4],
         marginBottom: spacing[6],
       }}>
-        <MetricCard title="Leads Qualificados (14d)" value={totalLeads} icon={Users} color="primary" />
-        <MetricCard title="Visitas (14d)" value={totalVisits} icon={Eye} color="secondary" />
-        <MetricCard title="Propostas (30d)" value={totalProposals} icon={Target} color="success" />
-        <MetricCard title="Melhor Oferta" value={bestOverallOffer > 0 ? formatCurrency(bestOverallOffer) : '—'} icon={TrendingUp} color="warning" />
+        <MetricCard title="Leads Qualificados (14d)" value={kpis.qualifiedLeads14d} icon={Users} color="primary" />
+        <MetricCard title="Visitas (14d)" value={kpis.visits14d} icon={Eye} color="secondary" />
+        <MetricCard title="Propostas (30d)" value={kpis.proposals30d} icon={Target} color="success" />
+        <MetricCard title="Melhor Oferta" value={kpis.bestOffer > 0 ? formatCurrency(kpis.bestOffer) : '—'} icon={TrendingUp} color="warning" />
+      </div>
+
+      {/* Conversion rates */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: spacing[4],
+        marginBottom: spacing[6],
+      }}>
+        <div style={{
+          padding: spacing[4],
+          background: colors.white,
+          border: `1px solid ${colors.gray[200]}`,
+          borderRadius: radius.lg,
+        }}>
+          <div style={{ fontSize: typography.fontSize.xs, color: colors.gray[500], marginBottom: spacing[1], textTransform: 'uppercase', fontWeight: typography.fontWeight.semibold }}>
+            Lead → Visita
+          </div>
+          <div style={{ fontSize: typography.fontSize['2xl'], fontWeight: typography.fontWeight.bold, color: colors.primary }}>
+            {kpis.leadToVisitRate}%
+          </div>
+        </div>
+        <div style={{
+          padding: spacing[4],
+          background: colors.white,
+          border: `1px solid ${colors.gray[200]}`,
+          borderRadius: radius.lg,
+        }}>
+          <div style={{ fontSize: typography.fontSize.xs, color: colors.gray[500], marginBottom: spacing[1], textTransform: 'uppercase', fontWeight: typography.fontWeight.semibold }}>
+            Visita → Proposta
+          </div>
+          <div style={{ fontSize: typography.fontSize['2xl'], fontWeight: typography.fontWeight.bold, color: colors.secondary }}>
+            {kpis.visitToProposalRate}%
+          </div>
+        </div>
       </div>
 
       {!targets && (
@@ -148,62 +216,141 @@ export function KPIDashboard({ units, targets, weeklyLogs }: KPIDashboardProps) 
         </div>
       )}
 
-      {/* KPI Table */}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={thStyle}>Unidade</th>
-              <th style={thStyle}>Preço ASK</th>
-              <th style={thStyle}>Leads 14d</th>
-              <th style={thStyle}>Visitas 14d</th>
-              <th style={thStyle}>Propostas 30d</th>
-              <th style={thStyle}>Lead→Visita</th>
-              <th style={thStyle}>Visita→Proposta</th>
-              <th style={thStyle}>Melhor Oferta</th>
-              <th style={thStyle}>Gap vs ASK</th>
-              <th style={thStyle}>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {kpis.map((kpi) => {
-              const sc = statusConfig[kpi.status];
-              return (
-                <tr key={kpi.unitId}>
-                  <td style={{ ...tdStyle, fontWeight: typography.fontWeight.bold }}>{kpi.unitCode}</td>
-                  <td style={tdStyle}>{formatCurrency(kpi.askPrice)}</td>
-                  <td style={tdStyle}>{kpi.qualifiedLeads14d}</td>
-                  <td style={tdStyle}>{kpi.visits14d}</td>
-                  <td style={tdStyle}>{kpi.proposals30d}</td>
-                  <td style={tdStyle}>{kpi.leadToVisitRate}%</td>
-                  <td style={tdStyle}>{kpi.visitToProposalRate}%</td>
-                  <td style={tdStyle}>{formatCurrency(kpi.bestOffer)}</td>
-                  <td style={{
-                    ...tdStyle,
-                    color: kpi.gapVsAsk >= 0 ? colors.success : colors.error,
-                    fontWeight: typography.fontWeight.semibold,
+      {/* Pipeline Funnel */}
+      <div style={{ marginBottom: spacing[6] }}>
+        <h4 style={{
+          fontSize: typography.fontSize.sm,
+          fontWeight: typography.fontWeight.bold,
+          color: colors.gray[700],
+          marginBottom: spacing[3],
+          display: 'flex',
+          alignItems: 'center',
+          gap: spacing[2],
+        }}>
+          <BarChart3 size={16} />
+          Funil do Pipeline
+        </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
+          {funnelStages.map((stage) => {
+            const count = kpis.leadsByStage[stage] || 0;
+            const width = maxStageCount > 0 ? Math.max(4, (count / maxStageCount) * 100) : 4;
+            const stageColor = STAGE_COLORS[stage] || colors.gray[400];
+            return (
+              <div key={stage} style={{ display: 'flex', alignItems: 'center', gap: spacing[3] }}>
+                <div style={{
+                  width: 120,
+                  fontSize: typography.fontSize.xs,
+                  color: colors.gray[600],
+                  fontWeight: typography.fontWeight.medium,
+                  flexShrink: 0,
+                  textAlign: 'right',
+                }}>
+                  {STAGE_LABELS[stage] || stage}
+                </div>
+                <div style={{ flex: 1, position: 'relative', height: 24 }}>
+                  <div style={{
+                    width: `${width}%`,
+                    height: '100%',
+                    background: designSystem.helpers.hexToRgba(stageColor, 0.2),
+                    borderRadius: radius.sm,
+                    position: 'relative',
                   }}>
-                    {kpi.gapVsAsk !== 0 ? `${kpi.gapVsAsk > 0 ? '+' : ''}${kpi.gapVsAsk}%` : '—'}
-                  </td>
-                  <td style={tdStyle}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: `${spacing[1]} ${spacing[2]}`,
-                      borderRadius: radius.md,
+                    <div style={{
+                      position: 'absolute',
+                      left: spacing[2],
+                      top: '50%',
+                      transform: 'translateY(-50%)',
                       fontSize: typography.fontSize.xs,
                       fontWeight: typography.fontWeight.bold,
-                      background: sc.bg,
-                      color: sc.color,
+                      color: stageColor,
                     }}>
-                      {sc.label}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                      {count}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {/* Perdido separately */}
+          {(kpis.leadsByStage.perdido || 0) > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: spacing[3], marginTop: spacing[1], opacity: 0.6 }}>
+              <div style={{ width: 120, fontSize: typography.fontSize.xs, color: colors.gray[500], textAlign: 'right' }}>
+                Perdido
+              </div>
+              <div style={{ fontSize: typography.fontSize.xs, color: colors.error, fontWeight: typography.fontWeight.bold }}>
+                {kpis.leadsByStage.perdido}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Per-unit KPI Table */}
+      {kpis.perUnit.length > 0 && (
+        <div style={{ overflowX: 'auto' }}>
+          <h4 style={{
+            fontSize: typography.fontSize.sm,
+            fontWeight: typography.fontWeight.bold,
+            color: colors.gray[700],
+            marginBottom: spacing[3],
+          }}>
+            KPIs por Unidade
+          </h4>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Unidade</th>
+                <th style={thStyle}>Preço ASK</th>
+                <th style={thStyle}>Leads 14d</th>
+                <th style={thStyle}>Visitas 14d</th>
+                <th style={thStyle}>Propostas 30d</th>
+                <th style={thStyle}>Lead→Visita</th>
+                <th style={thStyle}>Visita→Proposta</th>
+                <th style={thStyle}>Melhor Oferta</th>
+                <th style={thStyle}>Gap vs ASK</th>
+                <th style={thStyle}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {kpis.perUnit.map((kpi) => {
+                const usc = statusConfig[kpi.status] || statusConfig.SEM_DADOS;
+                return (
+                  <tr key={kpi.unitId}>
+                    <td style={{ ...tdStyle, fontWeight: typography.fontWeight.bold }}>{kpi.unitCode}</td>
+                    <td style={tdStyle}>{formatCurrency(kpi.askPrice)}</td>
+                    <td style={tdStyle}>{kpi.qualifiedLeads14d}</td>
+                    <td style={tdStyle}>{kpi.visits14d}</td>
+                    <td style={tdStyle}>{kpi.proposals30d}</td>
+                    <td style={tdStyle}>{kpi.leadToVisitRate}%</td>
+                    <td style={tdStyle}>{kpi.visitToProposalRate}%</td>
+                    <td style={tdStyle}>{formatCurrency(kpi.bestOffer)}</td>
+                    <td style={{
+                      ...tdStyle,
+                      color: kpi.gapVsAsk >= 0 ? colors.success : colors.error,
+                      fontWeight: typography.fontWeight.semibold,
+                    }}>
+                      {kpi.gapVsAsk !== 0 ? `${kpi.gapVsAsk > 0 ? '+' : ''}${kpi.gapVsAsk}%` : '—'}
+                    </td>
+                    <td style={tdStyle}>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: `${spacing[1]} ${spacing[2]}`,
+                        borderRadius: radius.md,
+                        fontSize: typography.fontSize.xs,
+                        fontWeight: typography.fontWeight.bold,
+                        background: usc.bg,
+                        color: usc.color,
+                      }}>
+                        {usc.label}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

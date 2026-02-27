@@ -28,7 +28,7 @@ app.get("/make-server-4b2936bc/health", (c) => {
 app.post("/make-server-4b2936bc/contact", async (c) => {
   try {
     const body = await c.req.json();
-    const { name, email, phone, interest, message } = body;
+    const { name, email, phone, interest, message, projectId } = body;
 
     // Validation
     if (!name || !email || !phone || !interest || !message) {
@@ -53,6 +53,7 @@ app.post("/make-server-4b2936bc/contact", async (c) => {
       phone,
       interest,
       message,
+      projectId: projectId || '',
       createdAt: new Date().toISOString(),
       timestamp,
     };
@@ -167,6 +168,10 @@ app.put("/make-server-4b2936bc/contacts/:id", async (c) => {
       desiredLocations,
       maxBudget,
       typology,
+      projectId,
+      unitId,
+      proposalValue,
+      classifications,
     } = body || {};
 
     const updated = {
@@ -182,6 +187,13 @@ app.put("/make-server-4b2936bc/contacts/:id", async (c) => {
         : (existing as any).desiredLocations || [],
       maxBudget: maxBudget !== undefined ? maxBudget : (existing as any).maxBudget || '',
       typology: typology !== undefined ? typology : (existing as any).typology || '',
+      // Projecto de controlo
+      projectId: projectId !== undefined ? projectId : (existing as any).projectId || '',
+      unitId: unitId !== undefined ? unitId : (existing as any).unitId || '',
+      proposalValue: proposalValue !== undefined ? proposalValue : (existing as any).proposalValue || 0,
+      classifications: Array.isArray(classifications)
+        ? classifications
+        : (existing as any).classifications || [],
       updatedAt: new Date().toISOString(),
     };
 
@@ -2171,6 +2183,146 @@ app.delete("/make-server-4b2936bc/controlo/competitors/:id", async (c) => {
   } catch (error) {
     console.log(`Error deleting controlo competitor: ${error}`);
     return c.json({ error: "Erro ao eliminar concorrente" }, 500);
+  }
+});
+
+// --- Auto KPIs (computed from pipeline leads) ---
+app.get("/make-server-4b2936bc/controlo/auto-kpis", async (c) => {
+  try {
+    const projectId = c.req.query("projectId");
+    if (!projectId) return c.json({ error: "projectId é obrigatório" }, 400);
+
+    // Fetch all contacts and controlo units/targets for this project
+    const [allContacts, units, targets] = await Promise.all([
+      kv.getByPrefix("contact:"),
+      kv.getByPrefix(`controlo:unit:${projectId}:`),
+      kv.get(`controlo:targets:${projectId}`),
+    ]);
+
+    // Filter contacts for this project
+    const contacts = (allContacts as any[]).filter((ct: any) => ct.projectId === projectId);
+
+    // Stage hierarchy
+    const stageOrder: Record<string, number> = {
+      novo: 0, contato: 1, qualificado: 2, visita: 3,
+      proposta: 4, negociacao: 5, ganho: 6, perdido: -1,
+    };
+    const stageKeys = ['novo', 'contato', 'qualificado', 'visita', 'proposta', 'negociacao', 'ganho', 'perdido'];
+
+    const now = Date.now();
+    const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
+    const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+
+    // Exclude "perdido" from active counts
+    const active = contacts.filter((ct: any) => (ct.pipelineStage || 'novo') !== 'perdido');
+
+    // Time-filtered
+    const created14d = active.filter((ct: any) => (now - (ct.timestamp || 0)) <= fourteenDaysMs);
+    const created30d = active.filter((ct: any) => (now - (ct.timestamp || 0)) <= thirtyDaysMs);
+
+    // Global metrics
+    const totalLeads14d = created14d.length;
+    const qualifiedLeads14d = created14d.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 2).length;
+    const visits14d = created14d.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 3).length;
+    const proposals30d = created30d.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 4).length;
+
+    // Best offer
+    const proposalContacts = active.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 4 && (ct.proposalValue || 0) > 0);
+    const bestOffer = proposalContacts.length > 0 ? Math.max(...proposalContacts.map((ct: any) => ct.proposalValue || 0)) : 0;
+
+    // Leads by stage
+    const leadsByStage: Record<string, number> = {};
+    stageKeys.forEach((s) => { leadsByStage[s] = 0; });
+    contacts.forEach((ct: any) => {
+      const s = ct.pipelineStage || 'novo';
+      leadsByStage[s] = (leadsByStage[s] || 0) + 1;
+    });
+
+    // Conversion rates
+    const leadToVisitRate = totalLeads14d > 0 ? Math.round((visits14d / totalLeads14d) * 1000) / 10 : 0;
+    const visitToProposalRate = visits14d > 0 ? Math.round((proposals30d / visits14d) * 1000) / 10 : 0;
+
+    // Status based on targets
+    const tgt = targets as any;
+    let status = 'SEM_DADOS';
+    if (contacts.length > 0 && tgt) {
+      let metCount = 0;
+      if (qualifiedLeads14d >= (tgt.qualifiedLeads14d || 0)) metCount++;
+      if (visits14d >= (tgt.visits14d || 0)) metCount++;
+      if (proposals30d >= (tgt.proposals30d || 0)) metCount++;
+      if (metCount === 3) status = 'MANTER';
+      else if (metCount >= 1) status = 'VIGIAR';
+      else status = 'REDUZIR';
+    } else if (contacts.length > 0 && !tgt) {
+      status = 'VIGIAR';
+    }
+
+    // Per-unit breakdown
+    const unitList = (units as any[]) || [];
+    const perUnit = unitList.map((unit: any) => {
+      const unitContacts = contacts.filter((ct: any) => ct.unitId === unit.id);
+      const unitActive = unitContacts.filter((ct: any) => (ct.pipelineStage || 'novo') !== 'perdido');
+      const unitCreated14d = unitActive.filter((ct: any) => (now - (ct.timestamp || 0)) <= fourteenDaysMs);
+      const unitCreated30d = unitActive.filter((ct: any) => (now - (ct.timestamp || 0)) <= thirtyDaysMs);
+
+      const uTotalLeads14d = unitCreated14d.length;
+      const uQualifiedLeads14d = unitCreated14d.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 2).length;
+      const uVisits14d = unitCreated14d.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 3).length;
+      const uProposals30d = unitCreated30d.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 4).length;
+      const uProposalContacts = unitActive.filter((ct: any) => stageOrder[ct.pipelineStage || 'novo'] >= 4 && (ct.proposalValue || 0) > 0);
+      const uBestOffer = uProposalContacts.length > 0 ? Math.max(...uProposalContacts.map((ct: any) => ct.proposalValue || 0)) : 0;
+      const uGapVsAsk = unit.askPrice > 0 && uBestOffer > 0 ? Math.round(((uBestOffer - unit.askPrice) / unit.askPrice) * 1000) / 10 : 0;
+      const uLeadToVisitRate = uTotalLeads14d > 0 ? Math.round((uVisits14d / uTotalLeads14d) * 1000) / 10 : 0;
+      const uVisitToProposalRate = uVisits14d > 0 ? Math.round((uProposals30d / uVisits14d) * 1000) / 10 : 0;
+
+      let uStatus = 'SEM_DADOS';
+      if (unitContacts.length > 0 && tgt) {
+        let m = 0;
+        if (uQualifiedLeads14d >= (tgt.qualifiedLeads14d || 0)) m++;
+        if (uVisits14d >= (tgt.visits14d || 0)) m++;
+        if (uProposals30d >= (tgt.proposals30d || 0)) m++;
+        if (m === 3) uStatus = 'MANTER';
+        else if (m >= 1) uStatus = 'VIGIAR';
+        else uStatus = 'REDUZIR';
+      } else if (unitContacts.length > 0) {
+        uStatus = 'VIGIAR';
+      }
+
+      return {
+        unitId: unit.id,
+        unitCode: unit.code,
+        askPrice: unit.askPrice || 0,
+        totalLeads14d: uTotalLeads14d,
+        qualifiedLeads14d: uQualifiedLeads14d,
+        visits14d: uVisits14d,
+        proposals30d: uProposals30d,
+        bestOffer: uBestOffer,
+        gapVsAsk: uGapVsAsk,
+        leadToVisitRate: uLeadToVisitRate,
+        visitToProposalRate: uVisitToProposalRate,
+        status: uStatus,
+      };
+    });
+
+    return c.json({
+      success: true,
+      kpis: {
+        totalLeads14d,
+        qualifiedLeads14d,
+        visits14d,
+        proposals30d,
+        bestOffer,
+        leadsByStage,
+        leadToVisitRate,
+        visitToProposalRate,
+        status,
+        perUnit,
+        totalContacts: contacts.length,
+      },
+    });
+  } catch (error) {
+    console.log(`Error computing auto-kpis: ${error}`);
+    return c.json({ error: "Erro ao calcular KPIs automáticos" }, 500);
   }
 });
 
