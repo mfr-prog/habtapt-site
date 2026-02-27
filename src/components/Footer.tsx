@@ -23,8 +23,8 @@ const links = {
     { label: 'Painel Admin', href: '/login' },
   ],
   legal: [
-    { label: 'Politica de Privacidade', href: '/privacidade' },
-    { label: 'Politica de Cookies', href: '/cookies' },
+    { label: 'Política de Privacidade', href: '/privacidade' },
+    { label: 'Política de Cookies', href: '/cookies' },
   ],
 };
 
@@ -50,7 +50,7 @@ export function Footer() {
     <footer
       className="relative text-white overflow-hidden"
       role="contentinfo"
-      aria-label="Rodape do site"
+      aria-label="Rodapé do site"
       style={{
         background: designSystem.colors.gradients.heroLuxury,
       }}
