@@ -37,7 +37,13 @@ export function Hero() {
         style={{ y: yParallax }}
       >
         <img
-          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=webp&ixlib=rb-4.1.0&q=80&w=1920"
+          src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=webp&ixlib=rb-4.1.0&q=70&w=1280"
+          srcSet={[
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=webp&ixlib=rb-4.1.0&q=65&w=640 640w',
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=webp&ixlib=rb-4.1.0&q=70&w=1024 1024w',
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=webp&ixlib=rb-4.1.0&q=75&w=1920 1920w',
+          ].join(', ')}
+          sizes="100vw"
           alt=""
           aria-hidden="true"
           width={1920}

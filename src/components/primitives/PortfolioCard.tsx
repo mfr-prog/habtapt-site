@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { MapPin, BedDouble, Bath, Maximize, ArrowRight, TrendingUp, ExternalLink, Calendar } from '../icons';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { designSystem } from '../design-system';
+import { unsplashSrcSet, unsplashUrl, isUnsplashUrl } from '@/utils/unsplashUrl';
 import type { ViewMode } from '@/utils/hooks/useViewMode';
 
 type ProjectStatus = 'in-progress' | 'available' | 'sold';
@@ -149,7 +150,9 @@ function PortfolioCardComponent({ project, index, isMobile, onClick, viewMode = 
         style={{ height: isMorar ? designSystem.spacing[40] : designSystem.spacing[64] }}
       >
         <ImageWithFallback
-          src={project.image}
+          src={isUnsplashUrl(project.image) ? unsplashUrl(project.image, 640) : project.image}
+          srcSet={unsplashSrcSet(project.image, [400, 640, 800])}
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           alt={project.title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           loading="lazy"
