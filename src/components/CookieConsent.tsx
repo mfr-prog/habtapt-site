@@ -45,9 +45,9 @@ export function CookieConsent() {
         <motion.div
           role="dialog"
           aria-label="Consentimento de cookies"
-          initial={{ y: 100, opacity: 0 }}
+          initial={{ y: 100, opacity: 0.01 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
+          exit={{ y: 100, opacity: 0.01 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
           style={{
             position: 'fixed',

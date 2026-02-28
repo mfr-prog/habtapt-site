@@ -335,7 +335,7 @@ export function Services() {
             <motion.span
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 px-10 py-5 rounded-full transition-all duration-300"
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-full transition-[transform,box-shadow] duration-300"
               style={{
                 background: designSystem.colors.gradients.primary,
                 color: designSystem.colors.neutral.white,
