@@ -105,7 +105,7 @@ export function Footer() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-white/70 hover:text-white transition-colors duration-200 inline-flex items-center"
+                        className="text-white/80 hover:text-white transition-colors duration-200 inline-flex items-center"
                         aria-label={`Navegar para ${link.label}`}
                         style={{ textDecoration: 'none', font: 'inherit', minHeight: '44px' }}
                       >
@@ -131,13 +131,13 @@ export function Footer() {
           >
             <div className="flex flex-col md:flex-row justify-between items-center" style={{ gap: designSystem.spacing[4], width: '100%' }}>
               <div className="text-center md:text-left">
-                <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.7), fontSize: designSystem.typography.fontSize.sm, marginBottom: designSystem.spacing[2] }}>
+                <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.8), fontSize: designSystem.typography.fontSize.sm, marginBottom: designSystem.spacing[2] }}>
                   HABTA &copy; {currentYear} — Reabilitação Inteligente e Investimento Sustentável.
                 </p>
-                <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.6), fontSize: designSystem.typography.fontSize.xs }}>
+                <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.75), fontSize: designSystem.typography.fontSize.xs }}>
                   &copy; {currentYear} Jornada Prometida LDA. NIF: 518493644
                 </p>
-                <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.6), fontSize: designSystem.typography.fontSize.xs }}>
+                <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.75), fontSize: designSystem.typography.fontSize.xs }}>
                   Sede: Rua Fernão Lopes, n.º 23, Cascais 2765-088, Portugal
                 </p>
               </div>
