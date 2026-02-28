@@ -193,7 +193,7 @@ export default function RootLayout({
           rel="preload"
           as="image"
           type="image/avif"
-          imageSrcSet="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=45&w=480 480w, https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=50&w=768 768w, https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=50&w=1080 1080w, https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=55&w=1600 1600w"
+          imageSrcSet="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=35&w=480 480w, https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=40&w=768 768w, https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=40&w=1080 1080w, https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=crop&fm=avif&ixlib=rb-4.1.0&q=45&w=1600 1600w"
           imageSizes="100vw"
           fetchPriority="high"
         />
