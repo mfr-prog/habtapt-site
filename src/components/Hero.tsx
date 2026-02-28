@@ -32,6 +32,7 @@ export function Hero() {
           width={1920}
           height={1280}
           fetchPriority="high"
+          decoding="async"
           className="w-full h-full object-cover"
           style={{ minHeight: '110%' }}
         />
