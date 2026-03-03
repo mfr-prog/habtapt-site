@@ -346,180 +346,105 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
         padding: spacing[3],
         boxShadow: draggingId === c.id ? shadows.md : 'none',
         cursor: 'grab',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: spacing[2],
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: spacing[2], marginBottom: spacing[2], justifyContent: 'space-between' }}>
-        <div
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: radius.full,
-            background: designSystem.helpers.hexToRgba(colors.primary, 0.1),
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-          aria-hidden="true"
-        >
-          <Mail size={16} style={{ color: colors.primary }} />
-        </div>
+      {/* Header: nome + classificações + editar */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing[1] }}>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: spacing[2] }}>
-            <div
-              style={{
-                fontWeight: typography.fontWeight.semibold,
-                color: colors.gray[900],
-                fontSize: typography.fontSize.sm,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {c.name}
+          <div style={{ fontWeight: typography.fontWeight.bold, color: colors.gray[900], fontSize: typography.fontSize.sm, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {c.name}
+          </div>
+          {c.classifications && c.classifications.length > 0 && (
+            <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap', marginTop: '3px' }}>
+              {c.classifications.map((cls) => (
+                <span key={`${c.id}-cls-${cls}`} style={{ padding: '1px 6px', background: designSystem.helpers.hexToRgba(colors.primary, 0.08), color: colors.primary, borderRadius: radius.full, fontSize: '10px', fontWeight: typography.fontWeight.bold, lineHeight: '16px' }}>
+                  {cls}
+                </span>
+              ))}
             </div>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setEditingContact(c);
-                setForm({
-                  name: c.name || '',
-                  email: c.email || '',
-                  phone: c.phone || '',
-                  interest: c.interest || '',
-                  desiredLocations: (c.desiredLocations || []).join(', '),
-                  maxBudget: c.maxBudget || '',
-                  typology: c.typology || '',
-                  notes: c.notes || '',
-                  classifications: c.classifications || [],
-                  projectId: c.projectId || '',
-                  unitId: c.unitId || '',
-                  proposalValue: c.proposalValue ? String(c.proposalValue) : '',
-                });
-                setIsEditing(true);
-              }}
-              aria-label="Editar preferências do lead"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: `1px solid ${colors.gray[300]}`,
-                background: colors.white,
-                borderRadius: radius.md,
-                padding: `${spacing[1]} ${spacing[2]}`,
-                cursor: 'pointer',
-              }}
-            >
-              <Edit size={14} style={{ color: colors.gray[700] }} />
-            </button>
-          </div>
-          <div style={{ color: colors.gray[500], fontSize: typography.fontSize.xs, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {c.email}
-          </div>
+          )}
         </div>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setEditingContact(c);
+            setForm({
+              name: c.name || '',
+              email: c.email || '',
+              phone: c.phone || '',
+              interest: c.interest || '',
+              desiredLocations: (c.desiredLocations || []).join(', '),
+              maxBudget: c.maxBudget || '',
+              typology: c.typology || '',
+              notes: c.notes || '',
+              classifications: c.classifications || [],
+              projectId: c.projectId || '',
+              unitId: c.unitId || '',
+              proposalValue: c.proposalValue ? String(c.proposalValue) : '',
+            });
+            setIsEditing(true);
+          }}
+          aria-label="Editar lead"
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: colors.gray[100], borderRadius: radius.md, padding: '4px', cursor: 'pointer', flexShrink: 0 }}
+        >
+          <Edit size={13} style={{ color: colors.gray[500] }} />
+        </button>
       </div>
 
-      <div style={{ display: 'flex', gap: spacing[2], flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[1], color: colors.gray[600], fontSize: typography.fontSize.xs }}>
-          <Phone size={14} aria-hidden="true" />
+      {/* Contacto: telefone + email */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.xs, color: colors.gray[600] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+          <Phone size={12} aria-hidden="true" />
           {c.phone}
         </div>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: spacing[1],
-            padding: `${spacing[1]} ${spacing[2]}`,
-            background: designSystem.helpers.hexToRgba(colors.secondary, 0.1),
-            color: colors.secondary,
-            borderRadius: radius.full,
-            fontSize: typography.fontSize.xs,
-            fontWeight: typography.fontWeight.semibold,
-          }}
-        >
-          <MessageSquare size={12} aria-hidden="true" />
-          {c.interest}
-        </div>
+        {c.email && !c.email.includes('@manual.habta.eu') && (
+          <>
+            <span style={{ color: colors.gray[300] }}>|</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <Mail size={12} aria-hidden="true" />
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.email}</span>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Chips de preferências */}
+      {/* Interesse */}
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', padding: `2px ${spacing[2]}`, background: designSystem.helpers.hexToRgba(colors.secondary, 0.08), color: colors.secondary, borderRadius: radius.md, fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.semibold, alignSelf: 'flex-start' }}>
+        <MessageSquare size={11} aria-hidden="true" />
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>{c.interest}</span>
+      </div>
+
+      {/* Preferências compactas */}
       {(c.desiredLocations?.length || c.maxBudget || c.typology) && (
-        <div style={{ marginTop: spacing[2], display: 'flex', gap: spacing[1], flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
           {c.typology && (
-            <span
-              style={{
-                padding: `${spacing[1]} ${spacing[2]}`,
-                background: designSystem.helpers.hexToRgba(colors.primary, 0.08),
-                color: colors.primary,
-                borderRadius: radius.full,
-                fontSize: typography.fontSize.xs,
-                fontWeight: typography.fontWeight.semibold,
-              }}
-            >
-              Tipologia: {c.typology}
+            <span style={{ padding: '1px 6px', background: designSystem.helpers.hexToRgba(colors.primary, 0.06), color: colors.primary, borderRadius: radius.full, fontSize: '10px', fontWeight: typography.fontWeight.semibold, lineHeight: '16px' }}>
+              {c.typology}
             </span>
           )}
           {c.maxBudget && (
-            <span
-              style={{
-                padding: `${spacing[1]} ${spacing[2]}`,
-                background: designSystem.helpers.hexToRgba(colors.success, 0.08),
-                color: colors.success,
-                borderRadius: radius.full,
-                fontSize: typography.fontSize.xs,
-                fontWeight: typography.fontWeight.semibold,
-              }}
-            >
-              Máx: {c.maxBudget}
+            <span style={{ padding: '1px 6px', background: designSystem.helpers.hexToRgba(colors.success, 0.08), color: colors.success, borderRadius: radius.full, fontSize: '10px', fontWeight: typography.fontWeight.bold, lineHeight: '16px' }}>
+              {c.maxBudget}
             </span>
           )}
           {(c.desiredLocations || []).slice(0, 2).map((loc, i) => (
-            <span
-              key={`${c.id}-loc-${i}`}
-              style={{
-                padding: `${spacing[1]} ${spacing[2]}`,
-                background: colors.gray[100],
-                color: colors.gray[700],
-                borderRadius: radius.full,
-                fontSize: typography.fontSize.xs,
-                fontWeight: typography.fontWeight.medium,
-              }}
-            >
+            <span key={`${c.id}-loc-${i}`} style={{ padding: '1px 6px', background: colors.gray[100], color: colors.gray[600], borderRadius: radius.full, fontSize: '10px', lineHeight: '16px' }}>
               {loc}
             </span>
           ))}
           {c.desiredLocations && c.desiredLocations.length > 2 && (
-            <span style={{ color: colors.gray[500], fontSize: typography.fontSize.xs }}>
-              +{c.desiredLocations.length - 2}
-            </span>
+            <span style={{ color: colors.gray[400], fontSize: '10px', lineHeight: '16px' }}>+{c.desiredLocations.length - 2}</span>
           )}
         </div>
       )}
 
-      {/* Badges de classificação */}
-      {c.classifications && c.classifications.length > 0 && (
-        <div style={{ marginTop: spacing[2], display: 'flex', gap: spacing[1], flexWrap: 'wrap' }}>
-          {c.classifications.map((cls) => (
-            <span
-              key={`${c.id}-cls-${cls}`}
-              style={{
-                padding: `${spacing[1]} ${spacing[2]}`,
-                background: designSystem.helpers.hexToRgba(colors.warning, 0.12),
-                color: colors.warning,
-                borderRadius: radius.full,
-                fontSize: typography.fontSize.xs,
-                fontWeight: typography.fontWeight.bold,
-              }}
-            >
-              {cls}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div style={{ marginTop: spacing[2], display: 'flex', alignItems: 'center', gap: spacing[1], color: colors.gray[500], fontSize: typography.fontSize.xs }}>
-        <Calendar size={12} aria-hidden="true" />
+      {/* Data */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: colors.gray[400], fontSize: '10px' }}>
+        <Calendar size={10} aria-hidden="true" />
         {new Date(c.createdAt).toLocaleDateString('pt-PT')}
       </div>
     </div>
