@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
-import { Mail, Phone, Calendar, MessageSquare, Edit, Save, X } from '../icons';
+import { Mail, Phone, Calendar, MessageSquare, Edit, Save, X, Plus } from '../icons';
 import { colors, spacing, radius, typography, shadows } from '../../utils/styles';
 import { designSystem } from '../design-system';
 import { supabaseFetch } from '../../utils/supabase/client';
@@ -92,6 +92,17 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
   });
   const [controloProjects, setControloProjects] = useState<ControloProjectOption[]>([]);
   const [controloUnits, setControloUnits] = useState<ControloUnitOption[]>([]);
+
+  // Create lead modal state
+  const [isCreating, setIsCreating] = useState(false);
+  const [newLead, setNewLead] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    interest: '',
+    message: '',
+    projectId: '',
+  });
 
   // Fetch controlo projects on mount
   React.useEffect(() => {
@@ -401,7 +412,64 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
     })()
   );
 
+  const handleCreateLead = async () => {
+    if (!newLead.name.trim() || !newLead.phone.trim()) {
+      toast.error('Nome e telefone são obrigatórios');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const response = await supabaseFetch('contact', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: newLead.name.trim(),
+          email: newLead.email.trim() || `lead-${Date.now()}@manual.habta.eu`,
+          phone: newLead.phone.trim(),
+          interest: newLead.interest.trim() || 'Lead manual',
+          message: newLead.message.trim() || 'Criado manualmente no admin',
+          projectId: newLead.projectId,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || 'Erro ao criar lead');
+      }
+      toast.success('Lead criado com sucesso');
+      setIsCreating(false);
+      setNewLead({ name: '', email: '', phone: '', interest: '', message: '', projectId: '' });
+      onRefresh?.();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao criar lead');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
+    <div>
+    {/* Header with create button */}
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: spacing[4] }}>
+      <button
+        onClick={() => setIsCreating(true)}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: spacing[2],
+          padding: `${spacing[2]} ${spacing[4]}`,
+          background: colors.primary,
+          color: colors.white,
+          border: 'none',
+          borderRadius: radius.md,
+          fontSize: typography.fontSize.sm,
+          fontWeight: typography.fontWeight.semibold,
+          cursor: 'pointer',
+        }}
+      >
+        <Plus size={16} />
+        Novo Lead
+      </button>
+    </div>
+
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, minmax(260px, 1fr))', gap: spacing[4], overflowX: 'auto' }}>
       {STAGES.map((stage) => {
         const items = columns[stage.id];
@@ -939,7 +1007,163 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
         </div>
       )}
     </div>
+
+    {/* Modal de criação de lead */}
+    {isCreating && (
+      <div
+        onClick={() => setIsCreating(false)}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: spacing[4],
+        }}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            background: colors.white,
+            borderRadius: radius.xl,
+            width: '100%',
+            maxWidth: 520,
+            padding: spacing[6],
+            boxShadow: shadows['2xl'],
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing[4] }}>
+            <h3 style={{ fontSize: typography.fontSize['xl'], fontWeight: typography.fontWeight.bold, color: colors.gray[900] }}>
+              Novo Lead
+            </h3>
+            <button
+              onClick={() => setIsCreating(false)}
+              aria-label="Fechar"
+              style={{ border: 'none', background: colors.gray[100], color: colors.gray[600], width: 36, height: 36, borderRadius: radius.full, cursor: 'pointer' }}
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[3] }}>
+            <div>
+              <label style={{ display: 'block', fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.medium, color: colors.gray[700], marginBottom: spacing[1] }}>
+                Nome <span style={{ color: colors.error }}>*</span>
+              </label>
+              <input
+                type="text"
+                value={newLead.name}
+                onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
+                placeholder="Nome completo"
+                style={{ width: '100%', padding: spacing[3], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.base, outline: 'none' }}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing[3] }}>
+              <div>
+                <label style={{ display: 'block', fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.medium, color: colors.gray[700], marginBottom: spacing[1] }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={newLead.email}
+                  onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
+                  placeholder="email@exemplo.com"
+                  style={{ width: '100%', padding: spacing[3], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.base, outline: 'none' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.medium, color: colors.gray[700], marginBottom: spacing[1] }}>
+                  Telefone <span style={{ color: colors.error }}>*</span>
+                </label>
+                <input
+                  type="tel"
+                  value={newLead.phone}
+                  onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
+                  placeholder="+351 000 000 000"
+                  style={{ width: '100%', padding: spacing[3], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.base, outline: 'none' }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.medium, color: colors.gray[700], marginBottom: spacing[1] }}>
+                Interesse
+              </label>
+              <input
+                type="text"
+                value={newLead.interest}
+                onChange={(e) => setNewLead({ ...newLead, interest: e.target.value })}
+                placeholder="Ex: Velask Residence, Investimento, Compra..."
+                style={{ width: '100%', padding: spacing[3], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.base, outline: 'none' }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.medium, color: colors.gray[700], marginBottom: spacing[1] }}>
+                Projeto (Controlo)
+              </label>
+              <select
+                value={newLead.projectId}
+                onChange={(e) => setNewLead({ ...newLead, projectId: e.target.value })}
+                style={{ width: '100%', padding: spacing[3], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.base, outline: 'none', background: colors.white }}
+              >
+                <option value="">— Nenhum —</option>
+                {controloProjects.map((p) => (
+                  <option key={p.id} value={p.id}>{p.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.medium, color: colors.gray[700], marginBottom: spacing[1] }}>
+                Observações
+              </label>
+              <textarea
+                value={newLead.message}
+                onChange={(e) => setNewLead({ ...newLead, message: e.target.value })}
+                placeholder="Notas sobre o lead"
+                rows={3}
+                style={{ width: '100%', padding: spacing[3], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.base, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: spacing[2], marginTop: spacing[2] }}>
+              <button
+                type="button"
+                onClick={() => setIsCreating(false)}
+                style={{ padding: `${spacing[2]} ${spacing[4]}`, border: `1px solid ${colors.gray[300]}`, background: colors.white, color: colors.gray[700], borderRadius: radius.md, cursor: 'pointer' }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateLead}
+                disabled={isSaving}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: spacing[1],
+                  padding: `${spacing[2]} ${spacing[4]}`,
+                  border: 'none',
+                  background: colors.primary,
+                  color: colors.white,
+                  borderRadius: radius.md,
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                  fontWeight: typography.fontWeight.semibold,
+                  opacity: isSaving ? 0.6 : 1,
+                }}
+              >
+                <Plus size={16} />
+                {isSaving ? 'A criar...' : 'Criar Lead'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+    </div>
   );
 }
-
-
