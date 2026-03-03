@@ -215,6 +215,69 @@ app.put("/make-server-4b2936bc/contacts/:id", async (c) => {
   }
 });
 
+// ── Activities per contact ──
+
+// GET /contacts/:id/activities
+app.get("/make-server-4b2936bc/contacts/:id/activities", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const normalizedId = id.startsWith("contact:") ? id.slice("contact:".length) : id;
+    const activities = await kv.getByPrefix(`activity:${normalizedId}:`);
+    const sorted = activities.sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
+    return c.json({ success: true, activities: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving activities: ${error}`);
+    return c.json({ error: "Erro ao buscar atividades" }, 500);
+  }
+});
+
+// POST /contacts/:id/activities
+app.post("/make-server-4b2936bc/contacts/:id/activities", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const normalizedId = id.startsWith("contact:") ? id.slice("contact:".length) : id;
+    const body = await c.req.json();
+    const { date, channel, type, content } = body || {};
+    if (!channel || !content) {
+      return c.json({ error: "Canal e conteúdo são obrigatórios" }, 400);
+    }
+    const timestamp = Date.now();
+    const activityId = `${timestamp}`;
+    const key = `activity:${normalizedId}:${activityId}`;
+    const data = {
+      id: activityId,
+      contactId: normalizedId,
+      date: date || new Date().toISOString().slice(0, 10),
+      channel,
+      type: type || '',
+      content,
+      timestamp,
+      createdAt: new Date().toISOString(),
+    };
+    await kv.set(key, data);
+    console.log(`Activity created for contact ${normalizedId}: ${channel} - ${type}`);
+    return c.json({ success: true, activity: data });
+  } catch (error) {
+    console.log(`Error creating activity: ${error}`);
+    return c.json({ error: "Erro ao criar atividade" }, 500);
+  }
+});
+
+// DELETE /contacts/:id/activities/:activityId
+app.delete("/make-server-4b2936bc/contacts/:id/activities/:activityId", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const activityId = c.req.param("activityId");
+    const normalizedId = id.startsWith("contact:") ? id.slice("contact:".length) : id;
+    const key = `activity:${normalizedId}:${activityId}`;
+    await kv.del(key);
+    return c.json({ success: true, message: "Atividade eliminada" });
+  } catch (error) {
+    console.log(`Error deleting activity: ${error}`);
+    return c.json({ error: "Erro ao eliminar atividade" }, 500);
+  }
+});
+
 // Get all newsletter subscribers (admin endpoint)
 app.get("/make-server-4b2936bc/subscribers", async (c) => {
   try {

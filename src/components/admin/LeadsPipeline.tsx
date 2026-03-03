@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
-import { Mail, Phone, Calendar, MessageSquare, Edit, Save, X, Plus } from '../icons';
+import { Mail, Phone, Calendar, MessageSquare, Edit, Save, X, Plus, Trash2 } from '../icons';
 import { colors, spacing, radius, typography, shadows } from '../../utils/styles';
 import { designSystem } from '../design-system';
 import { supabaseFetch } from '../../utils/supabase/client';
@@ -29,6 +29,18 @@ interface Contact {
   unitId?: string;
   proposalValue?: number;
 }
+
+interface Activity {
+  id: string;
+  contactId: string;
+  date: string;
+  channel: string;
+  type: string;
+  content: string;
+  timestamp: number;
+}
+
+const CHANNELS = ['Telefone', 'Email', 'WhatsApp', 'Mensagem'] as const;
 
 interface ControloProjectOption {
   id: string;
@@ -101,6 +113,16 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
   const [controloProjects, setControloProjects] = useState<ControloProjectOption[]>([]);
   const [controloUnits, setControloUnits] = useState<ControloUnitOption[]>([]);
 
+  // Activity log state
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(false);
+  const [newActivity, setNewActivity] = useState({
+    date: new Date().toISOString().slice(0, 10),
+    channel: '',
+    type: '',
+    content: '',
+  });
+
   // Create lead modal state
   const [isCreating, setIsCreating] = useState(false);
   const [newLead, setNewLead] = useState({
@@ -141,6 +163,66 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
       } catch {}
     })();
   }, [form.projectId]);
+
+  // Fetch activities when editing a contact
+  const fetchActivities = React.useCallback(async (contactId: string) => {
+    setLoadingActivities(true);
+    try {
+      const normalizedId = contactId.startsWith('contact:') ? contactId.slice('contact:'.length) : contactId;
+      const res = await supabaseFetch(`contacts/${encodeURIComponent(normalizedId)}/activities`, {}, 1, true);
+      const data = await res.json();
+      if (res.ok && data.activities) {
+        setActivities(data.activities);
+      }
+    } catch {
+      setActivities([]);
+    } finally {
+      setLoadingActivities(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (isEditing && editingContact) {
+      fetchActivities(editingContact.id);
+      setNewActivity({ date: new Date().toISOString().slice(0, 10), channel: '', type: '', content: '' });
+    }
+  }, [isEditing, editingContact, fetchActivities]);
+
+  const handleAddActivity = async () => {
+    if (!editingContact || !newActivity.channel || !newActivity.content.trim()) {
+      toast.error('Canal e conteúdo são obrigatórios');
+      return;
+    }
+    try {
+      const normalizedId = editingContact.id.startsWith('contact:') ? editingContact.id.slice('contact:'.length) : editingContact.id;
+      const res = await supabaseFetch(`contacts/${encodeURIComponent(normalizedId)}/activities`, {
+        method: 'POST',
+        body: JSON.stringify(newActivity),
+      });
+      if (!res.ok) throw new Error('Erro ao criar atividade');
+      toast.success('Atividade registada');
+      setNewActivity({ date: new Date().toISOString().slice(0, 10), channel: '', type: '', content: '' });
+      fetchActivities(editingContact.id);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao criar atividade');
+    }
+  };
+
+  const handleDeleteActivity = async (activityId: string) => {
+    if (!editingContact) return;
+    try {
+      const normalizedId = editingContact.id.startsWith('contact:') ? editingContact.id.slice('contact:'.length) : editingContact.id;
+      const res = await supabaseFetch(`contacts/${encodeURIComponent(normalizedId)}/activities/${activityId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Erro ao eliminar');
+      toast.success('Atividade eliminada');
+      fetchActivities(editingContact.id);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erro ao eliminar atividade');
+    }
+  };
+
   const [localPrefs, setLocalPrefs] = useState<Record<string, Partial<Contact>>>(() => {
     try {
       const raw = localStorage.getItem('habta_lead_prefs');
@@ -709,7 +791,7 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                   Classificação
                 </label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: spacing[2] }}>
-                  {['Comprador', 'Vendedor', 'Inquilino', 'Arrendatário'].map((classification) => (
+                  {['Comprador', 'Vendedor', 'Inquilino', 'Arrendatário', 'Consultor'].map((classification) => (
                     <label
                       key={classification}
                       style={{
@@ -865,6 +947,124 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                   style={{ width: '100%', padding: spacing[3], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.base, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
                 />
               </div>
+
+              {/* --- Registo de atividades --- */}
+              <div style={{ borderTop: `1px solid ${colors.gray[200]}`, marginTop: spacing[1], paddingTop: spacing[3] }}>
+                <div style={{ fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.bold, color: colors.gray[500], textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: spacing[3] }}>
+                  Registo de atividades
+                </div>
+              </div>
+
+              {/* Formulário nova atividade */}
+              <div style={{ background: colors.gray[50], border: `1px solid ${colors.gray[200]}`, borderRadius: radius.md, padding: spacing[3], display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing[2] }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.medium, color: colors.gray[600], marginBottom: '2px' }}>Data</label>
+                    <input
+                      type="date"
+                      value={newActivity.date}
+                      onChange={(e) => setNewActivity({ ...newActivity, date: e.target.value })}
+                      style={{ width: '100%', padding: spacing[2], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.sm, outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.medium, color: colors.gray[600], marginBottom: '2px' }}>Canal</label>
+                    <select
+                      value={newActivity.channel}
+                      onChange={(e) => setNewActivity({ ...newActivity, channel: e.target.value })}
+                      style={{ width: '100%', padding: spacing[2], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.sm, outline: 'none', background: colors.white }}
+                    >
+                      <option value="">— Selecionar —</option>
+                      {CHANNELS.map((ch) => (
+                        <option key={ch} value={ch}>{ch}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.medium, color: colors.gray[600], marginBottom: '2px' }}>Tipo</label>
+                  <input
+                    type="text"
+                    value={newActivity.type}
+                    onChange={(e) => setNewActivity({ ...newActivity, type: e.target.value })}
+                    placeholder="Ex: Follow-up, Qualificação, Visita..."
+                    style={{ width: '100%', padding: spacing[2], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.sm, outline: 'none' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.medium, color: colors.gray[600], marginBottom: '2px' }}>Resumo</label>
+                  <textarea
+                    value={newActivity.content}
+                    onChange={(e) => setNewActivity({ ...newActivity, content: e.target.value })}
+                    placeholder="Descreva a interação..."
+                    rows={2}
+                    style={{ width: '100%', padding: spacing[2], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.sm, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={handleAddActivity}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: spacing[1],
+                      padding: `${spacing[1]} ${spacing[3]}`,
+                      border: 'none', background: colors.primary, color: colors.white,
+                      borderRadius: radius.md, cursor: 'pointer', fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold,
+                    }}
+                  >
+                    <Plus size={14} />
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+
+              {/* Lista de atividades */}
+              {loadingActivities ? (
+                <div style={{ textAlign: 'center', color: colors.gray[400], fontSize: typography.fontSize.sm, padding: spacing[3] }}>A carregar...</div>
+              ) : activities.length === 0 ? (
+                <div style={{ textAlign: 'center', color: colors.gray[400], fontSize: typography.fontSize.sm, padding: spacing[3] }}>Nenhuma atividade registada</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
+                  {activities.map((act) => (
+                    <div
+                      key={act.id}
+                      style={{
+                        display: 'flex', alignItems: 'flex-start', gap: spacing[2],
+                        padding: spacing[2], border: `1px solid ${colors.gray[200]}`, borderRadius: radius.md, background: colors.white,
+                      }}
+                    >
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[2], marginBottom: '2px', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: typography.fontSize.xs, color: colors.gray[500] }}>{act.date}</span>
+                          <span style={{
+                            padding: `1px ${spacing[2]}`, background: designSystem.helpers.hexToRgba(colors.primary, 0.1),
+                            color: colors.primary, borderRadius: radius.full, fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.semibold,
+                          }}>
+                            {act.channel}
+                          </span>
+                          {act.type && (
+                            <span style={{
+                              padding: `1px ${spacing[2]}`, background: designSystem.helpers.hexToRgba(colors.secondary, 0.1),
+                              color: colors.secondary, borderRadius: radius.full, fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.semibold,
+                            }}>
+                              {act.type}
+                            </span>
+                          )}
+                        </div>
+                        <p style={{ fontSize: typography.fontSize.sm, color: colors.gray[700], lineHeight: typography.lineHeight.relaxed, whiteSpace: 'pre-wrap' }}>{act.content}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteActivity(act.id)}
+                        aria-label="Eliminar atividade"
+                        style={{ flexShrink: 0, border: 'none', background: 'none', color: colors.gray[400], cursor: 'pointer', padding: '2px' }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: spacing[2], marginTop: spacing[2] }}>
                 <button
