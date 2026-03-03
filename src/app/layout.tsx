@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = localFont({
@@ -202,7 +203,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationJsonLd, websiteJsonLd]) }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <Script
+          src="https://widget.atendeaqui.ai/widget.js"
+          data-tenant="habta"
+          data-channel="web"
+          strategy="lazyOnload"
+        />
+      </body>
     </html>
   );
 }
