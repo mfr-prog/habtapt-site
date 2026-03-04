@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Clock, CheckCircle, AlertCircle, Trash2, X } from '../icons';
+import { Clock, CheckCircle, AlertCircle, Trash2, X, Search } from '../icons';
 import { colors, spacing, radius, typography, shadows } from '../../utils/styles';
 import { designSystem } from '../design-system';
 import { supabaseFetch } from '../../utils/supabase/client';
@@ -72,6 +72,9 @@ export function FollowupsTab({ contacts, onRefresh }: FollowupsTabProps) {
   const [loading, setLoading] = useState(true);
   const [completingId, setCompletingId] = useState<string | null>(null);
   const [completionText, setCompletionText] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [filterType, setFilterType] = useState<'all' | FollowupType>('all');
+  const [filterPriority, setFilterPriority] = useState<'all' | FollowupPriority>('all');
 
   const contactMap = useMemo(() => {
     const map = new Map<string, Contact>();
@@ -104,12 +107,27 @@ export function FollowupsTab({ contacts, onRefresh }: FollowupsTabProps) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const { overdue, todayItems, upcoming } = useMemo(() => {
+  const hasActiveFilters = searchText !== '' || filterType !== 'all' || filterPriority !== 'all';
+
+  const { overdue, todayItems, upcoming, totalFiltered } = useMemo(() => {
     const overdue: Followup[] = [];
     const todayItems: Followup[] = [];
     const upcoming: Followup[] = [];
+    const search = searchText.toLowerCase();
 
-    followups.forEach((fu) => {
+    const filtered = followups.filter((fu) => {
+      if (filterType !== 'all' && fu.type !== filterType) return false;
+      if (filterPriority !== 'all' && fu.priority !== filterPriority) return false;
+      if (search) {
+        const contact = contactMap.get(fu.contactId) || contactMap.get(normalizeId(fu.contactId));
+        const matchTitle = fu.title.toLowerCase().includes(search);
+        const matchContact = contact?.name.toLowerCase().includes(search);
+        if (!matchTitle && !matchContact) return false;
+      }
+      return true;
+    });
+
+    filtered.forEach((fu) => {
       if (fu.dueDate < today) overdue.push(fu);
       else if (fu.dueDate === today) todayItems.push(fu);
       else upcoming.push(fu);
@@ -118,8 +136,8 @@ export function FollowupsTab({ contacts, onRefresh }: FollowupsTabProps) {
     overdue.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
     upcoming.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 
-    return { overdue, todayItems, upcoming };
-  }, [followups, today]);
+    return { overdue, todayItems, upcoming, totalFiltered: filtered.length };
+  }, [followups, today, searchText, filterType, filterPriority, contactMap]);
 
   const normalizeId = (id: string) => id.startsWith('contact:') ? id.slice('contact:'.length) : id;
 
@@ -416,11 +434,117 @@ export function FollowupsTab({ contacts, onRefresh }: FollowupsTabProps) {
     );
   }
 
+  const selectStyle: React.CSSProperties = {
+    padding: `${spacing[2]} ${spacing[3]}`,
+    border: `1px solid ${colors.gray[300]}`,
+    borderRadius: radius.md,
+    fontSize: typography.fontSize.sm,
+    outline: 'none',
+    background: colors.white,
+    color: colors.gray[700],
+    cursor: 'pointer',
+  };
+
   return (
     <div style={{ maxWidth: '800px' }}>
-      {renderSection('Atrasados', overdue, colors.error, designSystem.helpers.hexToRgba(colors.error, 0.03))}
-      {renderSection('Hoje', todayItems, colors.warning, designSystem.helpers.hexToRgba(colors.warning, 0.03))}
-      {renderSection('Próximos', upcoming, colors.primary, colors.white)}
+      {/* Filter bar */}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: spacing[2],
+        marginBottom: spacing[4],
+        alignItems: 'center',
+      }}>
+        <div style={{ position: 'relative', flex: '1 1 200px', minWidth: '160px' }}>
+          <Search size={14} style={{ position: 'absolute', left: spacing[2], top: '50%', transform: 'translateY(-50%)', color: colors.gray[400], pointerEvents: 'none' }} />
+          <input
+            type="text"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Pesquisar follow-ups..."
+            style={{
+              width: '100%',
+              padding: `${spacing[2]} ${spacing[3]}`,
+              paddingLeft: spacing[8],
+              border: `1px solid ${colors.gray[300]}`,
+              borderRadius: radius.md,
+              fontSize: typography.fontSize.sm,
+              outline: 'none',
+              transition: 'border-color 0.2s',
+            }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = colors.primary; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = colors.gray[300]; }}
+          />
+        </div>
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value as 'all' | FollowupType)}
+          style={selectStyle}
+        >
+          <option value="all">Todos os tipos</option>
+          {FOLLOWUP_TYPES.map((t) => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+        <select
+          value={filterPriority}
+          onChange={(e) => setFilterPriority(e.target.value as 'all' | FollowupPriority)}
+          style={selectStyle}
+        >
+          <option value="all">Todas as prioridades</option>
+          {FOLLOWUP_PRIORITIES.map((p) => (
+            <option key={p.value} value={p.value}>{p.label}</option>
+          ))}
+        </select>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={() => { setSearchText(''); setFilterType('all'); setFilterPriority('all'); }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              border: 'none',
+              background: designSystem.helpers.hexToRgba(colors.error, 0.08),
+              color: colors.error,
+              borderRadius: radius.md,
+              padding: `${spacing[2]} ${spacing[3]}`,
+              cursor: 'pointer',
+              fontSize: typography.fontSize.xs,
+              fontWeight: typography.fontWeight.bold,
+            }}
+          >
+            <X size={12} />
+            Limpar
+          </button>
+        )}
+      </div>
+
+      {/* Filter results count */}
+      {hasActiveFilters && (
+        <p style={{ fontSize: typography.fontSize.xs, color: colors.gray[500], marginBottom: spacing[3] }}>
+          {totalFiltered} {totalFiltered === 1 ? 'resultado' : 'resultados'} encontrado{totalFiltered === 1 ? '' : 's'}
+        </p>
+      )}
+
+      {/* Empty state for filters */}
+      {hasActiveFilters && totalFiltered === 0 ? (
+        <div style={{ textAlign: 'center', padding: `${spacing[8]} ${spacing[4]}`, color: colors.gray[400] }}>
+          <Search size={36} style={{ marginBottom: spacing[3], opacity: 0.3 }} />
+          <p style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.medium, color: colors.gray[500], marginBottom: spacing[1] }}>
+            Nenhum follow-up encontrado
+          </p>
+          <p style={{ fontSize: typography.fontSize.xs, color: colors.gray[400] }}>
+            Tente ajustar os filtros de pesquisa
+          </p>
+        </div>
+      ) : (
+        <>
+          {renderSection('Atrasados', overdue, colors.error, designSystem.helpers.hexToRgba(colors.error, 0.03))}
+          {renderSection('Hoje', todayItems, colors.warning, designSystem.helpers.hexToRgba(colors.warning, 0.03))}
+          {renderSection('Próximos', upcoming, colors.primary, colors.white)}
+        </>
+      )}
     </div>
   );
 }

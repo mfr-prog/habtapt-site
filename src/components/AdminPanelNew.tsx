@@ -176,7 +176,7 @@ export function AdminPanel() {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [testimonialsCount, setTestimonialsCount] = useState(0);
   const [unitsCount, setUnitsCount] = useState(0);
-  const [pendingFollowupsCount, setPendingFollowupsCount] = useState(0);
+  const [pendingFollowups, setPendingFollowups] = useState<Followup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -186,6 +186,31 @@ export function AdminPanel() {
   const [selectedPeriod, setSelectedPeriod] = useState<'all' | 'today' | '7days' | '30days'>('all');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [contactStatus, setContactStatus] = useState<{ [key: string]: 'pending' | 'attended' }>({});
+
+  const pendingFollowupsCount = pendingFollowups.length;
+
+  const overdueCount = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return pendingFollowups.filter((f) => f.dueDate < today).length;
+  }, [pendingFollowups]);
+
+  const urgentFollowups = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return [...pendingFollowups]
+      .sort((a, b) => {
+        const aOverdue = a.dueDate < today ? 0 : a.dueDate === today ? 1 : 2;
+        const bOverdue = b.dueDate < today ? 0 : b.dueDate === today ? 1 : 2;
+        if (aOverdue !== bOverdue) return aOverdue - bOverdue;
+        return a.dueDate.localeCompare(b.dueDate);
+      })
+      .slice(0, 5);
+  }, [pendingFollowups]);
+
+  // Browser tab badge
+  useEffect(() => {
+    document.title = overdueCount > 0 ? `(${overdueCount}) HABTA Admin` : 'HABTA Admin';
+    return () => { document.title = 'HABTA Admin'; };
+  }, [overdueCount]);
 
   // Auth check (backup do middleware)
   useEffect(() => {
@@ -305,12 +330,12 @@ export function AdminPanel() {
     }
   };
 
-  const fetchPendingFollowupsCount = async () => {
+  const fetchPendingFollowups = async () => {
     try {
       const response = await supabaseFetch('followups/pending', {}, 1, true);
       if (response.ok) {
         const data = await response.json();
-        setPendingFollowupsCount(data.followups?.length || 0);
+        setPendingFollowups(data.followups || []);
       }
     } catch {
       // Silently fail
@@ -324,7 +349,7 @@ export function AdminPanel() {
     fetchInsights();
     fetchTestimonialsCount();
     fetchUnitsCount();
-    fetchPendingFollowupsCount();
+    fetchPendingFollowups();
   }, []);
 
   // Filtered and sorted data
@@ -522,14 +547,14 @@ export function AdminPanel() {
 
   if (isInitialLoad) {
     return (
-      <AdminLayout notificationCount={pendingFollowupsCount} onNotificationClick={() => setActiveTab('followups')}>
+      <AdminLayout notificationCount={pendingFollowupsCount} urgentFollowups={urgentFollowups} contacts={contacts} onNotificationClick={() => setActiveTab('followups')}>
         <SkeletonDashboard />
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout notificationCount={pendingFollowupsCount} onNotificationClick={() => setActiveTab('followups')}>
+    <AdminLayout notificationCount={pendingFollowupsCount} urgentFollowups={urgentFollowups} contacts={contacts} onNotificationClick={() => setActiveTab('followups')}>
       {/* Compact Metrics Grid */}
       <div
         style={{
@@ -886,7 +911,7 @@ export function AdminPanel() {
               ) : activeTab === 'leads' ? (
                 <LeadsPipeline contacts={contacts} onRefresh={fetchContacts} />
               ) : activeTab === 'followups' ? (
-                <FollowupsTab contacts={contacts} onRefresh={() => { fetchContacts(); fetchPendingFollowupsCount(); }} />
+                <FollowupsTab contacts={contacts} onRefresh={() => { fetchContacts(); fetchPendingFollowups(); }} />
               ) : activeTab === 'subscribers' ? (
                 <SubscribersView 
                   subscribers={filteredSubscribers} 

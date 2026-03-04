@@ -1,20 +1,57 @@
 // Admin: Clean layout focused on data - 100% Conformidade Guardião
-import React, { ReactNode } from 'react';
-import { Home, LogOut, Bell } from 'lucide-react';
+import React, { ReactNode, useState, useRef, useEffect } from 'react';
+import { Home, LogOut, Bell, Clock } from 'lucide-react';
 import { colors, shadows, spacing, radius, typography } from '../../utils/styles';
 import { designSystem } from '../design-system';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 
+interface FollowupItem {
+  id: string;
+  contactId: string;
+  title: string;
+  type: string;
+  dueDate: string;
+  priority: string;
+}
+
+interface ContactItem {
+  id: string;
+  name: string;
+}
+
 interface AdminLayoutProps {
   children: ReactNode;
   notificationCount?: number;
+  urgentFollowups?: FollowupItem[];
+  contacts?: ContactItem[];
   onNotificationClick?: () => void;
 }
 
-export function AdminLayout({ children, notificationCount, onNotificationClick }: AdminLayoutProps) {
+const PRIORITY_STYLES: Record<string, { bg: string; color: string; label: string }> = {
+  low: { bg: '#F3F4F6', color: '#6B7280', label: 'Baixa' },
+  medium: { bg: '#FEF3C7', color: '#92400E', label: 'Média' },
+  high: { bg: '#FFEDD5', color: '#9A3412', label: 'Alta' },
+  urgent: { bg: '#FEE2E2', color: '#991B1B', label: 'Urgente' },
+};
+
+export function AdminLayout({ children, notificationCount, urgentFollowups = [], contacts = [], onNotificationClick }: AdminLayoutProps) {
   const router = useRouter();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const bellRef = useRef<HTMLDivElement>(null);
+
+  // Click-outside handler
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [dropdownOpen]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -22,6 +59,27 @@ export function AdminLayout({ children, notificationCount, onNotificationClick }
     toast.success('Sessão encerrada');
     router.push('/login');
     router.refresh();
+  };
+
+  const contactMap = new Map<string, string>();
+  contacts.forEach((c) => {
+    const rawId = c.id.startsWith('contact:') ? c.id.slice('contact:'.length) : c.id;
+    contactMap.set(rawId, c.name);
+    contactMap.set(c.id, c.name);
+  });
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  const getDateColor = (dueDate: string) => {
+    if (dueDate < today) return colors.error;
+    if (dueDate === today) return colors.warning;
+    return colors.gray[500];
+  };
+
+  const getDateLabel = (dueDate: string) => {
+    if (dueDate < today) return 'Atrasado';
+    if (dueDate === today) return 'Hoje';
+    return dueDate;
   };
 
   return (
@@ -90,55 +148,212 @@ export function AdminLayout({ children, notificationCount, onNotificationClick }
           {/* Compact Actions */}
           <nav aria-label="Ações do painel administrativo">
             <div style={{ display: 'flex', gap: spacing[2], alignItems: 'center' }}>
-              {/* Notification Bell */}
-              <button
-                onClick={onNotificationClick}
-                aria-label={`${notificationCount || 0} follow-ups pendentes`}
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: spacing[2],
-                  background: 'transparent',
-                  border: 'none',
-                  borderRadius: radius.md,
-                  color: notificationCount && notificationCount > 0 ? colors.gray[900] : colors.gray[600],
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = colors.gray[100];
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                }}
-              >
-                <Bell size={18} aria-hidden="true" />
-                {notificationCount != null && notificationCount > 0 && (
-                  <span
+              {/* Notification Bell + Dropdown */}
+              <div ref={bellRef} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                  aria-label={`${notificationCount || 0} follow-ups pendentes`}
+                  aria-expanded={dropdownOpen}
+                  style={{
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: spacing[2],
+                    background: dropdownOpen ? colors.gray[100] : 'transparent',
+                    border: 'none',
+                    borderRadius: radius.md,
+                    color: notificationCount && notificationCount > 0 ? colors.gray[900] : colors.gray[600],
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!dropdownOpen) e.currentTarget.style.background = colors.gray[100];
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!dropdownOpen) e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <Bell size={18} aria-hidden="true" />
+                  {notificationCount != null && notificationCount > 0 && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '2px',
+                        right: '2px',
+                        minWidth: '16px',
+                        height: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: colors.error,
+                        color: '#fff',
+                        borderRadius: '999px',
+                        fontSize: '10px',
+                        fontWeight: typography.fontWeight.bold,
+                        lineHeight: 1,
+                        padding: '0 3px',
+                      }}
+                    >
+                      {notificationCount > 99 ? '99+' : notificationCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Dropdown */}
+                {dropdownOpen && (
+                  <div
                     style={{
                       position: 'absolute',
-                      top: '2px',
-                      right: '2px',
-                      minWidth: '16px',
-                      height: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: colors.error,
-                      color: '#fff',
-                      borderRadius: '999px',
-                      fontSize: '10px',
-                      fontWeight: typography.fontWeight.bold,
-                      lineHeight: 1,
-                      padding: '0 3px',
+                      top: 'calc(100% + 4px)',
+                      right: 0,
+                      width: '340px',
+                      background: colors.white,
+                      border: `1px solid ${colors.gray[200]}`,
+                      borderRadius: radius.lg,
+                      boxShadow: shadows.lg,
+                      zIndex: 100,
+                      overflow: 'hidden',
                     }}
                   >
-                    {notificationCount > 99 ? '99+' : notificationCount}
-                  </span>
+                    <div style={{
+                      padding: `${spacing[3]} ${spacing[4]}`,
+                      borderBottom: `1px solid ${colors.gray[100]}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}>
+                      <span style={{
+                        fontSize: typography.fontSize.sm,
+                        fontWeight: typography.fontWeight.bold,
+                        color: colors.gray[900],
+                      }}>
+                        Follow-ups pendentes
+                      </span>
+                      {notificationCount != null && notificationCount > 0 && (
+                        <span style={{
+                          padding: '1px 8px',
+                          background: designSystem.helpers.hexToRgba(colors.error, 0.1),
+                          color: colors.error,
+                          borderRadius: radius.full,
+                          fontSize: typography.fontSize.xs,
+                          fontWeight: typography.fontWeight.bold,
+                        }}>
+                          {notificationCount}
+                        </span>
+                      )}
+                    </div>
+
+                    {urgentFollowups.length === 0 ? (
+                      <div style={{ padding: `${spacing[6]} ${spacing[4]}`, textAlign: 'center' }}>
+                        <Clock size={24} style={{ color: colors.gray[300], marginBottom: spacing[2] }} />
+                        <p style={{ fontSize: typography.fontSize.sm, color: colors.gray[400], margin: 0 }}>
+                          Sem follow-ups pendentes
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                        {urgentFollowups.map((fu) => {
+                          const contactName = contactMap.get(fu.contactId) || 'Desconhecido';
+                          const priority = PRIORITY_STYLES[fu.priority] || PRIORITY_STYLES.medium;
+                          const dateColor = getDateColor(fu.dueDate);
+                          const dateLabel = getDateLabel(fu.dueDate);
+
+                          return (
+                            <button
+                              key={fu.id}
+                              type="button"
+                              onClick={() => {
+                                setDropdownOpen(false);
+                                onNotificationClick?.();
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.background = colors.gray[50]; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '3px',
+                                width: '100%',
+                                padding: `${spacing[3]} ${spacing[4]}`,
+                                border: 'none',
+                                borderBottom: `1px solid ${colors.gray[50]}`,
+                                background: 'transparent',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'background 0.15s',
+                              }}
+                            >
+                              <span style={{
+                                fontSize: typography.fontSize.sm,
+                                fontWeight: typography.fontWeight.medium,
+                                color: colors.gray[800],
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}>
+                                {fu.title}
+                              </span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: spacing[1], flexWrap: 'wrap' }}>
+                                <span style={{
+                                  fontSize: '10px',
+                                  color: colors.gray[500],
+                                  fontWeight: typography.fontWeight.medium,
+                                }}>
+                                  {contactName}
+                                </span>
+                                <span style={{
+                                  fontSize: '10px',
+                                  color: dateColor,
+                                  fontWeight: typography.fontWeight.bold,
+                                }}>
+                                  {dateLabel}
+                                </span>
+                                <span style={{
+                                  padding: '0 5px',
+                                  background: priority.bg,
+                                  color: priority.color,
+                                  borderRadius: radius.full,
+                                  fontSize: '9px',
+                                  fontWeight: typography.fontWeight.bold,
+                                  lineHeight: '16px',
+                                }}>
+                                  {priority.label}
+                                </span>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        onNotificationClick?.();
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = designSystem.helpers.hexToRgba(colors.primary, 0.05); }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = colors.gray[50]; }}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: `${spacing[3]} ${spacing[4]}`,
+                        border: 'none',
+                        borderTop: `1px solid ${colors.gray[100]}`,
+                        background: colors.gray[50],
+                        color: colors.primary,
+                        fontSize: typography.fontSize.xs,
+                        fontWeight: typography.fontWeight.bold,
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        transition: 'background 0.15s',
+                      }}
+                    >
+                      Ver todos os follow-ups
+                    </button>
+                  </div>
                 )}
-              </button>
+              </div>
 
               <button
                 onClick={() => router.push('/')}

@@ -197,8 +197,26 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
   const [completionText, setCompletionText] = useState('');
 
   // Stage change modal state
-  const [stageChangeInfo, setStageChangeInfo] = useState<{ contactId: string; contactName: string; fromLabel: string; toLabel: string } | null>(null);
+  const [stageChangeInfo, setStageChangeInfo] = useState<{ contactId: string; contactName: string; fromLabel: string; toLabel: string; toStageId: PipelineStageId } | null>(null);
   const [stageChangeComment, setStageChangeComment] = useState('');
+  const [scheduleFollowup, setScheduleFollowup] = useState(false);
+  const [stageFollowup, setStageFollowup] = useState({
+    title: '',
+    type: 'call' as FollowupType,
+    dueDate: '',
+    priority: 'medium' as FollowupPriority,
+  });
+
+  const STAGE_FOLLOWUP_DEFAULTS: Record<PipelineStageId, { type: FollowupType; title: string; priority: FollowupPriority }> = {
+    novo: { type: 'call', title: 'Ligar para novo lead', priority: 'medium' },
+    contato: { type: 'call', title: 'Ligar para primeiro contacto', priority: 'high' },
+    qualificado: { type: 'call', title: 'Chamada de qualificação', priority: 'medium' },
+    visita: { type: 'meeting', title: 'Confirmar visita', priority: 'high' },
+    proposta: { type: 'email', title: 'Follow-up da proposta', priority: 'high' },
+    negociacao: { type: 'call', title: 'Negociação e fecho', priority: 'urgent' },
+    ganho: { type: 'task', title: 'Documentação e pós-venda', priority: 'medium' },
+    perdido: { type: 'task', title: 'Registar motivo de perda', priority: 'low' },
+  };
 
   // Drag-and-drop UX: auto-scroll + drop target highlight
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -555,7 +573,15 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
 
     // Abrir modal imediatamente (antes do await, senão onRefresh pode desmontar o componente)
     setStageChangeComment('');
-    setStageChangeInfo({ contactId: id, contactName, fromLabel, toLabel });
+    const defaults = STAGE_FOLLOWUP_DEFAULTS[stageId];
+    setScheduleFollowup(false);
+    setStageFollowup({
+      title: defaults.title,
+      type: defaults.type,
+      dueDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+      priority: defaults.priority,
+    });
+    setStageChangeInfo({ contactId: id, contactName, fromLabel, toLabel, toStageId: stageId });
 
     try {
       setIsSaving(true);
@@ -620,8 +646,30 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
       toast.error('Estágio atualizado mas falha ao registar atividade');
     }
 
+    // Create follow-up if scheduled
+    if (scheduleFollowup && stageFollowup.title.trim() && stageFollowup.dueDate) {
+      try {
+        const fuRes = await supabaseFetch(`contacts/${encodeURIComponent(normalizeContactId(contactId))}/followups`, {
+          method: 'POST',
+          body: JSON.stringify({
+            title: stageFollowup.title.trim(),
+            type: stageFollowup.type,
+            dueDate: stageFollowup.dueDate,
+            priority: stageFollowup.priority,
+          }),
+        });
+        if (fuRes.ok) {
+          toast.success('Follow-up agendado');
+          fetchAllPendingFollowups();
+        }
+      } catch {
+        toast.error('Falha ao agendar follow-up');
+      }
+    }
+
     setStageChangeInfo(null);
     setStageChangeComment('');
+    setScheduleFollowup(false);
     onRefresh?.();
   };
 
@@ -2049,6 +2097,118 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
             }}
             autoFocus
           />
+
+          {/* Schedule follow-up section */}
+          <div style={{
+            marginTop: spacing[3],
+            padding: spacing[3],
+            background: scheduleFollowup ? colors.gray[50] : 'transparent',
+            border: scheduleFollowup ? `1px solid ${colors.gray[200]}` : 'none',
+            borderRadius: radius.md,
+            transition: 'all 0.2s',
+          }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: spacing[2],
+              cursor: 'pointer',
+              fontSize: typography.fontSize.sm,
+              fontWeight: typography.fontWeight.medium,
+              color: scheduleFollowup ? colors.primary : colors.gray[700],
+            }}>
+              <div style={{
+                width: '18px',
+                height: '18px',
+                borderRadius: radius.sm,
+                border: `2px solid ${scheduleFollowup ? colors.primary : colors.gray[300]}`,
+                background: scheduleFollowup ? colors.primary : 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s',
+                flexShrink: 0,
+              }}>
+                {scheduleFollowup && (
+                  <CheckCircle size={12} style={{ color: colors.white }} />
+                )}
+              </div>
+              <input
+                type="checkbox"
+                checked={scheduleFollowup}
+                onChange={(e) => setScheduleFollowup(e.target.checked)}
+                style={{ display: 'none' }}
+              />
+              Agendar follow-up
+            </label>
+
+            {scheduleFollowup && (
+              <div style={{ marginTop: spacing[3], display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
+                <input
+                  type="text"
+                  value={stageFollowup.title}
+                  onChange={(e) => setStageFollowup({ ...stageFollowup, title: e.target.value })}
+                  placeholder="Título do follow-up"
+                  style={{
+                    width: '100%',
+                    padding: spacing[2],
+                    border: `1px solid ${colors.gray[300]}`,
+                    borderRadius: radius.md,
+                    fontSize: typography.fontSize.sm,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: spacing[2] }}>
+                  <select
+                    value={stageFollowup.type}
+                    onChange={(e) => setStageFollowup({ ...stageFollowup, type: e.target.value as FollowupType })}
+                    style={{
+                      padding: spacing[2],
+                      border: `1px solid ${colors.gray[300]}`,
+                      borderRadius: radius.md,
+                      fontSize: typography.fontSize.xs,
+                      outline: 'none',
+                      background: colors.white,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {FOLLOWUP_TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="date"
+                    value={stageFollowup.dueDate}
+                    onChange={(e) => setStageFollowup({ ...stageFollowup, dueDate: e.target.value })}
+                    style={{
+                      padding: spacing[2],
+                      border: `1px solid ${colors.gray[300]}`,
+                      borderRadius: radius.md,
+                      fontSize: typography.fontSize.xs,
+                      outline: 'none',
+                    }}
+                  />
+                  <select
+                    value={stageFollowup.priority}
+                    onChange={(e) => setStageFollowup({ ...stageFollowup, priority: e.target.value as FollowupPriority })}
+                    style={{
+                      padding: spacing[2],
+                      border: `1px solid ${colors.gray[300]}`,
+                      borderRadius: radius.md,
+                      fontSize: typography.fontSize.xs,
+                      outline: 'none',
+                      background: colors.white,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {FOLLOWUP_PRIORITIES.map((p) => (
+                      <option key={p.value} value={p.value}>{p.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: spacing[2], marginTop: spacing[3] }}>
             <button
