@@ -172,7 +172,7 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center transition-transform duration-200 hover:scale-105 active:scale-95"
-              title="Conversar via WhatsApp"
+              aria-label="Conversar via WhatsApp"
               style={{
                 marginLeft: designSystem.spacing[4],
                 paddingTop: designSystem.spacing[4],

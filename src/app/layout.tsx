@@ -188,7 +188,6 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <link rel="preconnect" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />
         <link rel="dns-prefetch" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />
         <link
           rel="preload"

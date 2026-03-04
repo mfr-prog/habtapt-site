@@ -17,14 +17,14 @@ export function Hero() {
       }}
     >
       {/* Background Image — static, no JS needed */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0" style={{ backgroundColor: '#1A3E5C' }}>
         <img
-          src="/images/hero/hero-1600.avif"
+          src="/images/hero/hero-480.avif"
           srcSet="/images/hero/hero-480.avif 480w, /images/hero/hero-768.avif 768w, /images/hero/hero-1080.avif 1080w, /images/hero/hero-1600.avif 1600w"
           sizes="100vw"
           alt="VELASK Residence - fachada do empreendimento"
           fetchPriority="high"
-          decoding="async"
+          decoding="sync"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div

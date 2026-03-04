@@ -40,7 +40,7 @@ export function isUnsplashUrl(src: string): boolean {
 export function unsplashSrcSet(
   src: string,
   widths: number[],
-  opts?: { format?: string; quality?: number },
+  opts?: { format?: string; quality?: number; height?: number },
 ): string | undefined {
   if (!isUnsplashUrl(src)) return undefined;
   return widths
