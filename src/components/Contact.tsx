@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Container } from './Container';
 import { Section } from './Section';
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare, ChevronDown, HelpCircle } from './icons';
-import { motion } from 'motion/react';
 import { useInView } from './useInView';
 import { toast } from 'sonner';
 import { designSystem } from './design-system';
@@ -199,21 +198,17 @@ export function Contact() {
         }
       `}</style>
       <Container>
-        <motion.div
+        <div
           ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className={`text-center mb-16 ${isInView ? 'anim-fade-in-up' : ''}`}
+          style={isInView ? undefined : { opacity: 0 }}
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 ${isInView ? 'anim-fade-in anim-delay-1' : ''}`}
             style={{
               background: designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.08),
               border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.15)}`,
+              ...(isInView ? {} : { opacity: 0 }),
             }}
           >
             <MessageSquare size={16} style={{ color: designSystem.colors.brand.primary }} />
@@ -228,7 +223,7 @@ export function Contact() {
             >
               Contacto
             </span>
-          </motion.div>
+          </div>
 
           <h2
             id="contact-title"
@@ -254,14 +249,13 @@ export function Contact() {
           >
             Fale com a nossa equipa e descubra como podemos colaborar no seu próximo projeto.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+          <div
+            className={isInView ? 'anim-fade-in-up anim-delay-2' : ''}
+            style={isInView ? undefined : { opacity: 0 }}
           >
             <form 
               onSubmit={handleSubmit} 
@@ -519,12 +513,10 @@ export function Contact() {
               </div>
 
               {/* Submit Button */}
-              <motion.button
+              <button
                 type="submit"
                 disabled={isSubmitting}
-                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-                className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl transition-all duration-300"
+                className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: isSubmitting
                     ? designSystem.colors.neutral[500]
@@ -539,10 +531,8 @@ export function Contact() {
               >
                 {isSubmitting ? (
                   <>
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                    <div
+                      className="anim-spin w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                     />
                     Enviando...
                   </>
@@ -552,7 +542,7 @@ export function Contact() {
                     <Send size={18} />
                   </>
                 )}
-              </motion.button>
+              </button>
 
               <p
                 className="text-center"
@@ -564,28 +554,23 @@ export function Contact() {
                 Respondemos em até 24 horas úteis
               </p>
             </form>
-          </motion.div>
+          </div>
 
           {/* Contact Info */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="space-y-8"
+          <div
+            className={`space-y-8 ${isInView ? 'anim-fade-in-up anim-delay-3' : ''}`}
+            style={isInView ? undefined : { opacity: 0 }}
           >
             {/* Contact Cards */}
             <div className="space-y-4">
               {contactInfo.map((info, index) => (
-                <motion.div
+                <div
                   key={info.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  className="bg-white rounded-2xl p-6 border transition-all duration-300"
+                  className={`bg-white rounded-2xl p-6 border transition-transform duration-300 hover:scale-[1.02] hover:translate-x-1 ${isInView ? 'anim-fade-in-up' : ''}`}
                   style={{
                     borderColor: designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1),
                     boxShadow: designSystem.shadows.md,
+                    ...(isInView ? {} : { opacity: 0 }),
                   }}
                 >
                   <div className="flex items-start gap-4">
@@ -639,18 +624,16 @@ export function Contact() {
                       )}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
 
             {/* CTA Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.8 }}
-              className="rounded-3xl p-8 text-white"
+            <div
+              className={`rounded-3xl p-8 text-white ${isInView ? 'anim-fade-in-up anim-delay-5' : ''}`}
               style={{
                 background: designSystem.colors.gradients.heroLuxury,
+                ...(isInView ? {} : { opacity: 0 }),
               }}
             >
               <h3
@@ -693,20 +676,19 @@ export function Contact() {
                   </span>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
 
         {/* FAQ Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.9 }}
+        <div
+          className={isInView ? 'anim-fade-in-up' : ''}
           style={{
             marginTop: designSystem.spacing[20],
             maxWidth: '900px',
             marginLeft: 'auto',
             marginRight: 'auto',
+            ...(isInView ? {} : { opacity: 0 }),
           }}
         >
           {/* FAQ Header */}
@@ -770,17 +752,16 @@ export function Contact() {
               const isOpen = openFaqIndex === index;
 
               return (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
+                  className={isInView ? 'anim-fade-in-up' : ''}
                   style={{
                     background: designSystem.colors.neutral.white,
                     borderRadius: designSystem.borderRadius.xl,
                     border: `2px solid ${isOpen ? designSystem.colors.brand.secondary : designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
                     overflow: 'hidden',
                     transition: 'all 0.3s ease',
+                    ...(isInView ? {} : { opacity: 0 }),
                   }}
                 >
                   <button
@@ -809,9 +790,8 @@ export function Contact() {
                     >
                       {faq.question}
                     </span>
-                    <motion.div
-                      animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
+                    <div
+                      className={`chevron-rotate ${isOpen ? 'chevron-rotate-open' : ''}`}
                       style={{
                         flexShrink: 0,
                         display: 'flex',
@@ -826,20 +806,12 @@ export function Contact() {
                           transition: 'color 0.3s ease',
                         }}
                       />
-                    </motion.div>
+                    </div>
                   </button>
 
-                  <motion.div
+                  <div
                     id={`faq-answer-${index}`}
-                    initial={false}
-                    animate={{
-                      height: isOpen ? 'auto' : 0,
-                      opacity: isOpen ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    style={{
-                      overflow: 'hidden',
-                    }}
+                    className={`faq-answer ${isOpen ? 'faq-answer-open' : ''}`}
                   >
                     <div
                       style={{
@@ -854,24 +826,22 @@ export function Contact() {
                     >
                       {faq.answer}
                     </div>
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               );
             })}
           </div>
 
           {/* FAQ CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 1.5 }}
-            className="text-center"
+          <div
+            className={`text-center ${isInView ? 'anim-fade-in-up' : ''}`}
             style={{
               marginTop: designSystem.spacing[10],
               padding: designSystem.spacing[8],
               background: designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.03),
               borderRadius: designSystem.borderRadius['2xl'],
               border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.1)}`,
+              ...(isInView ? {} : { opacity: 0 }),
             }}
           >
             <p
@@ -923,8 +893,8 @@ export function Contact() {
               </a>
               .
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </Container>
     </Section>
   );

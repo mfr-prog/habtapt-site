@@ -11,7 +11,7 @@ const inter = localFont({
     },
   ],
   variable: "--font-inter",
-  display: "optional",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -186,6 +186,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="theme-color" content="#1A3E5C" />
         <link rel="manifest" href="/manifest.json" />
+        <link rel="preload" as="font" href="/fonts/inter-latin.woff2" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />

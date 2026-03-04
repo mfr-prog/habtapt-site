@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { ArrowUp } from './icons';
 import { designSystem } from './design-system';
 
@@ -29,35 +28,26 @@ export function BackToTop() {
   };
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, y: 20, scale: 0 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0 }}
-          transition={{
-            duration: 0.3,
-            type: 'spring',
-            stiffness: 300,
-            damping: 20,
-          }}
-          onClick={scrollToTop}
-          whileHover={{ 
-            scale: 1.1,
-            boxShadow: '0 8px 32px rgba(26, 62, 92, 0.25)'
-          }}
-          whileTap={{ scale: 0.9 }}
-          className="fixed bottom-6 left-6 flex items-center justify-center w-14 h-14 rounded-full"
-          style={{
-            zIndex: designSystem.zIndex.sticky,
-            background: designSystem.colors.gradients.primary,
-            boxShadow: '0 4px 20px rgba(26, 62, 92, 0.2)',
-          }}
-          aria-label="Voltar ao topo"
-        >
-          <ArrowUp size={22} style={{ color: designSystem.colors.neutral.white }} />
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <button
+      onClick={scrollToTop}
+      className={`fixed bottom-6 left-6 flex items-center justify-center w-14 h-14 rounded-full transition-transform duration-200 hover:scale-110 active:scale-90 ${
+        isVisible ? 'float-btn-enter' : 'float-btn-hidden'
+      }`}
+      style={{
+        zIndex: designSystem.zIndex.sticky,
+        background: designSystem.colors.gradients.primary,
+        boxShadow: '0 4px 20px rgba(26, 62, 92, 0.2)',
+        transition: 'transform 0.2s, box-shadow 0.3s, opacity 0.3s, scale 0.3s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 8px 32px rgba(26, 62, 92, 0.25)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 4px 20px rgba(26, 62, 92, 0.2)';
+      }}
+      aria-label="Voltar ao topo"
+    >
+      <ArrowUp size={22} style={{ color: designSystem.colors.neutral.white }} />
+    </button>
   );
 }

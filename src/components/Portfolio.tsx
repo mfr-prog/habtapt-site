@@ -5,7 +5,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Container } from './Container';
 import { Section } from './Section';
 import { Building2, ArrowRight } from './icons';
-import { motion, AnimatePresence } from 'motion/react';
 import { useInView } from './useInView';
 import { designSystem } from './design-system';
 import { useRouter } from 'next/navigation';
@@ -280,22 +279,17 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
     <Section id="portfolio" background="muted">
       <Container>
         <section aria-labelledby="portfolio-title">
-          <motion.div
+          <div
             ref={ref}
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="text-center mx-auto"
+            className={`text-center mx-auto ${isInView ? 'anim-fade-in-up' : ''}`}
             style={{
               marginBottom: designSystem.spacing[16],
               maxWidth: '56rem',
+              opacity: isInView ? undefined : 0,
             }}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center rounded-full"
+            <div
+              className={`inline-flex items-center rounded-full ${isInView ? 'anim-fade-in anim-delay-1' : ''}`}
               style={{
                 gap: designSystem.spacing[2],
                 paddingLeft: designSystem.spacing[5],
@@ -305,6 +299,7 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
                 marginBottom: designSystem.spacing[6],
                 background: designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.08),
                 border: `1px solid ${designSystem.helpers.hexToRgba(designSystem.colors.brand.primary, 0.15)}`,
+                opacity: isInView ? undefined : 0,
               }}
             >
               <Building2 size={18} style={{ color: designSystem.colors.brand.primary }} />
@@ -319,7 +314,7 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
               >
                 {variant === 'homepage' ? 'Imóveis' : 'Portfólio'}
               </span>
-            </motion.div>
+            </div>
 
             <h2
               id="portfolio-title"
@@ -342,27 +337,23 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
                 ? 'Descubra os nossos imóveis reabilitados com acabamentos premium e localização privilegiada'
                 : 'Conheça os nossos casos de sucesso em reabilitação urbana e investimento imobiliário de alto rendimento em Portugal'}
             </p>
-          </motion.div>
+          </div>
 
           {/* Filters — only in full mode */}
           {variant === 'full' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex flex-wrap justify-center"
+            <div
+              className={`flex flex-wrap justify-center ${isInView ? 'anim-fade-in-up anim-delay-2' : ''}`}
               style={{
                 gap: designSystem.spacing[3],
                 marginBottom: designSystem.spacing[12],
+                opacity: isInView ? undefined : 0,
               }}
             >
               {filters.map((filter) => (
-                <motion.button
+                <button
                   key={filter.value}
-                  whileHover={isMobile ? {} : { scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveFilter(filter.value)}
-                  className="rounded-full transition-all duration-300"
+                  className="rounded-full transition-all duration-300 hover:scale-105 active:scale-95"
                   aria-pressed={activeFilter === filter.value}
                   aria-label={`Filtrar por ${filter.label}`}
                   style={{
@@ -391,9 +382,9 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
                   }}
                 >
                   {filter.label}
-                </motion.button>
+                </button>
               ))}
-            </motion.div>
+            </div>
           )}
 
           {/* Projects Grid with Skeleton */}
@@ -401,36 +392,29 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
             {isLoadingProjects ? (
               <PortfolioGridSkeleton count={6} isMobile={isMobile} />
             ) : (
-              <AnimatePresence mode="sync">
-                <motion.div
-                  key={activeFilter}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                  style={{
-                    gap: designSystem.spacing[6],
-                  }}
-                >
-                  {filteredProjects.map((project, index) => (
-                    <PortfolioCard
-                      key={project.id}
-                      project={project}
-                      index={index}
-                      isMobile={isMobile}
-                      onClick={handleProjectClick}
-                    />
-                  ))}
-                </motion.div>
-              </AnimatePresence>
+              <div
+                key={activeFilter}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 anim-fade-in"
+                style={{
+                  gap: designSystem.spacing[6],
+                }}
+              >
+                {filteredProjects.map((project, index) => (
+                  <PortfolioCard
+                    key={project.id}
+                    project={project}
+                    index={index}
+                    isMobile={isMobile}
+                    onClick={handleProjectClick}
+                  />
+                ))}
+              </div>
             )}
 
             {/* Empty state */}
             {!isLoadingProjects && filteredProjects.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+              <div
+                className="anim-fade-in"
                 style={{
                   textAlign: 'center',
                   padding: designSystem.spacing[12],
@@ -438,18 +422,15 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
                 }}
               >
                 <p>Nenhum projeto encontrado para este filtro.</p>
-              </motion.div>
+              </div>
             )}
           </div>
 
           {/* "Ver todos" link — homepage variant */}
           {variant === 'homepage' && !isLoadingProjects && filteredProjects.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-center"
-              style={{ marginTop: designSystem.spacing[10] }}
+            <div
+              className={`text-center ${isInView ? 'anim-fade-in-up anim-delay-4' : ''}`}
+              style={{ marginTop: designSystem.spacing[10], opacity: isInView ? undefined : 0 }}
             >
               <Link
                 href="/portfolio"
@@ -471,7 +452,7 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
                 Ver todos os imóveis
                 <ArrowRight size={18} />
               </Link>
-            </motion.div>
+            </div>
           )}
         </section>
       </Container>
