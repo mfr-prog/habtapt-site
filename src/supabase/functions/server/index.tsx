@@ -46,6 +46,10 @@ app.post("/make-server-4b2936bc/contact", async (c) => {
     const timestamp = Date.now();
     const contactId = `contact:${timestamp}`;
 
+    // Calculate leadNumber
+    const allContacts = await kv.getByPrefix("contact:");
+    const leadNumber = allContacts.length + 1;
+
     const contactData = {
       id: contactId,
       name,
@@ -55,6 +59,7 @@ app.post("/make-server-4b2936bc/contact", async (c) => {
       message,
       projectId: projectId || '',
       origin: origin || '',
+      leadNumber,
       createdAt: new Date().toISOString(),
       timestamp,
     };
@@ -132,7 +137,23 @@ app.get("/make-server-4b2936bc/contacts", async (c) => {
     const contacts = await kv.getByPrefix("contact:");
     const sortedContacts = contacts.sort((a: any, b: any) => b.timestamp - a.timestamp);
     console.log(`Retrieved ${contacts.length} contacts`);
-    // Garantir campo de estágio padrão para pipeline de leads
+
+    // Backfill leadNumber for old contacts that don't have one
+    const byTimestampAsc = [...contacts].sort((a: any, b: any) => (a.timestamp || 0) - (b.timestamp || 0));
+    const needsBackfill = byTimestampAsc.some((c: any) => !c.leadNumber);
+    if (needsBackfill) {
+      let nextNumber = 1;
+      for (const ct of byTimestampAsc) {
+        if (!(ct as any).leadNumber) {
+          (ct as any).leadNumber = nextNumber;
+          await kv.set((ct as any).id, ct);
+          console.log(`Backfilled leadNumber=${nextNumber} for ${(ct as any).id}`);
+        }
+        nextNumber = Math.max(nextNumber, (ct as any).leadNumber) + 1;
+      }
+    }
+
+    // Re-sort newest first for response, ensure stage default
     const withStage = sortedContacts.map((c: any) => ({
       ...c,
       pipelineStage: c.pipelineStage || 'novo',
@@ -2398,6 +2419,157 @@ app.get("/make-server-4b2936bc/controlo/auto-kpis", async (c) => {
   } catch (error) {
     console.log(`Error computing auto-kpis: ${error}`);
     return c.json({ error: "Erro ao calcular KPIs automáticos" }, 500);
+  }
+});
+
+// ============================================
+// FOLLOW-UP ENDPOINTS
+// ============================================
+
+// GET /contacts/:id/followups — List follow-ups for a contact
+app.get("/make-server-4b2936bc/contacts/:id/followups", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const normalizedId = id.startsWith("contact:") ? id.slice("contact:".length) : id;
+    const followups = await kv.getByPrefix(`followup:${normalizedId}:`);
+    const sorted = followups.sort((a: any, b: any) => {
+      const dateA = `${a.dueDate}T${a.dueTime || '23:59'}`;
+      const dateB = `${b.dueDate}T${b.dueTime || '23:59'}`;
+      return dateA.localeCompare(dateB);
+    });
+    return c.json({ success: true, followups: sorted, count: sorted.length });
+  } catch (error) {
+    console.log(`Error retrieving followups: ${error}`);
+    return c.json({ error: "Erro ao buscar follow-ups" }, 500);
+  }
+});
+
+// POST /contacts/:id/followups — Create follow-up
+app.post("/make-server-4b2936bc/contacts/:id/followups", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const normalizedId = id.startsWith("contact:") ? id.slice("contact:".length) : id;
+    const body = await c.req.json();
+    const { title, type, dueDate, dueTime, priority, notes } = body || {};
+
+    if (!title || !type || !dueDate || !priority) {
+      return c.json({ error: "Título, tipo, data e prioridade são obrigatórios" }, 400);
+    }
+
+    const timestamp = Date.now();
+    const followupId = `${timestamp}`;
+    const key = `followup:${normalizedId}:${followupId}`;
+
+    const data = {
+      id: followupId,
+      contactId: normalizedId,
+      title,
+      type,
+      dueDate,
+      dueTime: dueTime || null,
+      priority,
+      notes: notes || '',
+      status: 'pending',
+      outcome: null,
+      outcomeNotes: null,
+      completedAt: null,
+      // Sequence preparation fields (Phase 2)
+      sequenceEnrollmentId: null,
+      sequenceStepId: null,
+      isAutomated: false,
+      createdAt: new Date().toISOString(),
+      timestamp,
+    };
+
+    await kv.set(key, data);
+    console.log(`Follow-up created for contact ${normalizedId}: ${type} - ${title}`);
+    return c.json({ success: true, followup: data });
+  } catch (error) {
+    console.log(`Error creating followup: ${error}`);
+    return c.json({ error: "Erro ao criar follow-up" }, 500);
+  }
+});
+
+// PUT /contacts/:id/followups/:fid — Update follow-up
+app.put("/make-server-4b2936bc/contacts/:id/followups/:fid", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const fid = c.req.param("fid");
+    const normalizedId = id.startsWith("contact:") ? id.slice("contact:".length) : id;
+    const key = `followup:${normalizedId}:${fid}`;
+
+    const existing = await kv.get(key);
+    if (!existing) {
+      return c.json({ error: "Follow-up não encontrado" }, 404);
+    }
+
+    const body = await c.req.json();
+    const { title, type, dueDate, dueTime, priority, notes, status, outcome, outcomeNotes } = body || {};
+
+    const updated = {
+      ...(existing as any),
+      ...(title !== undefined && { title }),
+      ...(type !== undefined && { type }),
+      ...(dueDate !== undefined && { dueDate }),
+      ...(dueTime !== undefined && { dueTime }),
+      ...(priority !== undefined && { priority }),
+      ...(notes !== undefined && { notes }),
+      ...(status !== undefined && { status }),
+      ...(outcome !== undefined && { outcome }),
+      ...(outcomeNotes !== undefined && { outcomeNotes }),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Auto-set completedAt when status becomes completed
+    if (status === 'completed' && !(existing as any).completedAt) {
+      updated.completedAt = new Date().toISOString();
+    }
+
+    await kv.set(key, updated);
+    console.log(`Follow-up updated: ${key} -> status=${updated.status}`);
+    return c.json({ success: true, followup: updated });
+  } catch (error) {
+    console.log(`Error updating followup: ${error}`);
+    return c.json({ error: "Erro ao atualizar follow-up" }, 500);
+  }
+});
+
+// DELETE /contacts/:id/followups/:fid — Delete follow-up
+app.delete("/make-server-4b2936bc/contacts/:id/followups/:fid", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const fid = c.req.param("fid");
+    const normalizedId = id.startsWith("contact:") ? id.slice("contact:".length) : id;
+    const key = `followup:${normalizedId}:${fid}`;
+    await kv.del(key);
+    console.log(`Follow-up deleted: ${key}`);
+    return c.json({ success: true, message: "Follow-up eliminado" });
+  } catch (error) {
+    console.log(`Error deleting followup: ${error}`);
+    return c.json({ error: "Erro ao eliminar follow-up" }, 500);
+  }
+});
+
+// GET /followups/pending — Global: all pending/overdue follow-ups
+app.get("/make-server-4b2936bc/followups/pending", async (c) => {
+  try {
+    const allFollowups = await kv.getByPrefix("followup:");
+    const today = new Date().toISOString().slice(0, 10);
+    const pending = allFollowups
+      .filter((f: any) => f.status === 'pending')
+      .map((f: any) => ({
+        ...f,
+        isOverdue: f.dueDate < today,
+      }))
+      .sort((a: any, b: any) => {
+        const dateA = `${a.dueDate}T${a.dueTime || '23:59'}`;
+        const dateB = `${b.dueDate}T${b.dueTime || '23:59'}`;
+        return dateA.localeCompare(dateB);
+      });
+    return c.json({ success: true, followups: pending, count: pending.length });
+  } catch (error) {
+    console.log(`Error retrieving pending followups: ${error}`);
+    return c.json({ error: "Erro ao buscar follow-ups pendentes" }, 500);
   }
 });
 
