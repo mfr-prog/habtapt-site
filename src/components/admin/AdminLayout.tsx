@@ -1,6 +1,6 @@
 // Admin: Clean layout focused on data - 100% Conformidade Guardião
 import React, { ReactNode } from 'react';
-import { Home, LogOut } from 'lucide-react';
+import { Home, LogOut, Bell } from 'lucide-react';
 import { colors, shadows, spacing, radius, typography } from '../../utils/styles';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -8,9 +8,11 @@ import { createClient } from '@/lib/supabase/client';
 
 interface AdminLayoutProps {
   children: ReactNode;
+  notificationCount?: number;
+  onNotificationClick?: () => void;
 }
 
-export function AdminLayout({ children }: AdminLayoutProps) {
+export function AdminLayout({ children, notificationCount, onNotificationClick }: AdminLayoutProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -74,7 +76,57 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
           {/* Compact Actions */}
           <nav aria-label="Ações do painel administrativo">
-            <div style={{ display: 'flex', gap: spacing[2] }}>
+            <div style={{ display: 'flex', gap: spacing[2], alignItems: 'center' }}>
+              {/* Notification Bell */}
+              <button
+                onClick={onNotificationClick}
+                aria-label={`${notificationCount || 0} follow-ups pendentes`}
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: spacing[2],
+                  background: 'transparent',
+                  border: 'none',
+                  borderRadius: radius.md,
+                  color: notificationCount && notificationCount > 0 ? colors.gray[900] : colors.gray[600],
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = colors.gray[100];
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <Bell size={18} aria-hidden="true" />
+                {notificationCount != null && notificationCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '2px',
+                      right: '2px',
+                      minWidth: '16px',
+                      height: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: colors.error,
+                      color: '#fff',
+                      borderRadius: '999px',
+                      fontSize: '10px',
+                      fontWeight: typography.fontWeight.bold,
+                      lineHeight: 1,
+                      padding: '0 3px',
+                    }}
+                  >
+                    {notificationCount > 99 ? '99+' : notificationCount}
+                  </span>
+                )}
+              </button>
+
               <button
                 onClick={() => router.push('/')}
                 aria-label="Voltar para o site principal"

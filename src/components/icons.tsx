@@ -121,4 +121,5 @@ export {
   Image,
   Type,
   List,
+  Bell,
 } from 'lucide-react';

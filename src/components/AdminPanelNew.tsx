@@ -51,6 +51,7 @@ import { designSystem } from './design-system';
 import { LeadsPipeline } from './admin/LeadsPipeline';
 import { ControloManager } from './admin/ControloManager';
 import { UnitsManager } from './admin/UnitsManager';
+import { FollowupsTab } from './admin/FollowupsTab';
 
 interface Contact {
   id: string;
@@ -168,13 +169,14 @@ interface Insight {
 
 export function AdminPanel() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'contacts' | 'leads' | 'subscribers' | 'projects' | 'units' | 'insights' | 'testimonials' | 'controlo'>('contacts');
+  const [activeTab, setActiveTab] = useState<'contacts' | 'leads' | 'followups' | 'subscribers' | 'projects' | 'units' | 'insights' | 'testimonials' | 'controlo'>('contacts');
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [testimonialsCount, setTestimonialsCount] = useState(0);
   const [unitsCount, setUnitsCount] = useState(0);
+  const [pendingFollowupsCount, setPendingFollowupsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -303,6 +305,18 @@ export function AdminPanel() {
     }
   };
 
+  const fetchPendingFollowupsCount = async () => {
+    try {
+      const response = await supabaseFetch('followups/pending', {}, 1, true);
+      if (response.ok) {
+        const data = await response.json();
+        setPendingFollowupsCount(data.followups?.length || 0);
+      }
+    } catch {
+      // Silently fail
+    }
+  };
+
   useEffect(() => {
     fetchContacts();
     fetchSubscribers();
@@ -310,6 +324,7 @@ export function AdminPanel() {
     fetchInsights();
     fetchTestimonialsCount();
     fetchUnitsCount();
+    fetchPendingFollowupsCount();
   }, []);
 
   // Filtered and sorted data
@@ -507,14 +522,14 @@ export function AdminPanel() {
 
   if (isInitialLoad) {
     return (
-      <AdminLayout>
+      <AdminLayout notificationCount={pendingFollowupsCount} onNotificationClick={() => setActiveTab('followups')}>
         <SkeletonDashboard />
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout>
+    <AdminLayout notificationCount={pendingFollowupsCount} onNotificationClick={() => setActiveTab('followups')}>
       {/* Compact Metrics Grid */}
       <div
         style={{
@@ -551,6 +566,7 @@ export function AdminPanel() {
           {[
             { id: 'contacts' as const, label: 'Contatos', icon: Mail, count: contacts.length },
             { id: 'leads' as const, label: 'Leads', icon: Users, count: contacts.length },
+            { id: 'followups' as const, label: 'Follow-ups', icon: Clock, count: pendingFollowupsCount },
             { id: 'subscribers' as const, label: 'Newsletter', icon: Inbox, count: subscribers.length },
             { id: 'projects' as const, label: 'Projetos', icon: Building2, count: projects.length },
             { id: 'units' as const, label: 'Unidades', icon: Home, count: unitsCount },
@@ -606,7 +622,7 @@ export function AdminPanel() {
         </div>
 
         {/* Compact Toolbar - Only for contacts and subscribers */}
-        {activeTab !== 'projects' && activeTab !== 'units' && activeTab !== 'insights' && activeTab !== 'testimonials' && activeTab !== 'leads' && activeTab !== 'controlo' && (
+        {activeTab !== 'projects' && activeTab !== 'units' && activeTab !== 'insights' && activeTab !== 'testimonials' && activeTab !== 'leads' && activeTab !== 'controlo' && activeTab !== 'followups' && (
           <div
             style={{
               padding: `${spacing[3]} ${spacing[4]}`,
@@ -826,7 +842,7 @@ export function AdminPanel() {
           id={`tabpanel-${activeTab}`}
           role="tabpanel"
           aria-labelledby={`tab-${activeTab}`}
-          style={{ padding: (activeTab === 'projects' || activeTab === 'units' || activeTab === 'insights' || activeTab === 'testimonials' || activeTab === 'controlo') ? spacing[6] : spacing[4] }}
+          style={{ padding: (activeTab === 'projects' || activeTab === 'units' || activeTab === 'insights' || activeTab === 'testimonials' || activeTab === 'controlo' || activeTab === 'followups') ? spacing[6] : spacing[4] }}
         >
           {isLoading ? (
             <SkeletonTable rows={5} />
@@ -836,6 +852,8 @@ export function AdminPanel() {
                 <ContactsView contacts={filteredContacts} viewMode={viewMode} selectedContact={selectedContact} onSelectContact={setSelectedContact} onRefresh={fetchContacts} />
               ) : activeTab === 'leads' ? (
                 <LeadsPipeline contacts={contacts} onRefresh={fetchContacts} />
+              ) : activeTab === 'followups' ? (
+                <FollowupsTab contacts={contacts} onRefresh={() => { fetchContacts(); fetchPendingFollowupsCount(); }} />
               ) : activeTab === 'subscribers' ? (
                 <SubscribersView 
                   subscribers={filteredSubscribers} 
@@ -902,7 +920,7 @@ function ContactDetailModal({
     notes: '',
   });
   const [completingFollowupId, setCompletingFollowupId] = useState<string | null>(null);
-  const [selectedOutcome, setSelectedOutcome] = useState<FollowupOutcome | ''>('');
+  const [completionText, setCompletionText] = useState('');
 
   const normalizeId = (id: string) => (id.startsWith('contact:') ? id.slice('contact:'.length) : id);
 
@@ -939,18 +957,43 @@ function ContactDetailModal({
     } catch (err) { toast.error(err instanceof Error ? err.message : 'Erro'); }
   };
 
+  const TYPE_TO_CHANNEL: Record<FollowupType, string> = {
+    call: 'Telefone',
+    email: 'Email',
+    whatsapp: 'WhatsApp',
+    meeting: 'Telefone',
+    task: 'Mensagem',
+  };
+
   const handleCompleteFollowup = async (followupId: string) => {
-    if (!selectedOutcome) { toast.error('Selecione um resultado'); return; }
+    if (!completionText.trim()) { toast.error('Descreva o resultado'); return; }
     try {
-      const res = await supabaseFetch(`contacts/${encodeURIComponent(normalizeId(contact.id))}/followups/${followupId}`, {
+      const contactId = normalizeId(contact.id);
+      // 1. Complete follow-up
+      const res = await supabaseFetch(`contacts/${encodeURIComponent(contactId)}/followups/${followupId}`, {
         method: 'PUT',
-        body: JSON.stringify({ status: 'completed', outcome: selectedOutcome }),
+        body: JSON.stringify({ status: 'completed', outcomeNotes: completionText.trim() }),
       });
       if (!res.ok) throw new Error('Erro ao concluir follow-up');
-      toast.success('Follow-up concluído');
+
+      // 2. Auto-create activity
+      const fu = followups.find((f) => f.id === followupId);
+      const channel = fu ? TYPE_TO_CHANNEL[fu.type] || 'Mensagem' : 'Mensagem';
+      await supabaseFetch(`contacts/${encodeURIComponent(contactId)}/activities`, {
+        method: 'POST',
+        body: JSON.stringify({
+          date: new Date().toISOString().slice(0, 10),
+          channel,
+          type: 'Follow-up',
+          content: `FU: ${fu?.title || 'Follow-up'} — ${completionText.trim()}`,
+        }),
+      });
+
+      toast.success('Follow-up concluído + atividade registada');
       setCompletingFollowupId(null);
-      setSelectedOutcome('');
+      setCompletionText('');
       fetchFollowups();
+      fetchActivities();
     } catch (err) { toast.error(err instanceof Error ? err.message : 'Erro'); }
   };
 
@@ -1465,7 +1508,7 @@ function ContactDetailModal({
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
                           {isPending && completingFollowupId !== fu.id && (
-                            <button type="button" onClick={() => { setCompletingFollowupId(fu.id); setSelectedOutcome(''); }} style={{ border: 'none', background: designSystem.helpers.hexToRgba(colors.success, 0.1), color: colors.success, borderRadius: radius.md, padding: '2px 6px', cursor: 'pointer', fontSize: '10px', fontWeight: typography.fontWeight.bold }}>
+                            <button type="button" onClick={() => { setCompletingFollowupId(fu.id); setCompletionText(''); }} style={{ border: 'none', background: designSystem.helpers.hexToRgba(colors.success, 0.1), color: colors.success, borderRadius: radius.md, padding: '2px 6px', cursor: 'pointer', fontSize: '10px', fontWeight: typography.fontWeight.bold }}>
                               Concluir
                             </button>
                           )}
@@ -1481,13 +1524,19 @@ function ContactDetailModal({
                         {fu.outcome && <span style={{ padding: '1px 6px', background: colors.gray[100], color: colors.gray[600], borderRadius: radius.full, fontSize: '10px' }}>{FOLLOWUP_OUTCOMES.find((o) => o.value === fu.outcome)?.label || fu.outcome}</span>}
                       </div>
                       {completingFollowupId === fu.id && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: spacing[1], marginTop: spacing[1], padding: spacing[2], background: colors.gray[50], borderRadius: radius.md }}>
-                          <select value={selectedOutcome} onChange={(e) => setSelectedOutcome(e.target.value as FollowupOutcome)} style={{ flex: 1, padding: spacing[1], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.xs, outline: 'none', background: colors.white }}>
-                            <option value="">— Resultado —</option>
-                            {FOLLOWUP_OUTCOMES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                          </select>
-                          <button type="button" onClick={() => handleCompleteFollowup(fu.id)} style={{ border: 'none', background: colors.success, color: colors.white, borderRadius: radius.md, padding: `${spacing[1]} ${spacing[2]}`, cursor: 'pointer', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.bold }}>OK</button>
-                          <button type="button" onClick={() => { setCompletingFollowupId(null); setSelectedOutcome(''); }} style={{ border: 'none', background: 'none', color: colors.gray[400], cursor: 'pointer', padding: '2px' }}><X size={14} /></button>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[1], marginTop: spacing[1], padding: spacing[2], background: colors.gray[50], borderRadius: radius.md }}>
+                          <textarea
+                            value={completionText}
+                            onChange={(e) => setCompletionText(e.target.value)}
+                            placeholder="Descreva o resultado..."
+                            rows={2}
+                            style={{ width: '100%', padding: spacing[1], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.xs, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
+                            autoFocus
+                          />
+                          <div style={{ display: 'flex', gap: spacing[1], justifyContent: 'flex-end' }}>
+                            <button type="button" onClick={() => handleCompleteFollowup(fu.id)} style={{ border: 'none', background: colors.success, color: colors.white, borderRadius: radius.md, padding: `${spacing[1]} ${spacing[2]}`, cursor: 'pointer', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.bold }}>OK</button>
+                            <button type="button" onClick={() => { setCompletingFollowupId(null); setCompletionText(''); }} style={{ border: 'none', background: 'none', color: colors.gray[400], cursor: 'pointer', padding: '2px' }}><X size={14} /></button>
+                          </div>
                         </div>
                       )}
                     </div>

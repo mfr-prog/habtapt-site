@@ -194,7 +194,7 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
     notes: '',
   });
   const [completingFollowupId, setCompletingFollowupId] = useState<string | null>(null);
-  const [selectedOutcome, setSelectedOutcome] = useState<FollowupOutcome | ''>('');
+  const [completionText, setCompletionText] = useState('');
 
   // Fetch all pending follow-ups for card badges
   const fetchAllPendingFollowups = React.useCallback(async () => {
@@ -235,7 +235,7 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
       fetchFollowups(editingContact.id);
       setNewFollowup({ title: '', type: 'call', dueDate: new Date().toISOString().slice(0, 10), dueTime: '', priority: 'medium', notes: '' });
       setCompletingFollowupId(null);
-      setSelectedOutcome('');
+      setCompletionText('');
     }
   }, [isEditing, editingContact, fetchFollowups]);
 
@@ -267,21 +267,44 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
     }
   };
 
+  const TYPE_TO_CHANNEL: Record<FollowupType, string> = {
+    call: 'Telefone',
+    email: 'Email',
+    whatsapp: 'WhatsApp',
+    meeting: 'Telefone',
+    task: 'Mensagem',
+  };
+
   const handleCompleteFollowup = async (followupId: string) => {
-    if (!editingContact || !selectedOutcome) {
-      toast.error('Selecione um resultado');
+    if (!editingContact || !completionText.trim()) {
+      toast.error('Descreva o resultado');
       return;
     }
     try {
       const normalizedId = editingContact.id.startsWith('contact:') ? editingContact.id.slice('contact:'.length) : editingContact.id;
+      // 1. Complete follow-up
       const res = await supabaseFetch(`contacts/${encodeURIComponent(normalizedId)}/followups/${followupId}`, {
         method: 'PUT',
-        body: JSON.stringify({ status: 'completed', outcome: selectedOutcome }),
+        body: JSON.stringify({ status: 'completed', outcomeNotes: completionText.trim() }),
       });
       if (!res.ok) throw new Error('Erro ao concluir follow-up');
-      toast.success('Follow-up concluído');
+
+      // 2. Auto-create activity
+      const fu = followups.find((f) => f.id === followupId);
+      const channel = fu ? TYPE_TO_CHANNEL[fu.type] || 'Mensagem' : 'Mensagem';
+      await supabaseFetch(`contacts/${encodeURIComponent(normalizedId)}/activities`, {
+        method: 'POST',
+        body: JSON.stringify({
+          date: new Date().toISOString().slice(0, 10),
+          channel,
+          type: 'Follow-up',
+          content: `FU: ${fu?.title || 'Follow-up'} — ${completionText.trim()}`,
+        }),
+      });
+
+      toast.success('Follow-up concluído + atividade registada');
       setCompletingFollowupId(null);
-      setSelectedOutcome('');
+      setCompletionText('');
       fetchFollowups(editingContact.id);
       fetchAllPendingFollowups();
     } catch (err) {
@@ -1375,7 +1398,7 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                             {isPending && completingFollowupId !== fu.id && (
                               <button
                                 type="button"
-                                onClick={() => { setCompletingFollowupId(fu.id); setSelectedOutcome(''); }}
+                                onClick={() => { setCompletingFollowupId(fu.id); setCompletionText(''); }}
                                 style={{ border: 'none', background: designSystem.helpers.hexToRgba(colors.success, 0.1), color: colors.success, borderRadius: radius.md, padding: '2px 6px', cursor: 'pointer', fontSize: '10px', fontWeight: typography.fontWeight.bold }}
                               >
                                 Concluir
@@ -1409,31 +1432,31 @@ export function LeadsPipeline({ contacts, onRefresh }: LeadsPipelineProps) {
                         </div>
                         {/* Completion panel */}
                         {completingFollowupId === fu.id && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: spacing[1], marginTop: spacing[1], padding: spacing[2], background: colors.gray[50], borderRadius: radius.md }}>
-                            <select
-                              value={selectedOutcome}
-                              onChange={(e) => setSelectedOutcome(e.target.value as FollowupOutcome)}
-                              style={{ flex: 1, padding: spacing[1], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.xs, outline: 'none', background: colors.white }}
-                            >
-                              <option value="">— Resultado —</option>
-                              {FOLLOWUP_OUTCOMES.map((o) => (
-                                <option key={o.value} value={o.value}>{o.label}</option>
-                              ))}
-                            </select>
-                            <button
-                              type="button"
-                              onClick={() => handleCompleteFollowup(fu.id)}
-                              style={{ border: 'none', background: colors.success, color: colors.white, borderRadius: radius.md, padding: `${spacing[1]} ${spacing[2]}`, cursor: 'pointer', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.bold }}
-                            >
-                              OK
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => { setCompletingFollowupId(null); setSelectedOutcome(''); }}
-                              style={{ border: 'none', background: 'none', color: colors.gray[400], cursor: 'pointer', padding: '2px' }}
-                            >
-                              <X size={14} />
-                            </button>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[1], marginTop: spacing[1], padding: spacing[2], background: colors.gray[50], borderRadius: radius.md }}>
+                            <textarea
+                              value={completionText}
+                              onChange={(e) => setCompletionText(e.target.value)}
+                              placeholder="Descreva o resultado..."
+                              rows={2}
+                              style={{ width: '100%', padding: spacing[1], border: `1px solid ${colors.gray[300]}`, borderRadius: radius.md, fontSize: typography.fontSize.xs, outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
+                              autoFocus
+                            />
+                            <div style={{ display: 'flex', gap: spacing[1], justifyContent: 'flex-end' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleCompleteFollowup(fu.id)}
+                                style={{ border: 'none', background: colors.success, color: colors.white, borderRadius: radius.md, padding: `${spacing[1]} ${spacing[2]}`, cursor: 'pointer', fontSize: typography.fontSize.xs, fontWeight: typography.fontWeight.bold }}
+                              >
+                                OK
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => { setCompletingFollowupId(null); setCompletionText(''); }}
+                                style={{ border: 'none', background: 'none', color: colors.gray[400], cursor: 'pointer', padding: '2px' }}
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
                           </div>
                         )}
                       </div>
