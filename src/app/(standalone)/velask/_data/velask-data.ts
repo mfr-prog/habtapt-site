@@ -230,3 +230,83 @@ export const faqItems = [
   { q: 'Quem é a HABTA?', a: 'A HABTA é um grupo imobiliário de alta performance. O Velask é o nosso primeiro projecto de reabilitação em Porto — entregue com o mesmo rigor de processo que aplicamos a todos os nossos empreendimentos.' },
   { q: 'Posso fazer uma proposta diferente do preço?', a: 'Fale connosco. Analisamos cada situação individualmente.' },
 ];
+
+// --- Dynamic data merge helpers ---
+
+export interface ApiUnit {
+  id: string;
+  unitRef: string;
+  title: string;
+  typology: string;
+  grossArea: number;
+  usefulArea: number;
+  outdoorArea: number;
+  floor: string;
+  bedrooms: number;
+  bathrooms: number;
+  price: number;
+  priceLabel: string;
+  status: string;
+  description: string;
+  specs: Record<string, string>;
+  highlights: string[];
+  displayOrder: number;
+}
+
+const unitRefToLocalId: Record<string, string> = {
+  'Fracção A': 'rc',
+  'Fracção B': 'p1',
+  'Fracção C': 'p2',
+};
+
+const statusDisplay: Record<string, string> = {
+  available: 'Disponível',
+  reserved: 'Reservado',
+  sold: 'Vendido',
+};
+
+const fmtArea = (n: number) =>
+  n.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const fmtPrice = (n: number) => new Intl.NumberFormat('pt-PT').format(n);
+
+/** Merge API units into the hardcoded `units` array (for VelaskPlantas) */
+export function mergeApiUnits(apiUnits: ApiUnit[]) {
+  if (!apiUnits?.length) return units;
+
+  return units.map((local) => {
+    const api = apiUnits.find((u) => unitRefToLocalId[u.unitRef] === local.id);
+    if (!api) return local;
+
+    return {
+      ...local,
+      title: api.title || local.title,
+      area: `${fmtArea(api.grossArea)} m\u00B2`,
+      summary: api.description || local.summary,
+      specs: [
+        { label: 'Área bruta', value: `${fmtArea(api.grossArea)} m\u00B2` },
+        ...Object.entries(api.specs).map(([label, value]) => ({ label, value })),
+        { label: 'Casas de banho', value: String(api.bathrooms) },
+      ],
+    };
+  });
+}
+
+/** Merge API units into the hardcoded `pricingRows` array (for VelaskPricing) */
+export function mergeApiPricingRows(apiUnits: ApiUnit[]) {
+  if (!apiUnits?.length) return pricingRows;
+
+  const unitLetters = ['A', 'B', 'C'];
+
+  return pricingRows.map((row, i) => {
+    const api = apiUnits.find((u) => u.unitRef === `Fracção ${unitLetters[i]}`);
+    if (!api) return row;
+
+    return {
+      ...row,
+      area: fmtArea(api.grossArea),
+      price: fmtPrice(api.price),
+      status: statusDisplay[api.status] || row.status,
+    };
+  });
+}

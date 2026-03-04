@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { designSystem } from '@/components/design-system';
 import { Footer } from '@/components/Footer';
 import { VelaskNavbar } from './_components/VelaskNavbar';
@@ -12,12 +12,15 @@ import { VelaskLocation } from './_components/VelaskLocation';
 import { VelaskPricing } from './_components/VelaskPricing';
 import { VelaskContactForm } from './_components/VelaskContactForm';
 import { VelaskFAQ } from './_components/VelaskFAQ';
+import { supabaseFetch } from '@/utils/supabase/client';
+import { mergeApiUnits, mergeApiPricingRows, type ApiUnit } from './_data/velask-data';
 
 const ds = designSystem;
 
 export default function VelaskPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [selectedTypology, setSelectedTypology] = useState('');
+  const [apiUnits, setApiUnits] = useState<ApiUnit[]>([]);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < parseInt(ds.breakpoints.lg));
@@ -25,6 +28,21 @@ export default function VelaskPage() {
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  // Fetch units from API (public endpoint, no admin header)
+  useEffect(() => {
+    supabaseFetch('units', {}, 2)
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.units?.length) setApiUnits(data.units);
+      })
+      .catch(() => {
+        // Silently fall back to hardcoded data
+      });
+  }, []);
+
+  const dynamicUnits = useMemo(() => mergeApiUnits(apiUnits), [apiUnits]);
+  const dynamicPricingRows = useMemo(() => mergeApiPricingRows(apiUnits), [apiUnits]);
 
   const scrollToForm = () => {
     document.getElementById('velask-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -46,7 +64,7 @@ export default function VelaskPage() {
         <VelaskBairro isMobile={isMobile} />
       </div>
 
-      <VelaskPlantas isMobile={isMobile} onScrollToForm={scrollToForm} />
+      <VelaskPlantas isMobile={isMobile} onScrollToForm={scrollToForm} unitsData={dynamicUnits} />
 
       <VelaskInteriores isMobile={isMobile} />
 
@@ -59,7 +77,7 @@ export default function VelaskPage() {
       </div>
 
       <div id="precos">
-        <VelaskPricing isMobile={isMobile} onSelectTypology={setSelectedTypology} />
+        <VelaskPricing isMobile={isMobile} onSelectTypology={setSelectedTypology} rows={dynamicPricingRows} />
       </div>
 
       <div id="contacto">

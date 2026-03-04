@@ -117,6 +117,7 @@ export function VelaskInteriores({ isMobile }: InterioresProps) {
 interface PlantasProps {
   isMobile: boolean;
   onScrollToForm: () => void;
+  unitsData?: typeof units;
 }
 
 function UnitCarousel({ unitId, isMobile, onClickImage }: { unitId: string; isMobile: boolean; onClickImage: (idx: number) => void }) {
@@ -213,7 +214,8 @@ function UnitCarousel({ unitId, isMobile, onClickImage }: { unitId: string; isMo
   );
 }
 
-export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
+export function VelaskPlantas({ isMobile, onScrollToForm, unitsData }: PlantasProps) {
+  const displayUnits = unitsData ?? units;
   const planInView = useInView({ threshold: 0.05 });
 
   const [lightboxOpen, setLightboxOpen] = React.useState(false);
@@ -248,7 +250,7 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
 
             <Tabs defaultValue="rc" className="flex flex-col gap-2">
               <TabsList className="inline-flex items-center justify-center p-0 gap-3 flex-wrap" style={{ background: 'transparent', height: 'auto', marginBottom: sp[8] }}>
-                {units.map((u) => (
+                {displayUnits.map((u) => (
                   <TabsTrigger
                     key={u.id}
                     value={u.id}
@@ -272,7 +274,7 @@ export function VelaskPlantas({ isMobile, onScrollToForm }: PlantasProps) {
                 ))}
               </TabsList>
 
-              {units.map((unit) => (
+              {displayUnits.map((unit) => (
                 <TabsContent key={unit.id} value={unit.id}>
                   <div className="rounded-3xl overflow-hidden" style={{ background: c.neutral[50], border: `1px solid ${c.neutral[200]}` }}>
                     <div className="grid" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: isMobile ? 'auto' : 560, alignItems: 'stretch' }}>

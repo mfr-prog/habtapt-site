@@ -11,9 +11,11 @@ import { ds, c, t, sp, sectionBadge, sectionTitle, cardBase } from './velask-sty
 interface VelaskPricingProps {
   isMobile: boolean;
   onSelectTypology: (typology: string) => void;
+  rows?: typeof pricingRows;
 }
 
-export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps) {
+export function VelaskPricing({ isMobile, onSelectTypology, rows }: VelaskPricingProps) {
+  const pricingData = rows ?? pricingRows;
   const priceInView = useInView({ threshold: 0.1 });
 
   const waMessages: Record<string, string> = {
@@ -49,8 +51,8 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
                     </tr>
                   </thead>
                   <tbody>
-                    {pricingRows.map((row, i) => (
-                      <tr key={i} style={{ borderBottom: i < pricingRows.length - 1 ? `1px solid ${c.neutral[200]}` : 'none' }}>
+                    {pricingData.map((row, i) => (
+                      <tr key={i} style={{ borderBottom: i < pricingData.length - 1 ? `1px solid ${c.neutral[200]}` : 'none' }}>
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.semibold, color: c.neutral[900] }}>{row.unit}</td>
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, fontWeight: t.fontWeight.medium, color: c.brand.primary }}>{row.type}</td>
                         <td style={{ padding: `${sp[5]} ${sp[5]}`, fontSize: t.fontSize.sm, color: c.neutral[700] }}>{row.area} m&sup2;</td>
@@ -94,7 +96,7 @@ export function VelaskPricing({ isMobile, onSelectTypology }: VelaskPricingProps
 
             {isMobile && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: sp[4] }}>
-                {pricingRows.map((row, i) => (
+                {pricingData.map((row, i) => (
                   <div key={i} className="rounded-3xl" style={{ ...cardBase, padding: sp[6] }}>
                     <div className="flex items-center justify-between" style={{ marginBottom: sp[4] }}>
                       <div className="flex items-center gap-2">
