@@ -1,7 +1,7 @@
 // ProjectsManager - 100% Conformidade Guardião Universal
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Plus,
@@ -15,6 +15,7 @@ import {
   Maximize,
   TrendingUp,
   Building2,
+  Home,
   Image,
   AlertCircle,
 } from '../icons';
@@ -61,11 +62,68 @@ interface ProjectsManagerProps {
   isLoading: boolean;
 }
 
+interface UnitSummary {
+  id: string;
+  title: string;
+  typology: string;
+  status: 'available' | 'reserved' | 'sold';
+  priceLabel: string;
+  floor: string;
+  bedrooms: number;
+  bathrooms: number;
+  grossArea: number | null;
+  projectId: string | null;
+}
+
 export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsManagerProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Units per project
+  const [unitsMap, setUnitsMap] = useState<Record<string, UnitSummary[]>>({});
+  const [projectUnits, setProjectUnits] = useState<UnitSummary[]>([]);
+  const [isLoadingUnits, setIsLoadingUnits] = useState(false);
+
+  // Fetch all units to build count map
+  useEffect(() => {
+    const fetchAllUnits = async () => {
+      try {
+        const response = await supabaseFetch('units', {}, 2, true);
+        const data = await response.json();
+        if (data.success && data.units) {
+          const map: Record<string, UnitSummary[]> = {};
+          for (const u of data.units) {
+            if (u.projectId) {
+              if (!map[u.projectId]) map[u.projectId] = [];
+              map[u.projectId].push(u);
+            }
+          }
+          setUnitsMap(map);
+        }
+      } catch (err) {
+        console.error('Error fetching units for count:', err);
+      }
+    };
+    fetchAllUnits();
+  }, [projects]);
+
+  // Fetch units for the project being edited
+  const fetchProjectUnits = async (projectId: string) => {
+    setIsLoadingUnits(true);
+    try {
+      const response = await supabaseFetch(`units?project_id=${projectId}`, {}, 2, true);
+      const data = await response.json();
+      if (data.success && data.units) {
+        setProjectUnits(data.units);
+      }
+    } catch (err) {
+      console.error('Error fetching project units:', err);
+    } finally {
+      setIsLoadingUnits(false);
+    }
+  };
 
   // Form state
   const [formData, setFormData] = useState<Partial<Project>>({
@@ -94,8 +152,10 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
     if (project) {
       setEditingProject(project);
       setFormData(project);
+      fetchProjectUnits(project.id);
     } else {
       setEditingProject(null);
+      setProjectUnits([]);
       setFormData({
         title: '',
         location: '',
@@ -489,7 +549,7 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
                 </div>
 
                 {/* Price */}
-                <div style={{ marginBottom: spacing[4] }}>
+                <div style={{ marginBottom: spacing[3] }}>
                   <p style={{ fontSize: typography.fontSize.xs, color: colors.gray[500], marginBottom: spacing[1] }}>
                     Preço de Venda
                   </p>
@@ -497,6 +557,29 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
                     {project.price}
                   </p>
                 </div>
+
+                {/* Units Count */}
+                {(unitsMap[project.id]?.length || 0) > 0 && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: spacing[2],
+                      marginBottom: spacing[3],
+                      padding: `${spacing[2]} ${spacing[3]}`,
+                      background: designSystem.helpers.hexToRgba(colors.secondary, 0.08),
+                      borderRadius: radius.md,
+                    }}
+                  >
+                    <Home size={14} style={{ color: colors.secondary }} aria-hidden="true" />
+                    <span style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.secondary }}>
+                      {unitsMap[project.id].length} unidade{unitsMap[project.id].length !== 1 ? 's' : ''}
+                    </span>
+                    <span style={{ fontSize: typography.fontSize.xs, color: colors.gray[500] }}>
+                      {unitsMap[project.id].filter(u => u.status === 'available').length} disponíve{unitsMap[project.id].filter(u => u.status === 'available').length !== 1 ? 'is' : 'l'}
+                    </span>
+                  </div>
+                )}
 
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: spacing[2] }}>
@@ -1358,6 +1441,139 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
                     </div>
                   </div>
                 </div>
+
+                {/* Units Section (only when editing) */}
+                {editingProject && (
+                  <div style={{ marginTop: spacing[6], paddingTop: spacing[6], borderTop: `1px solid ${colors.gray[200]}` }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing[4] }}>
+                      <h3 style={{
+                        fontSize: typography.fontSize.lg,
+                        fontWeight: typography.fontWeight.bold,
+                        color: colors.gray[800],
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: spacing[2],
+                      }}>
+                        <Home size={20} style={{ color: colors.secondary }} />
+                        Unidades do Projeto
+                        <span style={{
+                          padding: `${spacing[1]} ${spacing[2]}`,
+                          background: designSystem.helpers.hexToRgba(colors.secondary, 0.1),
+                          color: colors.secondary,
+                          borderRadius: radius.md,
+                          fontSize: typography.fontSize.xs,
+                          fontWeight: typography.fontWeight.bold,
+                        }}>
+                          {projectUnits.length}
+                        </span>
+                      </h3>
+                    </div>
+
+                    {isLoadingUnits ? (
+                      <p style={{ fontSize: typography.fontSize.sm, color: colors.gray[500], textAlign: 'center', padding: spacing[4] }}>
+                        Carregando unidades...
+                      </p>
+                    ) : projectUnits.length === 0 ? (
+                      <div style={{
+                        textAlign: 'center',
+                        padding: spacing[6],
+                        background: colors.gray[50],
+                        borderRadius: radius.md,
+                        border: `1px dashed ${colors.gray[300]}`,
+                      }}>
+                        <Home size={32} style={{ color: colors.gray[300], margin: '0 auto', marginBottom: spacing[2] }} />
+                        <p style={{ fontSize: typography.fontSize.sm, color: colors.gray[500] }}>
+                          Nenhuma unidade associada a este projeto
+                        </p>
+                        <p style={{ fontSize: typography.fontSize.xs, color: colors.gray[400], marginTop: spacing[1] }}>
+                          Crie unidades na tab "Unidades" e selecione este projeto
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
+                        {projectUnits.map((unit) => {
+                          const unitStatusColor =
+                            unit.status === 'available' ? colors.success :
+                            unit.status === 'reserved' ? colors.warning : colors.gray[500];
+                          const unitStatusLabel =
+                            unit.status === 'available' ? 'Disponível' :
+                            unit.status === 'reserved' ? 'Reservado' : 'Vendido';
+
+                          return (
+                            <div
+                              key={unit.id}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: spacing[3],
+                                padding: `${spacing[3]} ${spacing[4]}`,
+                                background: colors.gray[50],
+                                borderRadius: radius.md,
+                                border: `1px solid ${colors.gray[200]}`,
+                              }}
+                            >
+                              {/* Typology badge */}
+                              <span style={{
+                                padding: `${spacing[1]} ${spacing[2]}`,
+                                background: designSystem.helpers.hexToRgba(colors.primary, 0.1),
+                                color: colors.primary,
+                                borderRadius: radius.sm,
+                                fontSize: typography.fontSize.xs,
+                                fontWeight: typography.fontWeight.bold,
+                                minWidth: '32px',
+                                textAlign: 'center',
+                              }}>
+                                {unit.typology || '—'}
+                              </span>
+
+                              {/* Title & floor */}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <p style={{
+                                  fontSize: typography.fontSize.sm,
+                                  fontWeight: typography.fontWeight.semibold,
+                                  color: colors.gray[900],
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}>
+                                  {unit.title}
+                                </p>
+                                <p style={{ fontSize: typography.fontSize.xs, color: colors.gray[500] }}>
+                                  {unit.floor}{unit.grossArea ? ` · ${unit.grossArea} m²` : ''}
+                                  {unit.bedrooms > 0 ? ` · ${unit.bedrooms} qto${unit.bedrooms > 1 ? 's' : ''}` : ''}
+                                </p>
+                              </div>
+
+                              {/* Price */}
+                              <span style={{
+                                fontSize: typography.fontSize.sm,
+                                fontWeight: typography.fontWeight.bold,
+                                color: colors.primary,
+                                whiteSpace: 'nowrap',
+                              }}>
+                                {unit.priceLabel || '—'}
+                              </span>
+
+                              {/* Status */}
+                              <span style={{
+                                padding: `${spacing[1]} ${spacing[2]}`,
+                                background: designSystem.helpers.hexToRgba(unitStatusColor, 0.1),
+                                color: unitStatusColor,
+                                borderRadius: radius.full,
+                                fontSize: '10px',
+                                fontWeight: typography.fontWeight.bold,
+                                textTransform: 'uppercase',
+                                whiteSpace: 'nowrap',
+                              }}>
+                                {unitStatusLabel}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Modal Footer */}
                 <div
