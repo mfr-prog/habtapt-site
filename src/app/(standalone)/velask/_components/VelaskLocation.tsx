@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
-import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import { ChevronDown } from '@/components/icons';
 import { locationAccordion } from '../_data/velask-data';
@@ -139,24 +138,21 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
     <Section background="white">
       <Container>
         <div ref={locInView.ref} className="text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+          <div className={locInView.isInView ? 'anim-fade-in-up' : ''} style={{ opacity: locInView.isInView ? undefined : 0 }}>
             <span style={sectionBadge()}>Localização</span>
-          </motion.div>
+          </div>
 
-          <motion.h2 initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={sectionTitle}>
+          <h2 className={locInView.isInView ? 'anim-fade-in-up anim-delay-1' : ''} style={{ ...sectionTitle, opacity: locInView.isInView ? undefined : 0 }}>
             Tudo ao seu alcance
-          </motion.h2>
+          </h2>
 
-          <motion.p initial={{ opacity: 0, y: 30 }} animate={locInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.15 }} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[10]}` }}>
+          <p className={locInView.isInView ? 'anim-fade-in-up anim-delay-1' : ''} style={{ ...bodyText, maxWidth: '42rem', margin: `0 auto ${sp[10]}`, opacity: locInView.isInView ? undefined : 0 }}>
             Campanhã coloca-o a minutos de tudo o que importa.
-          </motion.p>
+          </p>
 
           {/* 2-column: map (60%) + sidebar (40%) */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={locInView.isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid"
+          <div
+            className={`grid ${locInView.isInView ? 'anim-fade-in-up anim-delay-2' : ''}`}
             style={{
               gridTemplateColumns: isMobile ? '1fr' : '60% 40%',
               maxWidth: '64rem',
@@ -165,6 +161,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
               overflow: 'hidden',
               border: `1px solid ${c.neutral[200]}`,
               background: '#fff',
+              opacity: locInView.isInView ? undefined : 0,
             }}
           >
             {/* Map */}
@@ -221,7 +218,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
                     }} />
                   </button>
                   {openIndex === i && (
-                    <div style={{ paddingBottom: sp[4], paddingLeft: sp[9] }}>
+                    <div style={{ paddingBottom: sp[4], paddingLeft: '2.25rem' }}>
                       <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: sp[2] }}>
                         {cat.items.map((item, j) => (
                           <li key={j} style={{ fontSize: t.fontSize.xs, color: c.neutral[600], lineHeight: t.lineHeight.relaxed }}>
@@ -234,7 +231,7 @@ export function VelaskLocation({ isMobile }: VelaskLocationProps) {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </Container>
     </Section>

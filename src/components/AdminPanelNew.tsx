@@ -52,6 +52,7 @@ import { LeadsPipeline } from './admin/LeadsPipeline';
 import { ControloManager } from './admin/ControloManager';
 import { UnitsManager } from './admin/UnitsManager';
 import { FollowupsTab } from './admin/FollowupsTab';
+import type { Project } from '@/types/project';
 
 interface Contact {
   id: string;
@@ -127,28 +128,7 @@ interface Subscriber {
   timestamp: number;
 }
 
-interface Project {
-  id: string;
-  title: string;
-  location: string;
-  status: 'analysis' | 'renovation' | 'completed' | 'available';
-  statusLabel: string;
-  strategy: 'buy-hold' | 'fix-flip';
-  image: string;
-  roi: string;
-  area: string;
-  bedrooms: number;
-  bathrooms: number;
-  price: string;
-  investment: string;
-  timeline: string;
-  timelinePhases?: string;
-  description: string;
-  highlights?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  timestamp?: number;
-}
+// Project type is imported from @/types/project (see imports above)
 
 type InsightCategory = 'Investimento' | 'Regulamentação' | 'Sustentabilidade' | 'Mercado';
 
@@ -490,7 +470,7 @@ export function AdminPanel() {
       title: 'Crescimento',
       value: `${subscriberGrowth >= 0 ? '+' : ''}${subscriberGrowth}%`,
       icon: subscriberGrowth >= 0 ? TrendingUp : TrendingDown,
-      color: subscriberGrowth >= 0 ? 'success' as const : 'error' as const,
+      color: subscriberGrowth >= 0 ? 'success' as const : 'warning' as const,
     },
     {
       title: 'Projetos',

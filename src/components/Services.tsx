@@ -150,7 +150,7 @@ export function Services() {
               transition: { 
                 duration: 0.6,
                 delay: 0.2 + index * 0.15,
-                type: 'spring',
+                type: 'spring' as const,
                 stiffness: 100
               },
               whileHover: { 

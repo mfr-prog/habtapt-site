@@ -156,9 +156,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <Button
                 onClick={() => window.location.reload()}
                 aria-label="Recarregar a página atual"
-                style={{
-                  background: designSystem.colors.gradients.primary,
-                }}
+                className="bg-gradient-to-r from-[#1A3E5C] to-[#234d6f]"
               >
                 Recarregar Página
               </Button>

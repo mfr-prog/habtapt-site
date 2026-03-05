@@ -258,7 +258,7 @@ export function VelaskPlantas({ isMobile, onScrollToForm, unitsData }: PlantasPr
                     style={{
                       // @ts-expect-error CSS custom property
                       '--tab-active-bg': u.color,
-                      padding: `${sp[3]} ${sp[7]}`,
+                      padding: `${sp[3]} ${'1.75rem'}`,
                       borderRadius: ds.borderRadius.full,
                       fontSize: t.fontSize.sm,
                       fontWeight: t.fontWeight.semibold,

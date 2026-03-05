@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { motion } from 'motion/react';
 import { designSystem } from '../design-system';
 import { CheckCircle, Clock } from '../icons';
 
@@ -22,19 +21,9 @@ interface TimelineProps {
 }
 
 export function Timeline({ phases, title, animated = true, className = '' }: TimelineProps) {
-  const Wrapper = animated ? motion.div : 'div';
-  const wrapperProps = animated
-    ? {
-        initial: { opacity: 0, y: 30 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6 },
-      }
-    : {};
-
   return (
-    <Wrapper
-      {...wrapperProps}
-      className={className}
+    <div
+      className={`${className} ${animated ? 'anim-fade-in-up' : ''}`}
       style={{
         background: designSystem.colors.neutral.white,
         padding: designSystem.spacing[5],
@@ -57,7 +46,7 @@ export function Timeline({ phases, title, animated = true, className = '' }: Tim
           <TimelineItem key={index} phase={phase} />
         ))}
       </div>
-    </Wrapper>
+    </div>
   );
 }
 

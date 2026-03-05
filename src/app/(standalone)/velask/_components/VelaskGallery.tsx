@@ -27,7 +27,7 @@ export function VelaskGallery({ isMobile }: VelaskGalleryProps) {
   };
 
   const openFullGallery = () => {
-    setLightboxImages(allImages);
+    setLightboxImages(allImages.map(img => ({ ...img, caption: '' })));
     setSelectedIndex(0);
     setLightboxOpen(true);
   };

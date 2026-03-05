@@ -4,7 +4,16 @@ import React from 'react';
 import { motion, HTMLMotionProps } from 'motion/react';
 import { designSystem } from '../design-system';
 
-interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'style'> {
+// Minimal buttonVariants helper for compatibility with shadcn components
+// that import buttonVariants (alert-dialog, calendar, pagination)
+export function buttonVariants(opts?: { variant?: string; size?: string }): string {
+  const v = opts?.variant || 'primary';
+  const s = opts?.size || 'md';
+  return `habta-btn habta-btn-${v} habta-btn-${s}`;
+}
+
+interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'style' | 'children'> {
+  children?: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'tertiary' | 'outline' | 'outlineGold' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;

@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { motion } from 'motion/react';
 import { designSystem } from '../design-system';
 
 export interface FinancialData {
@@ -103,14 +102,13 @@ export function FinancialCard({
   delay = 0.2,
   className = '',
 }: FinancialCardProps) {
-  const Wrapper = animated ? motion.div : 'div';
-  const wrapperProps = animated
-    ? {
-        initial: { opacity: 0, y: 30 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay },
-      }
-    : {};
+  const delayClass = animated && delay > 0
+    ? delay <= 0.1 ? 'anim-delay-1'
+    : delay <= 0.2 ? 'anim-delay-2'
+    : delay <= 0.3 ? 'anim-delay-3'
+    : delay <= 0.4 ? 'anim-delay-4'
+    : 'anim-delay-5'
+    : '';
 
   const rows: Array<{ key: keyof FinancialData; label: string; variant?: 'default' | 'success' | 'highlight' }> = [
     { key: 'acquisition', label: 'Aquisição' },
@@ -124,9 +122,8 @@ export function FinancialCard({
   const hasRoi = data.roi;
 
   return (
-    <Wrapper
-      {...wrapperProps}
-      className={className}
+    <div
+      className={`${className} ${animated ? `anim-fade-in-up ${delayClass}` : ''}`}
       style={{
         background: designSystem.colors.neutral.white,
         padding: designSystem.spacing[5],
@@ -162,6 +159,6 @@ export function FinancialCard({
 
         {hasRoi && <FinancialRow label="ROI" value={data.roi!} variant="highlight" isLast />}
       </div>
-    </Wrapper>
+    </div>
   );
 }

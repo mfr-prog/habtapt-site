@@ -61,7 +61,7 @@ export function Badge({
         paddingRight: config.paddingX,
         paddingTop: config.paddingY,
         paddingBottom: config.paddingY,
-        gap: icon ? designSystem.spacing[1.5] : 0,
+        gap: icon ? '0.375rem' : 0,
         background: background || designSystem.colors.brand.primary,
         border: `2px solid ${border || designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.3)}`,
         boxShadow: variant === 'status' ? '0 4px 12px rgba(0,0,0,0.15)' : variant === 'strategy' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',

@@ -224,8 +224,8 @@ export function InsightsManager({ insights, onRefresh, isLoading }: InsightsMana
 
   const handleCategoryChange = (category: InsightCategory) => {
     let icon: 'TrendingUp' | 'Building2' | 'Leaf' | 'BookOpen' = 'TrendingUp';
-    let iconColor = designSystem.colors.brand.primary;
-    let gradient = designSystem.colors.gradients.primary;
+    let iconColor: string = designSystem.colors.brand.primary;
+    let gradient: string = designSystem.colors.gradients.primary;
 
     switch (category) {
       case 'Investimento':

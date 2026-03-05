@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { motion } from 'motion/react';
 import { designSystem } from '../design-system';
 import { Bed, Bath, Ruler, Home, Calendar } from '../icons';
 
@@ -37,14 +36,13 @@ export function CharacteristicsGrid({
   delay = 0.1,
   className = '',
 }: CharacteristicsGridProps) {
-  const Wrapper = animated ? motion.div : 'div';
-  const wrapperProps = animated
-    ? {
-        initial: { opacity: 0, y: 30 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay },
-      }
-    : {};
+  const delayClass = animated && delay > 0
+    ? delay <= 0.1 ? 'anim-delay-1'
+    : delay <= 0.2 ? 'anim-delay-2'
+    : delay <= 0.3 ? 'anim-delay-3'
+    : delay <= 0.4 ? 'anim-delay-4'
+    : 'anim-delay-5'
+    : '';
 
   const characteristics: Characteristic[] = [];
 
@@ -93,9 +91,8 @@ export function CharacteristicsGrid({
   }
 
   return (
-    <Wrapper
-      {...wrapperProps}
-      className={className}
+    <div
+      className={`${className} ${animated ? `anim-fade-in-up ${delayClass}` : ''}`}
       style={{
         background: designSystem.colors.neutral.white,
         padding: designSystem.spacing[5],
@@ -124,7 +121,7 @@ export function CharacteristicsGrid({
           <CharacteristicItem key={index} {...char} />
         ))}
       </div>
-    </Wrapper>
+    </div>
   );
 }
 

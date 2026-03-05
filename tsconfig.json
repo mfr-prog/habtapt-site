@@ -35,6 +35,7 @@
     "dist",
     ".vercel",
     ".wrangler",
-    "src/_pages-legacy"
+    "src/_pages-legacy",
+    "src/supabase"
   ]
 }

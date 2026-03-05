@@ -66,7 +66,7 @@ export function Process() {
   ];
 
   return (
-    <Section id="process" background={designSystem.colors.neutral[50]}>
+    <Section id="process" background="muted">
       <Container>
         <section aria-labelledby="process-title">
         <motion.div

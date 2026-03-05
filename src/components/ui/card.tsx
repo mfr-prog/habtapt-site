@@ -4,7 +4,8 @@ import React from 'react';
 import { motion, HTMLMotionProps } from 'motion/react';
 import { designSystem } from '../design-system';
 
-interface CardProps extends Omit<HTMLMotionProps<'div'>, 'style'> {
+interface CardProps extends Omit<HTMLMotionProps<'div'>, 'style' | 'children'> {
+  children?: React.ReactNode;
   variant?: 'default' | 'bordered' | 'elevated' | 'glass';
   padding?: keyof typeof designSystem.spacing;
   hover?: boolean;
@@ -14,7 +15,7 @@ interface CardProps extends Omit<HTMLMotionProps<'div'>, 'style'> {
 export function Card({
   children,
   variant = 'default',
-  padding = '8',
+  padding = 8,
   hover = true,
   gradient = false,
   ...props

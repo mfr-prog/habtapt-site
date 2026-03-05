@@ -14,38 +14,7 @@ import { PortfolioGridSkeleton } from '@/components/primitives/PortfolioGridSkel
 import { ViewModeToggle } from '@/components/ViewModeToggle';
 import { useViewMode } from '@/utils/hooks/useViewMode';
 
-type ProjectStatus = 'all' | 'analysis' | 'in-progress' | 'available' | 'sold';
-
-interface Project {
-  id: string;
-  title: string;
-  location: string;
-  status: string;
-  statusLabel: string;
-  strategy: string;
-  image: string;
-  roi: string;
-  area: string;
-  bedrooms: number;
-  bathrooms: number;
-  price: string;
-  investment: string;
-  timeline: string;
-  description: string;
-  highlights?: string;
-  landingPage?: string;
-  estimatedRent?: string;
-  grossYield?: string;
-  netYield?: string;
-  appreciationEstimate?: string;
-  propertyType?: 'moradia' | 'investimento' | 'ambos';
-  neighborhood?: string;
-  finishes?: string[];
-  nearbyAmenities?: string[];
-  lifestyle?: string;
-  typology?: string;
-  deliveryDate?: string;
-}
+import type { Project, ProjectStatusFilter as ProjectStatus } from '@/types/project';
 
 const fallbackProjects: Project[] = [
   {

@@ -15,42 +15,7 @@ import { PortfolioCard } from './primitives/PortfolioCard';
 import { PortfolioGridSkeleton } from './primitives/PortfolioGridSkeleton';
 import { useIsMobile } from '@/utils/hooks/useIsMobile';
 
-type ProjectStatus = 'all' | 'analysis' | 'in-progress' | 'available' | 'sold';
-type InvestmentStrategy = 'buy-hold' | 'fix-flip' | 'alojamento-local' | 'rent-to-rent' | 'desenvolvimento' | 'co-investimento';
-
-interface Project {
-  id: string;
-  title: string;
-  location: string;
-  status: Exclude<ProjectStatus, 'all'>;
-  statusLabel: string;
-  strategy: InvestmentStrategy;
-  image: string;
-  roi: string;
-  area: string;
-  bedrooms: number;
-  bathrooms: number;
-  price: string;
-  investment: string;
-  timeline: string;
-  description: string;
-  highlights?: string;
-  landingPage?: string;
-  // Investimento
-  estimatedRent?: string;
-  grossYield?: string;
-  netYield?: string;
-  appreciationEstimate?: string;
-  propertyType?: 'moradia' | 'investimento' | 'ambos';
-  // Moradia
-  neighborhood?: string;
-  finishes?: string[];
-  nearbyAmenities?: string[];
-  lifestyle?: string;
-  // Geral
-  typology?: string;
-  deliveryDate?: string;
-}
+import type { Project, ProjectStatusFilter as ProjectStatus, InvestmentStrategy } from '@/types/project';
 
 interface PortfolioProps {
   variant?: 'full' | 'homepage';

@@ -12,36 +12,7 @@ import { designSystem } from '../design-system';
 import { unsplashSrcSet, unsplashUrl, isUnsplashUrl } from '@/utils/unsplashUrl';
 import type { ViewMode } from '@/utils/hooks/useViewMode';
 
-type ProjectStatus = 'in-progress' | 'available' | 'sold';
-type InvestmentStrategy = 'buy-hold' | 'fix-flip' | 'alojamento-local' | 'rent-to-rent' | 'desenvolvimento' | 'co-investimento';
-
-interface Project {
-  id: string;
-  title: string;
-  location: string;
-  status: ProjectStatus;
-  statusLabel: string;
-  strategy: InvestmentStrategy;
-  image: string;
-  roi: string;
-  area: string;
-  bedrooms: number;
-  bathrooms: number;
-  price: string;
-  landingPage?: string | null;
-  portalLink?: string | null;
-  estimatedRent?: string;
-  grossYield?: string;
-  netYield?: string;
-  appreciationEstimate?: string;
-  propertyType?: 'moradia' | 'investimento' | 'ambos';
-  neighborhood?: string;
-  finishes?: string[];
-  nearbyAmenities?: string[];
-  lifestyle?: string;
-  typology?: string;
-  deliveryDate?: string;
-}
+import type { Project, ProjectStatus, InvestmentStrategy } from '@/types/project';
 
 interface PortfolioCardProps {
   project: Project;
@@ -51,8 +22,13 @@ interface PortfolioCardProps {
   viewMode?: ViewMode;
 }
 
-const getStatusColor = (status: ProjectStatus) => {
+const getStatusColor = (status: string) => {
   const colors: Record<ProjectStatus, { bg: string; text: string; border: string }> = {
+    analysis: {
+      bg: designSystem.helpers.hexToRgba(designSystem.colors.brand.tertiary, 0.15),
+      text: designSystem.colors.brand.tertiary,
+      border: designSystem.colors.brand.tertiary,
+    },
     available: {
       bg: designSystem.helpers.hexToRgba(designSystem.colors.brand.secondary, 0.15),
       text: designSystem.colors.brand.secondary,
@@ -69,10 +45,10 @@ const getStatusColor = (status: ProjectStatus) => {
       border: designSystem.colors.semantic.success,
     },
   };
-  return colors[status] || colors['in-progress'];
+  return colors[status as ProjectStatus] || colors['in-progress'];
 };
 
-const getStrategyConfig = (strategy: InvestmentStrategy) => {
+const getStrategyConfig = (strategy: string) => {
   const configs = {
     'buy-hold': {
       label: 'Buy & Hold',
@@ -111,7 +87,7 @@ const getStrategyConfig = (strategy: InvestmentStrategy) => {
       border: designSystem.colors.strategy.coInvestment,
     },
   };
-  return configs[strategy] || configs['fix-flip'];
+  return configs[strategy as InvestmentStrategy] || configs['fix-flip'];
 };
 
 function PortfolioCardComponent({ project, index, isMobile, viewMode = 'investir' }: PortfolioCardProps) {
@@ -194,7 +170,7 @@ function PortfolioCardComponent({ project, index, isMobile, viewMode = 'investir
               paddingRight: designSystem.spacing[4],
               paddingTop: designSystem.spacing[2],
               paddingBottom: designSystem.spacing[2],
-              gap: designSystem.spacing[1.5],
+              gap: '0.375rem',
               background: designSystem.colors.brand.secondary,
               border: `2px solid ${designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.3)}`,
             }}
@@ -371,7 +347,7 @@ function PortfolioCardComponent({ project, index, isMobile, viewMode = 'investir
                 href={project.landingPage}
                 className="inline-flex items-center transition-opacity duration-200 hover:opacity-100"
                 style={{
-                  gap: designSystem.spacing[1.5],
+                  gap: '0.375rem',
                   fontSize: designSystem.typography.fontSize.xs,
                   fontWeight: designSystem.typography.fontWeight.medium,
                   color: designSystem.colors.brand.primary,
@@ -392,7 +368,7 @@ function PortfolioCardComponent({ project, index, isMobile, viewMode = 'investir
                 rel="noopener noreferrer"
                 className="inline-flex items-center transition-opacity duration-200 hover:opacity-100"
                 style={{
-                  gap: designSystem.spacing[1.5],
+                  gap: '0.375rem',
                   fontSize: designSystem.typography.fontSize.xs,
                   fontWeight: designSystem.typography.fontWeight.medium,
                   color: designSystem.colors.brand.primary,

@@ -142,7 +142,7 @@ export const animations = {
       transition: {
         duration: 6,
         repeat: Infinity,
-        ease: 'easeInOut'
+        ease: 'easeInOut' as const
       }
     }
   },
@@ -154,7 +154,7 @@ export const animations = {
       transition: {
         duration: 3,
         repeat: Infinity,
-        ease: 'easeInOut'
+        ease: 'easeInOut' as const
       }
     }
   },
@@ -166,7 +166,7 @@ export const animations = {
       transition: {
         duration: 8,
         repeat: Infinity,
-        ease: 'easeInOut'
+        ease: 'easeInOut' as const
       }
     }
   },
@@ -178,7 +178,7 @@ export const animations = {
       transition: {
         duration: 1.5,
         repeat: Infinity,
-        ease: 'easeInOut'
+        ease: 'easeInOut' as const
       }
     }
   } as Variants,
@@ -190,7 +190,7 @@ export const animations = {
       transition: {
         duration: 1,
         repeat: Infinity,
-        ease: 'linear'
+        ease: 'linear' as const
       }
     }
   }

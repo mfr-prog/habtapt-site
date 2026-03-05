@@ -12,7 +12,7 @@ export const colors = {
 
   // Neutral
   white: designSystem.colors.neutral.white,
-  black: designSystem.colors.neutral.black,
+  black: designSystem.colors.neutral[950],
   gray: {
     50: designSystem.colors.neutral[50],
     100: designSystem.colors.neutral[100],

@@ -159,7 +159,7 @@ export function Insights() {
   }, [articles, activeCategory]);
 
   return (
-    <Section id="insights" background={designSystem.colors.neutral[50]}>
+    <Section id="insights" background="muted">
       <Container>
         <section aria-labelledby="insights-title">
           <motion.div

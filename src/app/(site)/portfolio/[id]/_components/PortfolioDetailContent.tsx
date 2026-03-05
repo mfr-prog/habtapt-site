@@ -121,7 +121,7 @@ export default function PortfolioDetailContent() {
           <Button
             variant="ghost"
             onClick={() => router.back()}
-            style={{ marginBottom: designSystem.spacing[6] }}
+            className="mb-6"
           >
             <ArrowLeft size={20} />
             Voltar
@@ -221,8 +221,8 @@ export default function PortfolioDetailContent() {
               {project.status === 'sold' && (
                 <MetricCard icon={<TrendingUp size={24} />} label="ROI" value={project.roi} highlight />
               )}
-              <MetricCard icon={<Clock size={24} />} label="Duração" value={project.duration} />
-              <MetricCard icon={<Home size={24} />} label="Tipo" value={project.type} />
+              <MetricCard icon={<Clock size={24} />} label="Duração" value={project.duration || 'N/A'} />
+              <MetricCard icon={<Home size={24} />} label="Tipo" value={project.type || 'N/A'} />
             </div>
           </motion.div>
         </Container>
@@ -255,13 +255,13 @@ export default function PortfolioDetailContent() {
                 </div>
               )}
 
-              {project.highlights && project.highlights.length > 0 && (
+              {project.highlights && (Array.isArray(project.highlights) ? project.highlights : project.highlights.split('\n').filter((h: string) => h.trim())).length > 0 && (
                 <div>
                   <h2 style={{ color: designSystem.colors.neutral[900], marginBottom: designSystem.spacing[4], fontSize: isMobile ? designSystem.typography.fontSize['2xl'] : undefined }}>
                     Principais Destaques
                   </h2>
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: designSystem.spacing[3] }}>
-                    {project.highlights.map((highlight, index) => (
+                    {(Array.isArray(project.highlights) ? project.highlights : project.highlights.split('\n').filter((h: string) => h.trim())).map((highlight: string, index: number) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, x: -20 }}
@@ -298,9 +298,9 @@ export default function PortfolioDetailContent() {
                   <CharacteristicRow icon={<Bed size={20} />} label="Quartos" value={`${project.bedrooms}`} />
                   <CharacteristicRow icon={<Bath size={20} />} label="Casas de Banho" value={`${project.bathrooms}`} />
                   <CharacteristicRow icon={<Ruler size={20} />} label="Área Total" value={project.area} />
-                  <CharacteristicRow icon={<Home size={20} />} label="Tipo" value={project.type} />
-                  <CharacteristicRow icon={<Calendar size={20} />} label="Ano" value={project.year} />
-                  <CharacteristicRow icon={<Clock size={20} />} label="Duração" value={project.duration} />
+                  <CharacteristicRow icon={<Home size={20} />} label="Tipo" value={project.type || 'N/A'} />
+                  <CharacteristicRow icon={<Calendar size={20} />} label="Ano" value={project.year || 'N/A'} />
+                  <CharacteristicRow icon={<Clock size={20} />} label="Duração" value={project.duration || 'N/A'} />
                 </div>
 
                 {project.forSale && (
@@ -318,7 +318,7 @@ export default function PortfolioDetailContent() {
       </Section>
 
       {/* Timeline */}
-      {project.timeline && project.timeline.length > 0 && (
+      {Array.isArray(project.timeline) && project.timeline.length > 0 && (
         <Section background="white">
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
@@ -326,7 +326,7 @@ export default function PortfolioDetailContent() {
                 Fases do Projeto
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : `repeat(${project.timeline.length}, 1fr)`, gap: designSystem.spacing[4] }}>
-                {project.timeline.map((phase, index) => (
+                {project.timeline.map((phase: { phase: string; duration: string; status: string }, index: number) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
@@ -370,10 +370,10 @@ export default function PortfolioDetailContent() {
                 Dados Financeiros
               </h2>
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : project.status === 'sold' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', gap: designSystem.spacing[6] }}>
-                <FinancialMetricCard label="Investimento Total" value={project.financials.total} breakdown={[{ label: 'Aquisição', value: project.financials.acquisition }, { label: 'Renovação', value: project.financials.renovation }]} />
-                <FinancialMetricCard label={project.status === 'sold' ? 'Valor de Venda' : 'Valor Estimado'} value={project.financials.sale} highlight />
+                <FinancialMetricCard label="Investimento Total" value={project.financials?.total || 'N/A'} breakdown={[{ label: 'Aquisição', value: project.financials?.acquisition || 'N/A' }, { label: 'Renovação', value: project.financials?.renovation || 'N/A' }]} />
+                <FinancialMetricCard label={project.status === 'sold' ? 'Valor de Venda' : 'Valor Estimado'} value={project.financials?.sale || 'N/A'} highlight />
                 {project.status === 'sold' && (
-                  <FinancialMetricCard label="Resultado" value={project.financials.profit} subtitle={`ROI: ${project.financials.roi}`} success />
+                  <FinancialMetricCard label="Resultado" value={project.financials?.profit || 'N/A'} subtitle={`ROI: ${project.financials?.roi || 'N/A'}`} success />
                 )}
               </div>
               <ExternalLinksCard portalLink={project.portalLink} brochureLink={project.brochureLink} landingPage={project.landingPage} animated={true} delay={0.3} isMobile={isMobile} />

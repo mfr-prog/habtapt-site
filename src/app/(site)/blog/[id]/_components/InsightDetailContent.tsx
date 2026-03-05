@@ -347,7 +347,7 @@ export default function InsightDetailContent() {
       </Section>
 
       {relatedInsights.length > 0 && (
-        <Section background="neutral.50" style={{ paddingTop: designSystem.spacing[16], paddingBottom: designSystem.spacing[16] }}>
+        <Section background="muted" style={{ paddingTop: designSystem.spacing[16], paddingBottom: designSystem.spacing[16] }}>
           <Container>
             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ textAlign: 'center', marginBottom: designSystem.spacing[12] }}>

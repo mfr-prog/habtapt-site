@@ -2,7 +2,6 @@
 
 import { Container } from '@/components/Container';
 import { Section } from '@/components/Section';
-import { motion } from 'motion/react';
 import { useInView } from '@/components/useInView';
 import {
   Accordion,
@@ -20,15 +19,15 @@ export function VelaskFAQ() {
     <Section background="white">
       <Container>
         <div ref={faqInView.ref} className="text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={faqInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+          <div className={faqInView.isInView ? 'anim-fade-in-up' : ''} style={{ opacity: faqInView.isInView ? undefined : 0 }}>
             <span style={sectionBadge()}>FAQ</span>
-          </motion.div>
+          </div>
 
-          <motion.h2 initial={{ opacity: 0, y: 30 }} animate={faqInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} style={{ ...sectionTitle, marginBottom: sp[12] }}>
+          <h2 className={faqInView.isInView ? 'anim-fade-in-up anim-delay-1' : ''} style={{ ...sectionTitle, marginBottom: sp[12], opacity: faqInView.isInView ? undefined : 0 }}>
             Perguntas frequentes
-          </motion.h2>
+          </h2>
 
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={faqInView.isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }} style={{ maxWidth: '48rem', margin: '0 auto', textAlign: 'left' }}>
+          <div className={faqInView.isInView ? 'anim-fade-in-up anim-delay-2' : ''} style={{ maxWidth: '48rem', margin: '0 auto', textAlign: 'left', opacity: faqInView.isInView ? undefined : 0 }}>
             <Accordion type="single" collapsible>
               {faqItems.map((item, i) => (
                 <AccordionItem key={i} value={`faq-${i}`} style={{ borderColor: c.neutral[200] }}>
@@ -41,7 +40,7 @@ export function VelaskFAQ() {
                 </AccordionItem>
               ))}
             </Accordion>
-          </motion.div>
+          </div>
         </div>
       </Container>
     </Section>

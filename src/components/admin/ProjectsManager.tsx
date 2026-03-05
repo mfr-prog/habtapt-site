@@ -27,34 +27,7 @@ import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { ImageUpload } from './ImageUpload';
 import { supabaseFetch } from '../../utils/supabase/client';
 
-type ProjectStatus = 'analysis' | 'in-progress' | 'available' | 'sold';
-type InvestmentStrategy = 'buy-hold' | 'fix-flip' | 'alojamento-local' | 'rent-to-rent' | 'desenvolvimento' | 'co-investimento';
-
-interface Project {
-  id: string;
-  title: string;
-  location: string;
-  status: ProjectStatus;
-  statusLabel: string;
-  strategy: InvestmentStrategy;
-  image: string;
-  roi: string;
-  area: string;
-  bedrooms: number;
-  bathrooms: number;
-  price: string;
-  investment: string;
-  timeline: string; // Prazo total (ex: "9 meses")
-  timelinePhases?: string; // Fases do projeto separadas por linha: "Aquisição|1 mês|completed"
-  description: string;
-  highlights?: string; // Destaques separados por linha
-  landingPage?: string | null; // Landing page interna (ex: /velask)
-  portalLink?: string | null; // Link do portal (Idealista)
-  brochureLink?: string | null; // Link da brochura
-  createdAt?: string;
-  updatedAt?: string;
-  timestamp?: number;
-}
+import type { Project, ProjectStatus, InvestmentStrategy } from '@/types/project';
 
 interface ProjectsManagerProps {
   projects: Project[];
@@ -295,7 +268,7 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
     { value: 'co-investimento', label: 'Co-Investimento' },
   ];
 
-  const getStatusColor = (status: ProjectStatus) => {
+  const getStatusColor = (status: string) => {
     const colorMap: Record<string, string> = {
       'in-progress': colors.warning,
       available: colors.secondary,
@@ -304,7 +277,7 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
     return colorMap[status] || colors.gray[500];
   };
 
-  const getStrategyColor = (strategy: InvestmentStrategy) => {
+  const getStrategyColor = (strategy: string) => {
     return strategy === 'fix-flip' ? colors.primary : colors.secondary;
   };
 
@@ -543,7 +516,7 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
                         Prazo
                       </span>
                       <span style={{ fontSize: typography.fontSize.sm, fontWeight: typography.fontWeight.semibold, color: colors.primary }}>
-                        {project.timeline}
+                        {typeof project.timeline === 'string' ? project.timeline : ''}
                       </span>
                     </div>
                   )}
@@ -1180,7 +1153,7 @@ export function ProjectsManager({ projects, onRefresh, isLoading }: ProjectsMana
                       <input
                         id="project-timeline"
                         type="text"
-                        value={formData.timeline}
+                        value={typeof formData.timeline === 'string' ? formData.timeline : ''}
                         onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
                         placeholder="9 meses"
                         style={{

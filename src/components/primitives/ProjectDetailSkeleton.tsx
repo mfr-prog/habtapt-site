@@ -89,7 +89,7 @@ export function ProjectDetailSkeleton() {
       </Section>
 
       {/* Details Section Skeleton */}
-      <Section background="neutral.50" style={{ paddingTop: designSystem.spacing[16], paddingBottom: designSystem.spacing[16] }}>
+      <Section background="muted" style={{ paddingTop: designSystem.spacing[16], paddingBottom: designSystem.spacing[16] }}>
         <Container>
           <div
             style={{

@@ -6,57 +6,10 @@
 import { useState, useEffect } from 'react';
 import { supabaseFetch } from '../supabase/client';
 import { projectsCache, CACHE_KEYS } from '../projectsCache';
+import type { Project } from '@/types/project';
 
-export interface Project {
-  id: string;
-  title: string;
-  location: string;
-  status: string;
-  strategy: string;
-  investment: string;
-  roi: string;
-  duration: string;
-  area: string;
-  bedrooms: number;
-  bathrooms: number;
-  year: string;
-  forSale: boolean;
-  salePrice: string | null;
-  portalLink: string | null;
-  brochureLink: string | null;
-  landingPage?: string | null;
-  type?: string;
-  description: string;
-  highlights: string[];
-  timeline: Array<{
-    phase: string;
-    duration: string;
-    status: string;
-  }>;
-  financials: {
-    acquisition?: string;
-    renovation?: string;
-    total?: string;
-    sale?: string;
-    profit?: string;
-    roi?: string;
-  };
-  image: string;
-  // Investimento
-  estimatedRent?: string;
-  grossYield?: string;
-  netYield?: string;
-  appreciationEstimate?: string;
-  propertyType?: 'moradia' | 'investimento' | 'ambos';
-  // Moradia
-  neighborhood?: string;
-  finishes?: string[];
-  nearbyAmenities?: string[];
-  lifestyle?: string;
-  // Geral
-  typology?: string;
-  deliveryDate?: string;
-}
+// Re-export Project type from centralized types
+export type { Project } from '@/types/project';
 
 interface UseProjectFetchOptions {
   mockData?: Project[];

@@ -4,7 +4,8 @@ import React from 'react';
 import { motion, HTMLMotionProps } from 'motion/react';
 import { designSystem } from '../design-system';
 
-interface BadgeProps extends Omit<HTMLMotionProps<'div'>, 'style'> {
+interface BadgeProps extends Omit<HTMLMotionProps<'div'>, 'style' | 'children'> {
+  children?: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'success' | 'warning' | 'error';
   size?: 'sm' | 'md' | 'lg';
   icon?: React.ReactNode;

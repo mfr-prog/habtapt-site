@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { LucideIcon } from 'lucide-react';
 import { colors, componentStyles, shadows } from '../../utils/styles';
 
-interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface AnimatedButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag' | 'onDragEnd' | 'onDragStart' | 'onDragOver' | 'onAnimationStart' | 'onAnimationEnd'> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   icon?: LucideIcon;

@@ -4,7 +4,7 @@ import React, { forwardRef } from 'react';
 import { motion } from 'motion/react';
 import { designSystem } from '../design-system';
 
-interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'style'> {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'style' | 'onDrag' | 'onDragEnd' | 'onDragStart' | 'onDragOver' | 'onAnimationStart' | 'onAnimationEnd'> {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
