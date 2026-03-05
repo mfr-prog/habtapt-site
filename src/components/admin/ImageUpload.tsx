@@ -21,6 +21,23 @@ interface ImageUploadProps {
   label?: string;
 }
 
+// Validate file magic bytes to prevent disguised uploads
+const VALID_SIGNATURES: { mime: string; bytes: number[] }[] = [
+  { mime: 'image/jpeg', bytes: [0xFF, 0xD8, 0xFF] },
+  { mime: 'image/png', bytes: [0x89, 0x50, 0x4E, 0x47] },
+  { mime: 'image/webp', bytes: [0x52, 0x49, 0x46, 0x46] }, // RIFF header
+  { mime: 'image/gif', bytes: [0x47, 0x49, 0x46] },
+  { mime: 'image/avif', bytes: [0x00, 0x00, 0x00] }, // ftyp box (variable offset)
+];
+
+async function validateMagicBytes(file: File): Promise<boolean> {
+  const buffer = await file.slice(0, 12).arrayBuffer();
+  const header = new Uint8Array(buffer);
+  return VALID_SIGNATURES.some(sig =>
+    sig.bytes.every((byte, i) => header[i] === byte)
+  );
+}
+
 export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem' }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
@@ -29,13 +46,20 @@ export function ImageUpload({ value, onChange, bucket, disabled, label = 'Imagem
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validação de tipo
+    // Validação de tipo (MIME header)
     if (!file.type.startsWith('image/')) {
       toast.error('Por favor, selecione apenas arquivos de imagem');
+      return;
+    }
+
+    // Validação de magic bytes (previne ficheiros disfarçados)
+    const validBytes = await validateMagicBytes(file);
+    if (!validBytes) {
+      toast.error('Ficheiro inválido. Apenas imagens JPEG, PNG, WebP ou GIF são aceites.');
       return;
     }
 

@@ -50,18 +50,11 @@ export const getServerUrl = (functionName: string): string => {
 /**
  * Retorna os headers padrão para requisições autenticadas
  */
-export const getAuthHeaders = (accessToken?: string, isAdmin: boolean = false): HeadersInit => {
-  const headers: HeadersInit = {
+export const getAuthHeaders = (accessToken?: string): HeadersInit => {
+  return {
     'Authorization': `Bearer ${accessToken || publicAnonKey}`,
     'Content-Type': 'application/json',
   };
-
-  // Adicionar header de admin se necessário
-  if (isAdmin) {
-    headers['x-admin-request'] = 'true';
-  }
-
-  return headers;
 };
 
 /**
@@ -84,7 +77,7 @@ export const supabaseFetch = async (
   const cleanEndpoint = endpoint.replace(/^\//, '');
   const url = `${getSupabaseUrl()}/functions/v1/make-server-4b2936bc/${cleanEndpoint}`;
   const headers = {
-    ...getAuthHeaders(undefined, isAdmin),
+    ...getAuthHeaders(),
     ...options.headers,
   };
 
