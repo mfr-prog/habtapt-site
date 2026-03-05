@@ -82,13 +82,30 @@ export async function middleware(request: NextRequest) {
       url.searchParams.set('error', 'email_not_confirmed');
       return NextResponse.redirect(url);
     }
+
+    // Check MFA assurance level
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal && aal.nextLevel === 'aal2' && aal.currentLevel === 'aal1') {
+      // User has MFA configured but hasn't verified in this session
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('mfa', 'required');
+      return NextResponse.redirect(url);
+    }
   }
 
-  // Redirect /login if already authenticated
+  // Redirect /login if already authenticated (but not if MFA verification is pending)
   if (request.nextUrl.pathname === '/login' && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/admin';
-    return NextResponse.redirect(url);
+    const mfaParam = request.nextUrl.searchParams.get('mfa');
+    if (mfaParam !== 'required') {
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      // Only redirect to admin if MFA is not pending
+      if (!aal || aal.nextLevel !== 'aal2' || aal.currentLevel !== 'aal1') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/admin';
+        return NextResponse.redirect(url);
+      }
+    }
   }
 
   return supabaseResponse;

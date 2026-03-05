@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Insights } from '@/components/Insights';
 import { Section } from '@/components/Section';
+import { fetchInsights } from './_lib/fetchInsights';
 
 export const metadata: Metadata = {
   title: 'Insights — Artigos sobre Investimento Imobiliário e Reabilitação',
@@ -27,7 +28,9 @@ const breadcrumbJsonLd = {
   ],
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const insights = await fetchInsights();
+
   return (
     <>
       <script
@@ -35,7 +38,7 @@ export default function BlogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Section background="white" style={{ paddingTop: '7.5rem' }}>
-        <Insights />
+        <Insights insights={insights.length > 0 ? insights : undefined} />
       </Section>
     </>
   );

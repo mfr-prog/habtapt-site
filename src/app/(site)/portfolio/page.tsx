@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Portfolio } from '@/components/Portfolio';
 import { Section } from '@/components/Section';
+import { fetchProjects } from './_lib/fetchProjects';
 
 export const metadata: Metadata = {
   title: 'Portfólio de Projetos de Reabilitação Urbana',
@@ -27,7 +28,9 @@ const breadcrumbJsonLd = {
   ],
 };
 
-export default function PortfolioPage() {
+export default async function PortfolioPage() {
+  const projects = await fetchProjects();
+
   return (
     <>
       <script
@@ -35,7 +38,7 @@ export default function PortfolioPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Section background="white" style={{ paddingTop: '7.5rem' }}>
-        <Portfolio />
+        <Portfolio projects={projects.length > 0 ? projects : undefined} />
       </Section>
     </>
   );

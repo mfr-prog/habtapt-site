@@ -19,15 +19,16 @@ import type { Project, ProjectStatusFilter as ProjectStatus, InvestmentStrategy 
 
 interface PortfolioProps {
   variant?: 'full' | 'homepage';
+  projects?: Project[];
 }
 
-export function Portfolio({ variant = 'full' }: PortfolioProps) {
+export function Portfolio({ variant = 'full', projects: serverProjects }: PortfolioProps) {
   const { ref, isInView } = useInView({ threshold: 0.1 });
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<ProjectStatus>('all');
   const isMobile = useIsMobile();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+  const [projects, setProjects] = useState<Project[]>(serverProjects || []);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(!serverProjects);
 
   // Fallback projects (dados originais do site)
   const fallbackProjects: Project[] = useMemo(() => [
@@ -171,8 +172,10 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
     },
   ], []);
 
-  // Fetch projects com cache
+  // Fetch projects com cache (skip if server-provided)
   useEffect(() => {
+    if (serverProjects) return;
+
     const fetchProjects = async () => {
       // Verificar cache primeiro
       const cached = projectsCache.get<Project[]>(CACHE_KEYS.ALL_PROJECTS);
@@ -214,7 +217,7 @@ export function Portfolio({ variant = 'full' }: PortfolioProps) {
     };
 
     fetchProjects();
-  }, [fallbackProjects]);
+  }, [fallbackProjects, serverProjects]);
 
   const filters: { value: ProjectStatus; label: string }[] = useMemo(() => [
     { value: 'all', label: 'Todos' },

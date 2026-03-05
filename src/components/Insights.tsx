@@ -15,6 +15,7 @@ import { projectsCache, CACHE_KEYS } from '../utils/projectsCache';
 import { InsightCard } from './primitives/InsightCard';
 import { InsightsGridSkeleton } from './primitives/InsightsGridSkeleton';
 import { useIsMobile } from '@/utils/hooks/useIsMobile';
+import type { Insight as RawInsight } from '@/components/admin/types';
 
 interface Insight {
   id: string;
@@ -27,13 +28,37 @@ interface Insight {
   iconColor?: string;
 }
 
-export function Insights() {
+function mapIconString(iconName: string): React.ElementType {
+  if (iconName === 'Building2') return Building2;
+  if (iconName === 'Leaf') return Leaf;
+  if (iconName === 'BookOpen') return BookOpen;
+  return TrendingUp;
+}
+
+function mapRawInsights(raw: RawInsight[]): Insight[] {
+  return raw.map((insight) => ({
+    id: insight.id,
+    icon: mapIconString(insight.icon),
+    title: insight.title,
+    description: insight.description,
+    category: insight.category,
+    readTime: insight.readTime,
+    gradient: insight.gradient,
+    iconColor: insight.iconColor,
+  }));
+}
+
+interface InsightsProps {
+  insights?: RawInsight[];
+}
+
+export function Insights({ insights: serverInsights }: InsightsProps) {
   const { ref, isInView } = useInView({ threshold: 0.1 });
   const router = useRouter();
   const isMobile = useIsMobile();
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
-  const [articles, setArticles] = useState<Insight[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [articles, setArticles] = useState<Insight[]>(serverInsights ? mapRawInsights(serverInsights) : []);
+  const [isLoading, setIsLoading] = useState(!serverInsights);
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   // Fallback insights
@@ -76,8 +101,10 @@ export function Insights() {
     []
   );
 
-  // Fetch insights com cache
+  // Fetch insights com cache (skip if server-provided)
   useEffect(() => {
+    if (serverInsights) return;
+
     const fetchInsights = async () => {
       // Verificar cache primeiro
       const cached = projectsCache.get<Insight[]>(CACHE_KEYS.INSIGHTS);
@@ -133,7 +160,7 @@ export function Insights() {
     };
 
     fetchInsights();
-  }, [fallbackInsights]);
+  }, [fallbackInsights, serverInsights]);
 
   // Handler memoizado
   const handleInsightClick = useCallback(
