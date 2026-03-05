@@ -22,6 +22,7 @@ import { AnimatedButton } from '../primitives/AnimatedButton';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { ImageUpload } from './ImageUpload';
 import { supabaseFetch } from '../../utils/supabase/client';
+import { logError } from '../../utils/error-logger';
 
 type UnitStatus = 'available' | 'reserved' | 'sold';
 
@@ -174,7 +175,7 @@ export function UnitsManager({ onRefresh }: UnitsManagerProps) {
         setUnits(data.units);
       }
     } catch (error) {
-      console.error('Error fetching units:', error);
+      logError(error, { component: 'UnitsManager', action: 'fetchUnits' });
       toast.error('Erro ao carregar unidades');
     } finally {
       setIsLoading(false);
@@ -189,7 +190,7 @@ export function UnitsManager({ onRefresh }: UnitsManagerProps) {
         setProjects(data.projects.map((p: { id: string; title: string }) => ({ id: p.id, title: p.title })));
       }
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      logError(error, { component: 'UnitsManager', action: 'fetchProjects' });
     }
   };
 
@@ -259,7 +260,7 @@ export function UnitsManager({ onRefresh }: UnitsManagerProps) {
       fetchUnits();
       onRefresh?.();
     } catch (error) {
-      console.error('Error saving unit:', error);
+      logError(error, { component: 'UnitsManager', action: 'saveUnit' });
       toast.error(error instanceof Error ? error.message : 'Erro ao salvar unidade');
     } finally {
       setIsSaving(false);
@@ -283,7 +284,7 @@ export function UnitsManager({ onRefresh }: UnitsManagerProps) {
       fetchUnits();
       onRefresh?.();
     } catch (error) {
-      console.error('Error deleting unit:', error);
+      logError(error, { component: 'UnitsManager', action: 'deleteUnit' });
       toast.error(error instanceof Error ? error.message : 'Erro ao eliminar unidade');
     } finally {
       setIsDeleting(false);
@@ -305,7 +306,7 @@ export function UnitsManager({ onRefresh }: UnitsManagerProps) {
       toast.success(data.message);
       fetchUnits();
     } catch (error) {
-      console.error('Error seeding units:', error);
+      logError(error, { component: 'UnitsManager', action: 'seedVelask' });
       toast.error('Erro ao popular unidades Velask');
     }
   };

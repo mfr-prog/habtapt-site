@@ -42,6 +42,7 @@ import { ContactsView } from './admin/ContactsView';
 import { SubscribersView } from './admin/SubscribersView';
 import type { Project } from '@/types/project';
 import type { Contact, Followup, Subscriber, Insight } from './admin/types';
+import { logError } from '../utils/error-logger';
 
 export function AdminPanel() {
   const router = useRouter();
@@ -318,11 +319,11 @@ export function AdminPanel() {
         toast.success('Assinante excluído com sucesso!');
       } else {
         const data = await response.json();
-        console.error('[AdminPanelNew] ❌ Erro na resposta:', data);
+        logError(data.error || 'Erro na resposta', { component: 'AdminPanel', action: 'deleteSubscriber', metadata: { data } });
         toast.error(data.error || 'Erro ao excluir assinante');
       }
     } catch (error) {
-      console.error('[AdminPanelNew] ❌ Erro de conexão ao excluir assinante:', error);
+      logError(error, { component: 'AdminPanel', action: 'deleteSubscriber' });
       toast.error('Erro de conexão ao excluir assinante');
     }
   };
