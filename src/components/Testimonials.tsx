@@ -55,14 +55,20 @@ const fallbackTestimonials: Testimonial[] = [
   },
 ];
 
-export function Testimonials() {
+interface TestimonialsProps {
+  testimonials?: Testimonial[];
+}
+
+export function Testimonials({ testimonials: serverTestimonials }: TestimonialsProps = {}) {
   const { ref, isInView } = useInView({ threshold: 0.1 });
   const isMobile = useIsMobile();
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(serverTestimonials || []);
+  const [isLoading, setIsLoading] = useState(!serverTestimonials);
 
-  // Fetch testimonials from backend
+  // Fetch testimonials from backend (skip if server-provided)
   useEffect(() => {
+    if (serverTestimonials) return;
+
     const fetchTestimonials = async () => {
       try {
         const response = await supabaseFetch('testimonials', {
@@ -87,7 +93,7 @@ export function Testimonials() {
     };
 
     fetchTestimonials();
-  }, []);
+  }, [serverTestimonials]);
 
 
   return (

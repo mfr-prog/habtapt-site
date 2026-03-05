@@ -65,13 +65,17 @@ const fallbackProjects: Project[] = [
   },
 ];
 
-export default function ImoveisContent() {
+interface ImoveisContentProps {
+  projects?: Project[];
+}
+
+export default function ImoveisContent({ projects: serverProjects }: ImoveisContentProps) {
   const { mode, setMode } = useViewMode();
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<ProjectStatus>('all');
   const [isMobile, setIsMobile] = useState(false);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+  const [projects, setProjects] = useState<Project[]>(serverProjects ?? []);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(!serverProjects);
 
   useEffect(() => {
     const lgBreakpoint = parseInt(designSystem.breakpoints.lg);
@@ -82,6 +86,8 @@ export default function ImoveisContent() {
   }, []);
 
   useEffect(() => {
+    if (serverProjects) return;
+
     const fetchProjects = async () => {
       const cached = projectsCache.get<Project[]>(CACHE_KEYS.ALL_PROJECTS);
       if (cached) {
@@ -111,7 +117,7 @@ export default function ImoveisContent() {
       }
     };
     fetchProjects();
-  }, []);
+  }, [serverProjects]);
 
   const filters: { value: ProjectStatus; label: string }[] = useMemo(() => [
     { value: 'all', label: 'Todos' },

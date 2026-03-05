@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Testimonials } from '@/components/Testimonials';
 import { Section } from '@/components/Section';
+import { fetchTestimonials } from '../_lib/fetchTestimonials';
 
 export const metadata: Metadata = {
   title: 'Depoimentos de Clientes e Investidores',
@@ -27,7 +28,9 @@ const breadcrumbJsonLd = {
   ],
 };
 
-export default function DepoimentosPage() {
+export default async function DepoimentosPage() {
+  const testimonials = await fetchTestimonials();
+
   return (
     <>
       <script
@@ -35,7 +38,7 @@ export default function DepoimentosPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Section background="white" style={{ paddingTop: '7.5rem' }}>
-        <Testimonials />
+        <Testimonials testimonials={testimonials} />
       </Section>
     </>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import PortfolioDetailContent from './_components/PortfolioDetailContent';
+import { fetchProjectById } from '../_lib/fetchProjects';
 import { projectId, publicAnonKey } from '@/utils/supabase/info';
 
 export const runtime = 'edge';
@@ -7,7 +8,7 @@ export const runtime = 'edge';
 const SUPABASE_URL = `https://${projectId}.supabase.co`;
 const FUNCTION_PATH = 'functions/v1/make-server-4b2936bc';
 
-async function fetchProject(id: string) {
+async function fetchProjectForMetadata(id: string) {
   try {
     const res = await fetch(`${SUPABASE_URL}/${FUNCTION_PATH}/projects/${id}`, {
       headers: { 'Authorization': `Bearer ${publicAnonKey}` },
@@ -25,7 +26,7 @@ export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params;
-  const project = await fetchProject(id);
+  const project = await fetchProjectForMetadata(id);
 
   if (project) {
     const title = project.title;
@@ -112,10 +113,13 @@ function generateRealEstateJsonLd(project: any, id: string) {
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const project = await fetchProject(id);
+  const [metaProject, adaptedProject] = await Promise.all([
+    fetchProjectForMetadata(id),
+    fetchProjectById(id),
+  ]);
 
-  const breadcrumbJsonLd = generateBreadcrumbJsonLd(project, id);
-  const realEstateJsonLd = generateRealEstateJsonLd(project, id);
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd(metaProject, id);
+  const realEstateJsonLd = generateRealEstateJsonLd(metaProject, id);
   const jsonLd = realEstateJsonLd ? [breadcrumbJsonLd, realEstateJsonLd] : [breadcrumbJsonLd];
 
   return (
@@ -124,7 +128,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PortfolioDetailContent />
+      <PortfolioDetailContent project={adaptedProject} />
     </>
   );
 }

@@ -62,20 +62,27 @@ const categoryConfig = {
   },
 };
 
-export default function InsightDetailContent() {
+interface InsightDetailContentProps {
+  insight?: Insight | null;
+  relatedInsights?: Insight[];
+}
+
+export default function InsightDetailContent({ insight: serverInsight, relatedInsights: serverRelated }: InsightDetailContentProps) {
   const params = useParams();
   const router = useRouter();
-  const id = params.id as string;
+  const id = serverInsight?.id || (params.id as string);
   const { ref: sectionRef, isInView } = useInView({ threshold: 0.1 });
-  const [insight, setInsight] = useState<Insight | null>(null);
-  const [relatedInsights, setRelatedInsights] = useState<Insight[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const hasServerData = serverInsight !== undefined;
+  const [insight, setInsight] = useState<Insight | null>(serverInsight ?? null);
+  const [relatedInsights, setRelatedInsights] = useState<Insight[]>(serverRelated ?? []);
+  const [isLoading, setIsLoading] = useState(!hasServerData);
   const [isMobile, setIsMobile] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
 
   useEffect(() => {
+    if (hasServerData) return;
     const fetchInsight = async () => {
       if (!id) {
         setIsLoading(false);
@@ -125,7 +132,7 @@ export default function InsightDetailContent() {
       setIsLoading(false);
     };
     fetchInsight();
-  }, [id]);
+  }, [id, hasServerData]);
 
   useEffect(() => {
     const mdBreakpoint = parseInt(designSystem.breakpoints.md);

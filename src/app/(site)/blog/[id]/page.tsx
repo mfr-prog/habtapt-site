@@ -1,34 +1,14 @@
 import type { Metadata } from 'next';
 import InsightDetailContent from './_components/InsightDetailContent';
+import { fetchInsightById, fetchRelatedInsights, type InsightFull } from '../_lib/fetchInsights';
 
 export const runtime = 'edge';
-
-const SUPABASE_URL = 'https://xrgcrvhmzoxfduhytzhk.supabase.co';
-const FUNCTION_PATH = 'functions/v1/make-server-4b2936bc';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyZ2Nydmhtem94ZmR1aHl0emhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxNzQ5MDEsImV4cCI6MjA3Nzc1MDkwMX0.kuOHXFvX3s5yTDmxA4KBw_r6NDZxmsQtZRm_WDkdGUE';
-
-async function fetchInsight(id: string) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/${FUNCTION_PATH}/insights`, {
-      headers: { 'Authorization': `Bearer ${ANON_KEY}` },
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data.success && data.insights) {
-      return data.insights.find((i: any) => i.id === id) || null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params;
-  const insight = await fetchInsight(id);
+  const insight = await fetchInsightById(id);
 
   if (insight) {
     const title = insight.title;
@@ -69,7 +49,7 @@ export async function generateMetadata(
   };
 }
 
-function generateArticleJsonLd(insight: any, id: string) {
+function generateArticleJsonLd(insight: InsightFull | null, id: string) {
   if (!insight) return null;
   return {
     '@context': 'https://schema.org',
@@ -95,7 +75,7 @@ function generateArticleJsonLd(insight: any, id: string) {
   };
 }
 
-function generateBreadcrumbJsonLd(insight: any, id: string) {
+function generateBreadcrumbJsonLd(insight: InsightFull | null, id: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -109,7 +89,8 @@ function generateBreadcrumbJsonLd(insight: any, id: string) {
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const insight = await fetchInsight(id);
+  const insight = await fetchInsightById(id);
+  const related = insight ? await fetchRelatedInsights(insight.category, id) : [];
 
   const articleJsonLd = generateArticleJsonLd(insight, id);
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(insight, id);
@@ -121,7 +102,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <InsightDetailContent />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <InsightDetailContent insight={insight as any} relatedInsights={related as any} />
     </>
   );
 }

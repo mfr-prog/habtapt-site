@@ -13,7 +13,8 @@ import {
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
-import { useProjectFetch, Project } from '@/utils/hooks/useProjectFetch';
+import { useProjectFetch } from '@/utils/hooks/useProjectFetch';
+import type { Project } from '@/types/project';
 import { supabaseFetch } from '@/utils/supabase/client';
 import { StatusBadge, StrategyBadge } from '@/components/primitives/Badge';
 import { ProjectDetailSkeleton } from '@/components/primitives/ProjectDetailSkeleton';
@@ -66,19 +67,26 @@ const projectsData: Project[] = [
   },
 ];
 
-export default function PortfolioDetailContent() {
+export default function PortfolioDetailContent({ project: serverProject }: { project?: Project | null }) {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
   const { ref, isInView } = useInView({ threshold: 0.1 });
   const [isMobile, setIsMobile] = useState(false);
 
-  const { project, isLoading, error } = useProjectFetch(id, {
-    mockData: projectsData,
-    onError: (err) => {
-      console.error('Erro ao carregar projeto:', err);
+  const { project: clientProject, isLoading: clientLoading, error: clientError } = useProjectFetch(
+    serverProject ? undefined : id,
+    {
+      mockData: projectsData,
+      onError: (err) => {
+        console.error('Erro ao carregar projeto:', err);
+      }
     }
-  });
+  );
+
+  const project = serverProject ?? clientProject;
+  const isLoading = serverProject ? false : clientLoading;
+  const error = serverProject ? null : clientError;
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);

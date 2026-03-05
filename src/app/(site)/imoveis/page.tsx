@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import ImoveisContent from './_components/ImoveisContent';
+import { fetchProjects } from '../portfolio/_lib/fetchProjects';
 
 export const metadata: Metadata = {
   title: 'Imóveis à Venda em Portugal — Apartamentos e Moradias Reabilitados',
@@ -28,7 +29,9 @@ const breadcrumbJsonLd = {
   ],
 };
 
-export default function ImoveisPage() {
+export default async function ImoveisPage() {
+  const projects = await fetchProjects();
+
   return (
     <>
       <script
@@ -36,7 +39,7 @@ export default function ImoveisPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Suspense>
-        <ImoveisContent />
+        <ImoveisContent projects={projects.length > 0 ? projects : undefined} />
       </Suspense>
     </>
   );
