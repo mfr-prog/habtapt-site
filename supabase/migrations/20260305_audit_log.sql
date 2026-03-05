@@ -52,15 +52,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Attach audit triggers to sensitive tables
-CREATE TRIGGER audit_contacts
-  AFTER INSERT OR UPDATE OR DELETE ON contacts
-  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-
-CREATE TRIGGER audit_projects
-  AFTER INSERT OR UPDATE OR DELETE ON projects
-  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-
-CREATE TRIGGER audit_newsletter_subscribers
-  AFTER INSERT OR UPDATE OR DELETE ON newsletter_subscribers
-  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+-- NOTE: Triggers omitted — contacts/projects/newsletter_subscribers
+-- live in Deno KV, not Postgres tables. Attach triggers here when
+-- those tables are migrated to Postgres.
