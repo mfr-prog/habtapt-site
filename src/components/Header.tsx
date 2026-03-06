@@ -106,7 +106,7 @@ export function Header() {
           <Link
             href="/"
             className="flex items-center gap-3"
-            aria-label="Ir para página inicial"
+            aria-label="HABTA — Ir para página inicial"
             style={{ textDecoration: 'none' }}
           >
             <div className="flex items-center gap-3 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">

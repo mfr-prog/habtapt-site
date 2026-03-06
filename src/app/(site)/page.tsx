@@ -26,14 +26,6 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_PT',
     siteName: 'HABTA',
-    images: [
-      {
-        url: 'https://habta.eu/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'HABTA — Imóveis Reabilitados Premium em Portugal',
-      },
-    ],
   },
 };
 

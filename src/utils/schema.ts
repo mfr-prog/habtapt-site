@@ -13,7 +13,7 @@ export const organizationJsonLd = {
     width: 512,
     height: 512,
   },
-  image: 'https://habta.eu/og-image.png',
+  image: 'https://habta.eu/opengraph-image',
   description: 'Reabilitação urbana, investimento imobiliário e co-investimento em Portugal. Imóveis reabilitados premium em Lisboa, Porto e Cascais. Decisões baseadas em dados para património de alta performance.',
   address: {
     '@type': 'PostalAddress',

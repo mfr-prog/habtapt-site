@@ -37,20 +37,11 @@ export const metadata: Metadata = {
     title: "HABTA — Reabilitação Urbana e Investimento Imobiliário em Portugal",
     description: "Reabilitação urbana, investimento imobiliário e co-investimento em Portugal. Imóveis reabilitados premium em Lisboa, Porto e Cascais.",
     url: "https://habta.eu",
-    images: [
-      {
-        url: "https://habta.eu/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "HABTA — Reabilitação Urbana e Investimento Imobiliário em Portugal",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "HABTA — Reabilitação Urbana e Investimento Imobiliário em Portugal",
     description: "Reabilitação urbana, investimento imobiliário e co-investimento em Portugal. Imóveis reabilitados premium.",
-    images: ["https://habta.eu/og-image.png"],
   },
   alternates: {
     canonical: "https://habta.eu",
@@ -90,14 +81,9 @@ export default function RootLayout({
   return (
     <html lang="pt-PT" className={inter.variable}>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="32x32" />
-        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="theme-color" content="#1A3E5C" />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://widget.atendeaqui.ai" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />
         <link
           rel="preload"
           as="image"
@@ -119,6 +105,9 @@ export default function RootLayout({
           data-channel="web"
           strategy="lazyOnload"
         />
+        <Script id="atd-a11y" strategy="lazyOnload">{`
+          (function(){var b=document.getElementById('atd-widget-btn');if(b){b.setAttribute('aria-label','Abrir chat de apoio')}else{new MutationObserver(function(m,o){var b=document.getElementById('atd-widget-btn');if(b){b.setAttribute('aria-label','Abrir chat de apoio');o.disconnect()}}).observe(document.body,{childList:true,subtree:true})}})();
+        `}</Script>
       </body>
     </html>
   );

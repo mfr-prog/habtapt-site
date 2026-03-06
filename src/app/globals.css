@@ -286,11 +286,9 @@
 }
 .anim-fade-in-up {
   animation: fadeInUp 0.6s ease-out both;
-  will-change: transform, opacity;
 }
 .anim-fade-in {
   animation: fadeIn 0.6s ease-out both;
-  will-change: opacity;
 }
 .anim-slide-down {
   animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;

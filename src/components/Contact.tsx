@@ -631,7 +631,7 @@ export function Contact() {
                 ...(isInView ? {} : { opacity: 0 }),
               }}
             >
-              <h3
+              <h2
                 className="mb-4"
                 style={{
                   fontSize: designSystem.typography.fontSize['2xl'],
@@ -640,7 +640,7 @@ export function Contact() {
                 }}
               >
                 Pronto para dar o próximo passo?
-              </h3>
+              </h2>
               <p
                 className="mb-6"
                 style={{

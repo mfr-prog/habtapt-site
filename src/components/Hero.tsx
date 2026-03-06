@@ -25,7 +25,7 @@ export function Hero() {
           height={900}
           alt="VELASK Residence - fachada do empreendimento"
           fetchPriority="high"
-          decoding="async"
+          decoding="auto"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div

@@ -98,7 +98,7 @@ export function Footer() {
             {/* Links Columns */}
             {allSections.map((section) => (
               <div key={section.title}>
-                <h4 className="text-white mb-4" aria-label={`Links de ${section.title}`}>{section.title}</h4>
+                <h3 className="text-white mb-4" aria-label={`Links de ${section.title}`}>{section.title}</h3>
                 <ul className="space-y-3">
                   {section.links.map((link) => (
                     <li key={link.label}>
