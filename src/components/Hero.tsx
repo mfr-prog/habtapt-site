@@ -62,9 +62,9 @@ export function Hero() {
               paddingBottom: designSystem.spacing[8],
             }}
           >
-            {/* Project badge */}
+            {/* Project badge — visible immediately for LCP */}
             <div
-              className="inline-flex items-center rounded-full anim-fade-in-up anim-delay-1"
+              className="inline-flex items-center rounded-full anim-fade-in anim-delay-1"
               style={{
                 paddingLeft: designSystem.spacing[5],
                 paddingRight: designSystem.spacing[5],
@@ -89,10 +89,10 @@ export function Hero() {
               </span>
             </div>
 
-            {/* Title */}
+            {/* Title — NO animation delay, visible immediately for LCP */}
             <h1
               id="hero-title"
-              className="text-center w-full anim-fade-in-up anim-delay-2"
+              className="text-center w-full"
               style={{
                 fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
                 lineHeight: 1.1,
@@ -103,7 +103,6 @@ export function Hero() {
               }}
             >
               <span
-                className="anim-fade-in anim-delay-4"
                 style={{
                   background: designSystem.colors.gradients.accentReverse,
                   WebkitBackgroundClip: 'text',
@@ -119,7 +118,7 @@ export function Hero() {
 
             {/* Location */}
             <p
-              className="text-center anim-fade-in-up anim-delay-3"
+              className="text-center anim-fade-in anim-delay-1"
               style={{
                 fontSize: designSystem.typography.fontSize.xl,
                 color: 'rgba(255, 255, 255, 0.85)',
@@ -132,7 +131,7 @@ export function Hero() {
 
             {/* Specs */}
             <div
-              className="flex flex-wrap justify-center items-center anim-fade-in-up anim-delay-4"
+              className="flex flex-wrap justify-center items-center anim-fade-in anim-delay-2"
               style={{
                 gap: designSystem.spacing[4],
                 marginBottom: designSystem.spacing[10],
@@ -166,7 +165,7 @@ export function Hero() {
 
             {/* CTA Buttons */}
             <div
-              className="flex flex-col sm:flex-row justify-center items-center w-full anim-fade-in-up anim-delay-5"
+              className="flex flex-col sm:flex-row justify-center items-center w-full anim-fade-in anim-delay-3"
               style={{
                 gap: designSystem.spacing[4],
               }}
