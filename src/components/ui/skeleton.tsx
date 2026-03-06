@@ -1,7 +1,6 @@
 // HABTA Skeleton Component - Migrated from /primitives/ to /ui/
-// Enhanced with Motion animations and design-system tokens
+// Pure CSS shimmer animation (no motion/react dependency)
 import React from 'react';
-import { motion } from 'motion/react';
 import { designSystem } from '../design-system';
 
 interface SkeletonProps {
@@ -52,27 +51,19 @@ export function Skeleton({
 
   return (
     <div style={skeletonStyle} className={className}>
-      <motion.div
+      <div
+        className="skeleton-shimmer"
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          background: `linear-gradient(90deg, 
-            transparent 0%, 
-            ${designSystem.colors.neutral[100]} 50%, 
+          background: `linear-gradient(90deg,
+            transparent 0%,
+            ${designSystem.colors.neutral[100]} 50%,
             transparent 100%
           )`,
-          transformOrigin: '0 0',
-        }}
-        animate={{
-          x: ['-100%', '200%'],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: 'linear',
         }}
       />
     </div>

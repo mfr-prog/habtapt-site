@@ -1,10 +1,9 @@
 // HABTA Card Component - Migrated from /primitives/ to /ui/
-// Enhanced with Motion animations and design-system tokens
+// Pure CSS hover effects (no motion/react dependency)
 import React from 'react';
-import { motion, HTMLMotionProps } from 'motion/react';
 import { designSystem } from '../design-system';
 
-interface CardProps extends Omit<HTMLMotionProps<'div'>, 'style' | 'children'> {
+interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   children?: React.ReactNode;
   variant?: 'default' | 'bordered' | 'elevated' | 'glass';
   padding?: keyof typeof designSystem.spacing;
@@ -18,6 +17,7 @@ export function Card({
   padding = 8,
   hover = true,
   gradient = false,
+  className,
   ...props
 }: CardProps) {
   const baseStyle: React.CSSProperties = {
@@ -54,17 +54,9 @@ export function Card({
   };
 
   return (
-    <motion.div
+    <div
       style={combinedStyle}
-      whileHover={
-        hover
-          ? {
-              y: -8,
-              scale: 1.02,
-              boxShadow: designSystem.shadows.xl,
-            }
-          : {}
-      }
+      className={[hover ? 'hover-lift-card' : '', className].filter(Boolean).join(' ') || undefined}
       {...props}
     >
       {gradient && (
@@ -84,7 +76,7 @@ export function Card({
         />
       )}
       <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
-    </motion.div>
+    </div>
   );
 }
 

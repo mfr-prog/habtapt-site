@@ -1,7 +1,6 @@
 // HABTA Button Component - Migrated from /primitives/ to /ui/
-// Enhanced with Motion animations and design-system tokens
+// Pure CSS hover/tap effects (no motion/react dependency)
 import React from 'react';
-import { motion, HTMLMotionProps } from 'motion/react';
 import { designSystem } from '../design-system';
 
 // Minimal buttonVariants helper for compatibility with shadcn components
@@ -12,7 +11,7 @@ export function buttonVariants(opts?: { variant?: string; size?: string }): stri
   return `habta-btn habta-btn-${v} habta-btn-${s}`;
 }
 
-interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'style' | 'children'> {
+interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'style'> {
   children?: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'tertiary' | 'outline' | 'outlineGold' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -29,6 +28,7 @@ export function Button({
   icon,
   iconPosition = 'right',
   disabled,
+  className,
   ...props
 }: ButtonProps) {
   const baseStyle: React.CSSProperties = {
@@ -103,31 +103,15 @@ export function Button({
   };
 
   return (
-    <motion.button
+    <button
       style={combinedStyle}
-      whileHover={
-        disabled
-          ? {}
-          : {
-              y: -2,
-              scale: 1.02,
-              boxShadow:
-                variant === 'primary'
-                  ? designSystem.shadows.primaryHover
-                  : variant === 'secondary'
-                  ? designSystem.shadows.secondaryHover
-                  : variant === 'tertiary'
-                  ? designSystem.shadows.tertiaryHover
-                  : designSystem.shadows.lg,
-            }
-      }
-      whileTap={disabled ? {} : { scale: 0.98 }}
+      className={[disabled ? '' : 'habta-btn-hover', className].filter(Boolean).join(' ') || undefined}
       disabled={disabled}
       {...props}
     >
       {icon && iconPosition === 'left' && icon}
       {children}
       {icon && iconPosition === 'right' && icon}
-    </motion.button>
+    </button>
   );
 }

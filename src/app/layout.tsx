@@ -98,7 +98,8 @@ export default function RootLayout({
         <link rel="preload" as="font" href="/fonts/inter-latin.woff2" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />
+        <link rel="preconnect" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://widget.atendeaqui.ai" />
         <link
           rel="preload"
           as="image"

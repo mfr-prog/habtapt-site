@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { Hero } from '@/components/Hero';
 import { CredibilityBar } from '@/components/CredibilityBar';
 import { DualCTA } from '@/components/DualCTA';
+import { fetchProjects } from './portfolio/_lib/fetchProjects';
 
 // Below-fold components: code-split so motion/react JS loads after initial paint
 const Portfolio = dynamic(
@@ -49,7 +50,9 @@ const homeBreadcrumbJsonLd = {
   ],
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const projects = await fetchProjects();
+
   return (
     <>
       <script
@@ -57,7 +60,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeBreadcrumbJsonLd) }}
       />
       <Hero />
-      <Portfolio variant="homepage" />
+      <Portfolio variant="homepage" projects={projects} />
       <CredibilityBar />
       <DualCTA />
       <Contact />

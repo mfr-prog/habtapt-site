@@ -1,10 +1,9 @@
 // HABTA Badge Component - Migrated from /primitives/ to /ui/
-// Enhanced with Motion animations and design-system tokens
+// Pure CSS hover effects (no motion/react dependency)
 import React from 'react';
-import { motion, HTMLMotionProps } from 'motion/react';
 import { designSystem } from '../design-system';
 
-interface BadgeProps extends Omit<HTMLMotionProps<'div'>, 'style' | 'children'> {
+interface BadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   children?: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'success' | 'warning' | 'error';
   size?: 'sm' | 'md' | 'lg';
@@ -16,6 +15,7 @@ export function Badge({
   variant = 'primary',
   size = 'md',
   icon,
+  className,
   ...props
 }: BadgeProps) {
   const baseStyle: React.CSSProperties = {
@@ -89,14 +89,13 @@ export function Badge({
   };
 
   return (
-    <motion.div
+    <div
       style={combinedStyle}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      className={['hover-scale-badge', className].filter(Boolean).join(' ')}
       {...props}
     >
       {icon && icon}
       {children}
-    </motion.div>
+    </div>
   );
 }

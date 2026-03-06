@@ -273,22 +273,24 @@
 
 /* Performance-optimized CSS animations (replacing motion/react) */
 @keyframes fadeInUp {
-  from { opacity: 0.01; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate3d(0, 20px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 @keyframes fadeIn {
-  from { opacity: 0.01; }
+  from { opacity: 0; }
   to { opacity: 1; }
 }
 @keyframes slideDown {
-  from { opacity: 0.01; transform: translateY(-100px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate3d(0, -100px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 .anim-fade-in-up {
   animation: fadeInUp 0.6s ease-out both;
+  will-change: transform, opacity;
 }
 .anim-fade-in {
   animation: fadeIn 0.6s ease-out both;
+  will-change: opacity;
 }
 .anim-slide-down {
   animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -311,6 +313,51 @@
 }
 .hover-scale:hover {
   transform: scale(1.15) translateY(-3px);
+}
+
+/* Button hover (replacing motion whileHover on buttons) */
+.habta-btn-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.habta-btn-hover:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+.habta-btn-hover:active {
+  transform: scale(0.98);
+}
+
+/* Card hover-lift (larger lift than default hover-lift) */
+.hover-lift-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-lift-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Badge hover scale */
+.hover-scale-badge {
+  transition: transform 0.2s ease;
+}
+.hover-scale-badge:hover {
+  transform: scale(1.05);
+}
+.hover-scale-badge:active {
+  transform: scale(0.95);
+}
+
+/* Input focus (replacing motion whileFocus) */
+.habta-input:focus {
+  border-color: #1A3E5C !important;
+  box-shadow: 0 0 0 3px rgba(26, 62, 92, 0.1) !important;
+}
+
+/* Skeleton shimmer animation (replacing motion animate) */
+@keyframes skeleton-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(200%); }
+}
+.skeleton-shimmer {
+  animation: skeleton-shimmer 1.5s infinite linear;
 }
 
 /* Spinner for loading states */
@@ -374,3 +421,4 @@
 .chevron-rotate-open {
   transform: rotate(180deg);
 }
+

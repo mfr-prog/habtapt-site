@@ -1,10 +1,9 @@
 // HABTA Input Component - Migrated from /primitives/ to /ui/
-// Enhanced with Motion animations and design-system tokens
+// Pure CSS focus effects (no motion/react dependency)
 import React, { forwardRef } from 'react';
-import { motion } from 'motion/react';
 import { designSystem } from '../design-system';
 
-interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'style' | 'onDrag' | 'onDragEnd' | 'onDragStart' | 'onDragOver' | 'onAnimationStart' | 'onAnimationEnd'> {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'style'> {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
@@ -12,7 +11,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, icon, fullWidth = false, ...props }, ref) => {
+  ({ label, error, icon, fullWidth = false, className, ...props }, ref) => {
     const inputStyle: React.CSSProperties = {
       width: fullWidth ? '100%' : 'auto',
       padding: icon ? '0.875rem 1rem 0.875rem 3rem' : '0.875rem 1rem',
@@ -60,16 +59,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && <label style={labelStyle}>{label}</label>}
         <div style={{ position: 'relative', width: '100%' }}>
           {icon && <div style={iconContainerStyle}>{icon}</div>}
-          <motion.input
+          <input
             ref={ref}
             style={inputStyle}
-            whileFocus={{
-              borderColor: designSystem.colors.brand.primary,
-              boxShadow: `0 0 0 3px ${designSystem.helpers.hexToRgba(
-                designSystem.colors.brand.primary,
-                0.1
-              )}`,
-            }}
+            className={['habta-input', className].filter(Boolean).join(' ')}
             {...props}
           />
         </div>

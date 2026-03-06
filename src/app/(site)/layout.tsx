@@ -2,9 +2,13 @@ import dynamic from "next/dynamic";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CookieConsentWrapper } from "@/components/CookieConsentWrapper";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { BackToTop } from "@/components/BackToTop";
 
+const ScrollProgress = dynamic(
+  () => import("@/components/ScrollProgress").then((m) => ({ default: m.ScrollProgress }))
+);
+const BackToTop = dynamic(
+  () => import("@/components/BackToTop").then((m) => ({ default: m.BackToTop }))
+);
 const WhatsAppButton = dynamic(
   () => import("@/components/WhatsAppButton").then((m) => ({ default: m.WhatsAppButton }))
 );
