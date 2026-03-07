@@ -43,6 +43,15 @@ const nextConfig: NextConfig = {
       'sonner',
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/imoveis',
+        destination: '/portfolio',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
