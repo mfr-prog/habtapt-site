@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true, // TODO: configure ESLint properly (zod/eslint-config-next conflict)
   },
   experimental: {
+    inlineCss: true,
     optimizePackageImports: [
       'lucide-react',
       'motion',
