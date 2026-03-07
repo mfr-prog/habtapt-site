@@ -95,6 +95,13 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZKN7PMCDBP"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">{`
+          window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZKN7PMCDBP');
+        `}</Script>
         <Script id="atd-err" strategy="lazyOnload">{`
           (function(){var o=console.error;console.error=function(){var a=[].slice.call(arguments).join(' ');if(a.indexOf('Atendimento Widget')!==-1||a.indexOf('atendeaqui')!==-1)return;o.apply(console,arguments)}})();
         `}</Script>
