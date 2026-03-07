@@ -61,8 +61,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add Google Search Console verification when available
-    // google: 'your-verification-code',
+    google: 'nJHhL_Gc7I7MvkU3QcLCxJmgWbAylGLumR6VS3bwWdI',
   },
   other: {
     'geo.region': 'PT',

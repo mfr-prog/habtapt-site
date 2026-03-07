@@ -7,6 +7,14 @@ export const metadata: Metadata = {
   description: 'Política de privacidade da HABTA — como recolhemos, utilizamos e protegemos os seus dados pessoais em conformidade com o RGPD.',
   alternates: { canonical: 'https://habta.eu/privacidade' },
   robots: { index: true, follow: true },
+  openGraph: {
+    title: 'Política de Privacidade | HABTA',
+    description: 'Como recolhemos, utilizamos e protegemos os seus dados pessoais em conformidade com o RGPD.',
+    url: 'https://habta.eu/privacidade',
+    type: 'website',
+    locale: 'pt_PT',
+    siteName: 'HABTA',
+  },
 };
 
 export default function PrivacidadePage() {

@@ -7,6 +7,14 @@ export const metadata: Metadata = {
   description: 'Política de cookies da HABTA — informação sobre os cookies utilizados no site habta.eu e como pode geri-los.',
   alternates: { canonical: 'https://habta.eu/cookies' },
   robots: { index: true, follow: true },
+  openGraph: {
+    title: 'Política de Cookies | HABTA',
+    description: 'Informação sobre os cookies utilizados no site habta.eu e como pode geri-los.',
+    url: 'https://habta.eu/cookies',
+    type: 'website',
+    locale: 'pt_PT',
+    siteName: 'HABTA',
+  },
 };
 
 export default function CookiesPage() {
