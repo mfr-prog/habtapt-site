@@ -85,7 +85,7 @@ export default function RootLayout({
           rel="preload"
           as="image"
           imageSrcSet="/images/hero/hero-480.avif 480w, /images/hero/hero-768.avif 768w, /images/hero/hero-1080.avif 1080w, /images/hero/hero-1600.avif 1600w"
-          imageSizes="(max-width: 640px) 640px, 100vw"
+          imageSizes="100vw"
           fetchPriority="high"
         />
         <script
@@ -97,9 +97,9 @@ export default function RootLayout({
         {children}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-ZKN7PMCDBP"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="gtag-init" strategy="afterInteractive">{`
+        <Script id="gtag-init" strategy="lazyOnload">{`
           window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZKN7PMCDBP');
         `}</Script>
         <Script id="atd-err" strategy="lazyOnload">{`
