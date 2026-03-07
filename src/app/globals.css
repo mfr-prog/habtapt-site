@@ -271,6 +271,12 @@
   }
 }
 
+/* Skip rendering for below-fold content until scrolled into view */
+.content-skip {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
 /* Performance-optimized CSS animations (replacing motion/react) */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translate3d(0, 20px, 0); }

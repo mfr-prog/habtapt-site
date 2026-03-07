@@ -52,10 +52,18 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeBreadcrumbJsonLd) }}
       />
       <Hero />
-      <Portfolio variant="homepage" projects={projects} />
-      <CredibilityBar />
-      <DualCTA />
-      <Contact />
+      <div className="content-skip">
+        <Portfolio variant="homepage" projects={projects} />
+      </div>
+      <div className="content-skip">
+        <CredibilityBar />
+      </div>
+      <div className="content-skip">
+        <DualCTA />
+      </div>
+      <div className="content-skip">
+        <Contact />
+      </div>
     </>
   );
 }

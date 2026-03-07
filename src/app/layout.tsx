@@ -12,7 +12,7 @@ const inter = localFont({
     },
   ],
   variable: "--font-inter",
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {
@@ -82,14 +82,11 @@ export default function RootLayout({
     <html lang="pt-PT" className={inter.variable}>
       <head>
         <meta name="theme-color" content="#1A3E5C" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://xrgcrvhmzoxfduhytzhk.supabase.co" />
         <link
           rel="preload"
           as="image"
-          type="image/avif"
           imageSrcSet="/images/hero/hero-480.avif 480w, /images/hero/hero-768.avif 768w, /images/hero/hero-1080.avif 1080w, /images/hero/hero-1600.avif 1600w"
-          imageSizes="100vw"
+          imageSizes="(max-width: 640px) 640px, 100vw"
           fetchPriority="high"
         />
         <script
