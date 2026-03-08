@@ -37,13 +37,9 @@ export function WhatsAppButton() {
 
   const handleChat = useCallback(() => {
     setIsOpen(false);
-    // Try widget API first, fallback to button click
-    const w = (window as any).AtendimentoWidget;
-    if (w && typeof w.open === 'function') {
-      w.open();
-    } else {
-      const btn = document.getElementById('atd-widget-btn') as HTMLButtonElement | null;
-      if (btn) btn.click();
+    const openFn = (window as any).__openAtdChat;
+    if (typeof openFn === 'function') {
+      openFn();
     }
   }, []);
 

@@ -101,15 +101,15 @@ export default function RootLayout({
         <Script id="atd-err" strategy="lazyOnload">{`
           (function(){var o=console.error;console.error=function(){var a=[].slice.call(arguments).join(' ');if(a.indexOf('Atendimento Widget')!==-1||a.indexOf('atendeaqui')!==-1)return;o.apply(console,arguments)}})();
         `}</Script>
+        <Script id="atd-hide-css" strategy="lazyOnload">{`
+          (function(){var s=document.createElement('style');s.textContent='#atendimento-widget-root:not([data-chat-open]){position:fixed!important;bottom:-9999px!important;right:-9999px!important;opacity:0!important;pointer-events:none!important;width:0!important;height:0!important;overflow:hidden!important;z-index:-1!important}';document.head.appendChild(s);window.__openAtdChat=function(){var r=document.getElementById('atendimento-widget-root');if(r){r.setAttribute('data-chat-open','1');setTimeout(function(){var b=r.querySelector('button')||r.querySelector('[role=button]');if(r.shadowRoot){b=r.shadowRoot.querySelector('button')||r.shadowRoot.querySelector('[role=button]')||r.shadowRoot.querySelector('.atd-bubble')}if(b)b.click()},100)}};window.__closeAtdChat=function(){var r=document.getElementById('atendimento-widget-root');if(r)r.removeAttribute('data-chat-open')}})();
+        `}</Script>
         <Script
           src="https://widget.atendeaqui.ai/widget.js"
           data-tenant="habta"
           data-channel="web"
           strategy="lazyOnload"
         />
-        <Script id="atd-hide" strategy="lazyOnload">{`
-          (function(){function h(b){b.style.cssText='position:fixed!important;bottom:-9999px!important;right:-9999px!important;opacity:0!important;pointer-events:none!important;width:0!important;height:0!important;overflow:hidden!important';b.setAttribute('aria-hidden','true');b.setAttribute('aria-label','Abrir chat de apoio')}var b=document.getElementById('atd-widget-btn');if(b){h(b)}new MutationObserver(function(){var b=document.getElementById('atd-widget-btn');if(b)h(b)}).observe(document.body,{childList:true,subtree:true,attributes:true})})();
-        `}</Script>
       </body>
     </html>
   );
