@@ -271,6 +271,14 @@
   }
 }
 
+/* Hide native Atendeaqui widget button — replaced by unified contact button */
+#atd-widget-btn,
+[id^="atd-widget"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* Skip rendering for below-fold content until scrolled into view */
 .content-skip {
   content-visibility: auto;

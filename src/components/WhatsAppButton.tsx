@@ -34,22 +34,15 @@ export function WhatsAppButton() {
     return () => clearTimeout(timer);
   }, [isVisible, showPulse]);
 
-  // Hide the native Atendeaqui button
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = '#atd-widget-btn { display: none !important; }';
-    document.head.appendChild(style);
-    return () => { document.head.removeChild(style); };
-  }, []);
 
   const handleChat = useCallback(() => {
     setIsOpen(false);
-    // Try to open Atendeaqui widget
     const btn = document.getElementById('atd-widget-btn') as HTMLButtonElement | null;
     if (btn) {
-      btn.style.display = '';
+      // Temporarily make it clickable, click it, then re-hide
+      btn.style.cssText = 'display:block!important;visibility:visible!important;pointer-events:auto!important;opacity:0;position:fixed;bottom:-100px';
       btn.click();
-      setTimeout(() => { btn.style.display = 'none'; }, 100);
+      setTimeout(() => { btn.style.cssText = ''; }, 200);
     }
   }, []);
 
