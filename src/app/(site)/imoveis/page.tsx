@@ -31,10 +31,22 @@ const breadcrumbJsonLd = {
 
 export default async function ImoveisPage() {
   let properties: Awaited<ReturnType<typeof fetchProperties>> = [];
+  let fetchError = '';
   try {
     properties = await fetchProperties();
   } catch (err) {
+    fetchError = err instanceof Error ? err.message : String(err);
     console.error('[ImoveisPage] Error fetching properties:', err);
+  }
+
+  if (fetchError) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <h1>Imóveis HABTA</h1>
+        <p>Erro ao carregar imóveis. Tente novamente mais tarde.</p>
+        <p style={{ fontSize: '0.75rem', color: '#999' }}>{fetchError}</p>
+      </div>
+    );
   }
 
   return (
