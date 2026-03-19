@@ -113,8 +113,8 @@ export function Header() {
               <img
                 src={showSolid ? '/logo-dark.svg' : '/logo-white.svg'}
                 alt="HABTA"
-                height={64}
-                style={{ height: 64, width: 'auto', transition: designSystem.animations.transition.base }}
+                height={48}
+                style={{ height: 48, width: 'auto', transition: designSystem.animations.transition.base }}
               />
             </div>
           </Link>
