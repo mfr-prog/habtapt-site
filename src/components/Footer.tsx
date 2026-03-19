@@ -60,7 +60,7 @@ export function Footer() {
             <div className="lg:col-span-2">
               <div className="mb-6">
                 <img
-                  src="/logo-white.svg?v=2"
+                  src="/logo-white-full.svg?v=2"
                   alt="HABTA — Every Home, Productized"
                   height={60}
                   style={{ height: 60, width: 'auto' }}
