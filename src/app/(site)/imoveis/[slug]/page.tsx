@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import PropertyDetailContent from './_components/PropertyDetailContent';
+import PropertyDetailWrapper from './_components/PropertyDetailWrapper';
 import { fetchPropertyBySlug } from '../_lib/fetchProperties';
 import { projectId, publicAnonKey } from '@/utils/supabase/info';
 
@@ -65,5 +65,5 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
     notFound();
   }
 
-  return <PropertyDetailContent property={property} />;
+  return <PropertyDetailWrapper property={property} />;
 }
