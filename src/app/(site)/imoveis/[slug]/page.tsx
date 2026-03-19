@@ -1,8 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import PropertyDetailContent from './_components/PropertyDetailContent';
+import dynamic from 'next/dynamic';
 import { fetchPropertyBySlug } from '../_lib/fetchProperties';
 import { projectId, publicAnonKey } from '@/utils/supabase/info';
+
+const PropertyDetailContent = dynamic(
+  () => import('./_components/PropertyDetailContent'),
+  { ssr: false, loading: () => <div style={{ minHeight: '60vh' }} /> }
+);
 
 export const runtime = 'edge';
 
