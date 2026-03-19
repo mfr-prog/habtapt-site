@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { fetchProperties } from './_lib/fetchProperties';
-import PropertyListContent from './_components/PropertyListContent';
+// Lazy import to debug Cloudflare Pages edge runtime crash
+import dynamic from 'next/dynamic';
+const PropertyListContent = dynamic(() => import('./_components/PropertyListContent'), { ssr: true });
 
 export const runtime = 'edge';
 
