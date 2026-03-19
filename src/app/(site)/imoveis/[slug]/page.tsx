@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import PropertyDetailContent from './_components/PropertyDetailContent';
 import { fetchPropertyBySlug } from '../_lib/fetchProperties';
 import { projectId, publicAnonKey } from '@/utils/supabase/info';
 
@@ -66,5 +65,14 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
     notFound();
   }
 
-  return <PropertyDetailContent property={property} />;
+  return (
+    <div style={{ padding: '2rem', maxWidth: 800, margin: '0 auto' }}>
+      <h1 style={{ fontSize: '2rem' }}>{property.title}</h1>
+      <p>{property.location}</p>
+      <p>{property.description}</p>
+      <p style={{ color: '#999', fontSize: '0.8rem' }}>
+        Página de detalhe em construção — dados carregados com sucesso via slug.
+      </p>
+    </div>
+  );
 }
