@@ -29,7 +29,8 @@ export function unsplashUrl(
 }
 
 /** Check if an URL points to Unsplash (images.unsplash.com) */
-export function isUnsplashUrl(src: string): boolean {
+export function isUnsplashUrl(src: string | null | undefined): boolean {
+  if (!src) return false;
   return src.includes('images.unsplash.com');
 }
 
