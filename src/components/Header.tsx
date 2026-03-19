@@ -109,20 +109,13 @@ export function Header() {
             aria-label="HABTA — Ir para página inicial"
             style={{ textDecoration: 'none' }}
           >
-            <div className="flex items-center gap-3 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
-              <Logo variant={showSolid ? 'black' : 'white'} size={40} />
-              <span
-                className="hidden sm:inline"
-                style={{
-                  color: showSolid ? designSystem.colors.brand.primary : designSystem.colors.neutral.white,
-                  fontWeight: designSystem.typography.fontWeight.black,
-                  letterSpacing: designSystem.typography.letterSpacing.tight,
-                  fontSize: designSystem.typography.fontSize['2xl'],
-                  transition: designSystem.animations.transition.base,
-                }}
-              >
-                HABTA
-              </span>
+            <div className="flex items-center transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]">
+              <img
+                src={showSolid ? '/logo-dark.svg' : '/logo-white.svg'}
+                alt="HABTA"
+                height={36}
+                style={{ height: 36, width: 'auto', transition: designSystem.animations.transition.base }}
+              />
             </div>
           </Link>
 

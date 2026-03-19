@@ -61,43 +61,25 @@ interface LogoFullProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export function LogoFull({ variant = 'white', className = '', showTagline = true, size = 'md' }: LogoFullProps) {
-  const textColor = variant === 'white' ? '#0A2D55' : '#F9FAFC';
-  const accentColor = '#6683A0';
-  
+export function LogoFull({ variant = 'white', className = '', showTagline: _showTagline = true, size = 'md' }: LogoFullProps) {
+  const logoSrc = variant === 'white' ? '/logo-dark.svg' : '/logo-white.svg';
+
   const sizes = {
-    sm: { logo: 40, text: 'text-2xl', tagline: 'text-xs', spacing: 'gap-3' },
-    md: { logo: 60, text: 'text-4xl', tagline: 'text-sm', spacing: 'gap-4' },
-    lg: { logo: 80, text: 'text-5xl', tagline: 'text-base', spacing: 'gap-5' },
+    sm: { height: 32 },
+    md: { height: 48 },
+    lg: { height: 64 },
   };
-  
+
   const config = sizes[size];
 
   return (
-    <div className={`flex items-center ${config.spacing} ${className}`}>
-      <Logo variant={variant} size={config.logo} />
-      <div className="flex flex-col">
-        <h1 
-          className={`${config.text} tracking-tight leading-none`}
-          style={{ color: textColor, fontWeight: 900, letterSpacing: '-0.03em' }}
-        >
-          HABTA
-        </h1>
-        {showTagline && (
-          <div className="flex flex-col gap-1 mt-1">
-            <p 
-              className={`${config.tagline} tracking-wider uppercase`}
-              style={{ color: textColor, letterSpacing: '0.12em' }}
-            >
-              Every Home, Productized
-            </p>
-            <div 
-              className="h-0.5 w-12"
-              style={{ background: accentColor }}
-            />
-          </div>
-        )}
-      </div>
+    <div className={className}>
+      <img
+        src={logoSrc}
+        alt="HABTA — Every Home, Productized"
+        height={config.height}
+        style={{ height: config.height, width: 'auto' }}
+      />
     </div>
   );
 }

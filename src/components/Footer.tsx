@@ -58,18 +58,13 @@ export function Footer() {
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12 mb-12">
             {/* Brand Column */}
             <div className="lg:col-span-2">
-              <div className="mb-6 flex items-center gap-3">
-                <Logo variant="white" size={48} />
-                <span
-                  style={{
-                    fontWeight: designSystem.typography.fontWeight.black,
-                    letterSpacing: designSystem.typography.letterSpacing.tight,
-                    fontSize: designSystem.typography.fontSize['3xl'],
-                    color: designSystem.colors.neutral.white,
-                  }}
-                >
-                  HABTA
-                </span>
+              <div className="mb-6">
+                <img
+                  src="/logo-white.svg"
+                  alt="HABTA — Every Home, Productized"
+                  height={48}
+                  style={{ height: 48, width: 'auto' }}
+                />
               </div>
               <p
                 style={{
@@ -79,7 +74,7 @@ export function Footer() {
                   maxWidth: '24rem'
                 }}
               >
-                Reabilitação Inteligente e Investimento Sustentável.
+                Every Home, Productized.
               </p>
               <div className="flex" style={{ gap: designSystem.spacing[3] }}>
                 {socialLinks.map((social) => (
@@ -131,7 +126,7 @@ export function Footer() {
             <div className="flex flex-col md:flex-row justify-between items-center" style={{ gap: designSystem.spacing[4], width: '100%' }}>
               <div className="text-center md:text-left">
                 <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.8), fontSize: designSystem.typography.fontSize.sm, marginBottom: designSystem.spacing[2] }}>
-                  HABTA &copy; {currentYear} — Reabilitação Inteligente e Investimento Sustentável.
+                  HABTA &copy; {currentYear} — Every Home, Productized.
                 </p>
                 <p style={{ color: designSystem.helpers.hexToRgba(designSystem.colors.neutral.white, 0.75), fontSize: designSystem.typography.fontSize.xs }}>
                   &copy; {currentYear} Jornada Prometida LDA. NIF: 518493644
