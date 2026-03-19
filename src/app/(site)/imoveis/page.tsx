@@ -30,7 +30,12 @@ const breadcrumbJsonLd = {
 };
 
 export default async function ImoveisPage() {
-  const properties = await fetchProperties();
+  let properties: Awaited<ReturnType<typeof fetchProperties>> = [];
+  try {
+    properties = await fetchProperties();
+  } catch (err) {
+    console.error('[ImoveisPage] Error fetching properties:', err);
+  }
 
   return (
     <>
