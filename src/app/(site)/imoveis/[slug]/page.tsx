@@ -4,8 +4,6 @@ import PropertyDetailWrapper from './_components/PropertyDetailWrapper';
 import { fetchPropertyBySlug } from '../_lib/fetchProperties';
 import { projectId, publicAnonKey } from '@/utils/supabase/info';
 
-export const runtime = 'edge';
-
 const SUPABASE_URL = `https://${projectId}.supabase.co`;
 const FUNCTION_PATH = 'functions/v1/make-server-4b2936bc';
 
